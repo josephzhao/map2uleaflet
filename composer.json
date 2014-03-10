@@ -1,0 +1,30 @@
+{
+  "name" : "map2u/leaflet-bundle",
+    "description" : "Map2u Leaflet Bundle",
+    "type" : "symfony-bundle",
+    "authors" : [{
+        "name" : "Joseph Zhao",
+        "email" : "zhaoshuilin2004@yahoo.ca"
+    }],
+    "keywords" : [
+        "Map2u Leaflet Bundle,Symfony 2"
+    ],
+    "license" : [
+        "MIT"
+    ],
+    "require" : {
+    },
+    "autoload" : {
+        "psr-0" : {
+            "Map2u\\LeafletBundle" : ""
+        }
+    },
+    "target-dir" : "Map2u/LeafletBundle",
+    "repositories" : [{}
+    ],
+    "extra" : {
+    "branch-alias" : {
+            "dev-master" : "2.2-dev"
+        }
+    }
+}

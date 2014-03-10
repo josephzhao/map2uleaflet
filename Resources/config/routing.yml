@@ -1,0 +1,3 @@
+map2u_leaflet_homepage:
+    pattern:  /hello/{name}
+    defaults: { _controller: Map2uLeafletBundle:Default:index }
