@@ -1,7 +1,12 @@
 parameters:
 #    map2u_leaflet.example.class: Map2u\LeafletBundle\Example
-
+     map2uleafletbundle.db.table_prefix: map2uleaflet_
 services:
 #    map2u_leaflet.example:
 #        class: %map2u_leaflet.example.class%
 #        arguments: [@service_id, "plain_value", %parameter%]
+    map2uleafletbundle.tblprefix_subscriber:
+                    class: Map2u\LeafletBundle\Subscriber\TablePrefixSubscriber
+                    arguments: [%map2uleafletbundle.db.table_prefix%]
+                    tags:
+                        - { name: doctrine.event_subscriber }        

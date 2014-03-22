@@ -1,3 +1,4 @@
-map2u_leaflet_homepage:
-    pattern:  /hello/{name}
-    defaults: { _controller: Map2uLeafletBundle:Default:index }
+map2u_leaflet_controller:
+    resource: "@Map2uLeafletBundle/Controller/"
+    type: annotation
+    prefix: /

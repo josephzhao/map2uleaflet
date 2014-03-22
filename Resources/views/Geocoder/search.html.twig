@@ -1,0 +1,11 @@
+<h2>
+    <a class="geolink" href="<%= root_path %>"><span class="icon close"></span></a>
+	{{'site.sidebar.search_results'|trans }}
+</h2>
+{% for source in sources %}
+<h4 class="inner12">{{ ("geocoder.search.title." ~ source) |trans |raw }}</h4>
+  <div class="search_results_entry" data-href="{{ path('map2uleaflet_geocoder_search_' ~ source,{query:params.query,lat:params.lat,lon:params.lon}) }}">
+      {{source}}
+    <img src="{{ asset('bundles/map2uleaflet/images/searching.gif') }}" class = "loader" />
+  </div>
+{% endfor %}

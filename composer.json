@@ -1,6 +1,7 @@
 {
   "name" : "map2u/leaflet-bundle",
     "description" : "Map2u Leaflet Bundle",
+    "version": "1.0.0",
     "type" : "symfony-bundle",
     "authors" : [{
         "name" : "Joseph Zhao",
@@ -24,7 +25,7 @@
     ],
     "extra" : {
     "branch-alias" : {
-            "dev-master" : "2.2-dev"
+            "dev-master" : "2.4-dev"
         }
     }
 }

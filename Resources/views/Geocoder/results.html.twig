@@ -1,0 +1,15 @@
+{% if results|length == 0 %}
+<p class="search_results_entry inner12">{{ 'geocoder.results.no_results' | trans }}</p>
+{% else %}
+  <ul class='results-list'>
+    {#% for  result in results %#}
+      <li><p class="inner12 search_results_entry clearfix">{{ results| result_to_html |raw  }}</p></li>
+    {#% endfor %#}
+  </ul>
+  {% if more_params %}
+    <div class="search_more">
+      <%= link_to t('geocoder.results.more_results'), url_for(@more_params), :class => "button load_more" %>
+      <%= image_tag "searching.gif", :class => "loader", :style => "display: none;" %>
+    </div>
+  {% endif %}
+{% endif %}
