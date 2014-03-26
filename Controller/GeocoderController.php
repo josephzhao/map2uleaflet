@@ -30,8 +30,8 @@ class GeocoderController extends Controller {
     $query = $request->get('query');
     $latlon = $this->normalize_params($query);
     
-    $sources = [];
-    $params = [];
+    $sources = array();
+    $params = array();
     if (isset($latlon['lat']) && !empty($latlon['lat']) && isset($latlon['lon']) && !empty($latlon['lon'])) {
       array_push($sources, "latlon");
       $params=array_merge($params, array('lat'=>$latlon['lat'],'lon'=>$latlon['lon']));
