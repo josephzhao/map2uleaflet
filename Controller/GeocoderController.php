@@ -154,7 +154,7 @@ class GeocoderController extends Controller {
    */
   public function search_ca_postcodeAction(Request $request) {
     $query = $request->get('query');
-    $results = [];
+    $results = array();
     try {
 
 
@@ -185,7 +185,7 @@ class GeocoderController extends Controller {
    */
   public function search_osm_nominatimAction(Request $request) {
     $query = $request->get('query');
-    $results = [];
+    $results = array();
  //   var_dump($request);
 
     //    # get query parameters
