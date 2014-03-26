@@ -345,7 +345,7 @@ var baseMaps = {
         L.MAP2U.share({
         position: position,
                 sidebar: rightSidebar,
-                short: true
+                'short': true
         }).addTo(map);
         L.MAP2U.note({
         position: position,

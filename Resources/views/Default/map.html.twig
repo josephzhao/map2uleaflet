@@ -12,7 +12,16 @@
         </div>
 
         <div id="sidebar_content">
-
+            {{ sonata_block_render({ 'type': 'map2ucorebundle.block.latest_news' }, {
+                'title': 'Latest News', 'number': 5, 'mode': 'public'
+            }) }}
+{#            {{render(controller(path('map2ucore_latestnews')))}}#}
+            {{ sonata_block_render({ 'type': 'sonata.news.block.recent_posts' }, {
+                'title': 'Recent Posts', 'number': 5, 'mode': 'public'
+            }) }}
+            {{ sonata_block_render({ 'type': 'sonata.news.block.recent_comments' }, {
+                'title': 'Recent Comments', 'number': 5, 'mode': 'public'
+            }) }}
         </div>
 
         <div class="welcome">
