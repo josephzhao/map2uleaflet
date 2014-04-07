@@ -1,0 +1,63 @@
+{% extends sonata_block.templates.block_base %}
+{% block block %}
+    <div id="leaflet_content" class="overlay-sidebar">
+
+        <div id="sidebar-left">
+            <div id="flash">
+            </div>
+
+            <div id="browse_status"></div>
+
+            <div id="sidebar_loader" style="display: none;">
+                <img alt="Loading..." class="loader" src="{{ asset('/bundles/map2uleaflet/images/searching.gif') }}">
+            </div>
+
+            <div id="sidebar_content">
+                {#  {{ sonata_block_render({ 'type': 'map2ucorebundle.block.latest_news' }, {
+                      'title': 'Latest News', 'number': 5, 'mode': 'public'
+                  }) }}#}
+                {#            {{render(controller(path('map2ucore_latestnews')))}}#}
+                {{ sonata_block_render({ 'type': 'sonata.news.block.recent_posts' }, {
+                'title': 'Recent Posts', 'number': 5, 'mode': 'public'
+            }) }}
+                {{ sonata_block_render({ 'type': 'sonata.news.block.recent_comments' }, {
+                'title': 'Recent Comments', 'number': 5, 'mode': 'public'
+            }) }}
+            </div>
+
+            <div class="welcome">
+                <h2><a onclick=" $('.welcome').hide();"><span class="icon close"></span></a>Welcome to Credit Valley Conservation Browser!</h2>
+                <p>Welcome to Credit Valley Conservation Browser is a map of the world, created by people like you and free to use under an open license.</p>
+                <a class="button learn-more" href="/about">Learn More</a>
+                <a class="button sign-up" href="/user/new">Start</a>
+            </div>
+
+        </div>
+        <div id="sidebar-right">
+        </div>        
+        <div id="sidebar" >
+            <form accept-charset="UTF-8" action="/search" class="search_form" method="post"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /><input name="authenticity_token" type="hidden" value="WzUq33tXmIGkkIg0LB/2KBd91Dfveckr8QvNtZoo9Zo=" /></div>
+                <input name="commit" type="submit" value="Go" />
+                <div class='query_wrapper'>
+                    <input autofocus="autofocus" id="query" name="query" placeholder="Search" type="text" />
+                    <a class="describe_location" href="#" title="Describe the current location using the search engine">Where am I?</a>
+                </div>
+            </form>
+        </div>
+
+        <div id="map-ui">
+        </div>
+
+
+        <noscript>
+        <div id="noscript">
+            <p>You are either using a browser that does not support JavaScript, or you have disabled JavaScript.</p>
+            <p>OpenStreetMap uses JavaScript for its slippy map.</p>
+        </div>
+        </noscript>
+        <div id="leafmap"  style="padding-top: 0; top:0px;border:0px #090 solid" >
+
+        </div> 
+    </div>
+
+{% endblock %}

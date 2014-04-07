@@ -28,14 +28,8 @@ I18n.translations = {'en': {
                     'notes': 'Notes',
                     'Subwatersheds': 'Subwatersheds',
                     'Watersheds': 'Watersheds',
-                    'cvcsubwatersheds': 'Subwatersheds',
-                    'cvcwatersheds': 'Watersheds',
-                    'parks': 'Parks',
-                    'conservation_areas':'Conservation Areas',
                     'data': 'Data',
                     "Credit River Parks": "Credit River Parks",
-                    'golf_courses':'Golf Courses',
-                    'peel_community_centres': 'Community Centres',
                     "Conservation": "Conservation",
                     "credit_river": "Credit River",
                     "credit_river_head_waters": "Credit River Head Waters",
@@ -43,7 +37,7 @@ I18n.translations = {'en': {
                     "creditriverheadwaters": "Credit River Head Waters",
                     "creditvalleyprovincialpark": "Credit Valley Provincial Park",
                     "creditvalleytrails": "Credit Valley Trails",
-               
+                    "peel_community_centres": "Peel Community Centres",
                     "peel_golf_courses": "Peel Golf Courses",
                     "peel_parks": "Peel Parks",
                     "peel_playground_pools": "Peel Playground Pools",
@@ -166,25 +160,15 @@ I18n.translations = {'en': {
 
 window.onload = function() {
 
- $(".navbar.navbar-fixed-top").resize(function() { 
-    // alert("qqq=" + $(".navbar.navbar-fixed-top").height());
-     $("body.sonata-bc").css('top',$(".navbar.navbar-fixed-top").height());
- });
 
 $('#leafmap').height($(window).height() - 126);
         $(window).resize(function() { /* do something */
-            
-        $('#leafmap').height($(window).height() - 126);
+$('#leafmap').height($(window).height() - 126);
         $('#map-ui').height($(window).height() - 126);
-        $('.leaflet-sidebar #sidebar-left').height($(window).height() - 186);
 });
         var map = new L.MAP2U.Map('leafmap', {
-        'zoomControl': false
+        'zoomControl': false,
         }).setView([43.73737, - 79.95987], 10);
-        
-        
- 
-        
         //add a tile layer to add to our map, in this case it's the 'standard' OpenStreetMap.org tile server
         var mapnik = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
@@ -256,22 +240,22 @@ $('#leafmap').height($(window).height() - 126);
 ////	}
 //}).addTo(map);
 //
-       var nonswitchable_layernames = [ 'credit_river','water_ways','credit_valley_lakes','credit_river_head_waters'];
- 
-        var layernames = ['cvcwatersheds', 'cvcsubwatersheds',
-               
-                'conservation_areas',
-                'trails',
-                'trail3_clip',
+
+        var layernames = ['trails', 'credit_river',
+                'credit_river_head_waters',
+                'credit_valley_conservation',
+                'creditriverheadwaters',
+                'creditvalleyprovincialpark',
               
-                'parks',
+                'peel_community_centres',
+                'peel_golf_courses',
+                'peel_parks',
                 'peel_playground_pools',
-                'golf_courses',
-                'peel_community_centres'];
+                
+                'trail3_clip',
+                'water_ways'];
         map.addLayer(mapnik);
-        
-      
-       
+        map.addLayer(subwatersheds);
         map.baseLayers = [{'layer':
                 mapnik, 'name': 'Open Street Map'},
         {'layer':
@@ -283,27 +267,10 @@ $('#leafmap').height($(window).height() - 126);
         ];
         map.noteLayer = new L.FeatureGroup();
         map.noteLayer.options = {code: 'N'};
-        map.dataLayers =   [];//{'layer':creditriverparks, name:'Credit River Parks'}, {'layer':conservationareas, name:'Conservation'}, {'layer': subwatersheds, 'name': 'Subwatersheds'},
-      //  {'layer': watersheds, 'name': 'Watersheds'}];
-    
- 
-    
+        map.dataLayers = [{'layer':creditriverparks, name:'Credit River Parks'}, {'layer':conservationareas, name:'Conservation'}, {'layer': subwatersheds, 'name': 'Subwatersheds'},
+        {'layer': watersheds, 'name': 'Watersheds'}];
         var index;
         var layers = [];
-   
-        for (index = 0; index < nonswitchable_layernames.length; ++index) {
-                map.addLayer(new L.TileLayer.WMS(
-                "http://cobas.juturna.ca:8080/geoserver/juturna/wms",
-                {
-                    layers: 'juturna:' + nonswitchable_layernames[index],
-                    format: 'image/png',
-                    srs: 'EPSG:26917',
-                    transparent: true,
-                    attribution: ""
-                }));
-        }
-        
-        
         for (index = 0; index < layernames.length; ++index) {
 layers[index] = new L.TileLayer.WMS(
         "http://cobas.juturna.ca:8080/geoserver/juturna/wms",
@@ -329,8 +296,6 @@ var baseMaps = {
                 "Subwatersheds": subwatersheds,
                 "Watersheds": watersheds
         };
-        
-//       
 //    
 //var MyControl = L.Control.extend({
 //    options: {
@@ -371,19 +336,16 @@ var baseMaps = {
         }).addTo(map);
         L.control.scale().addTo(map);
         L.control.mousePosition({'emptyString': '', 'position': 'bottomleft'}).addTo(map);
-       
+//    var sidebar = L.MAP2U.sidebar('#map-ui').addTo(map);
+        // alert(map.layers.length);
         var leftSidebar = L.control.sidebar('sidebar-left', {
         position: 'left'
         });
         map.addControl(leftSidebar);
-        
         var rightSidebar = L.control.sidebar('sidebar-right', {
         position: 'right'
         });
         map.addControl(rightSidebar);
-        
-       
-        
         L.MAP2U.layers({
         position: position,
                 layers: map.baseLayers,
@@ -436,14 +398,10 @@ var baseMaps = {
                 featureGroup: drawnItems
                 }
         });
-        
- 
         map.addControl(drawControl);
         setTimeout(function () {
         leftSidebar.toggle();
         }, 500);
-
- 
 //        setTimeout(function () {
 //            rightSidebar.toggle();
 //        }, 2500);
@@ -467,202 +425,221 @@ var baseMaps = {
         });
         
          var overlays = {};
-         var geojson_tj;
-//         L.TopoJSON = L.GeoJSON.extend({
-//  addData: function(jsonData) {    
-//    if (jsonData.type === "Topology") {
-//      for (key in jsonData.objects) {
-//        geojson = topojson.feature(jsonData, jsonData.objects[key]);
-//        L.GeoJSON.prototype.addData.call(this, geojson);
-//      }
-//    }    
-//    else {
-//      L.GeoJSON.prototype.addData.call(this, jsonData);
-//    }
-//  }  
-//});
-//         
-//         
-    var projection = d3.geo.mercator()
-        .center([-22, 64 ])
-        .scale(99999);
+         
+         
+  // Add an SVG element to Leaflet’s overlay pane
+  var svg = d3.select(map.getPanes().overlayPane).append("svg"),
+   g = svg.append("g").attr("class", "leaflet-zoom-hide");
+   
+  d3.json("park.json", function(error, geoShape) {
+  
+  //  create a d3.geo.path to convert GeoJSON to SVG
+  var transform = d3.geo.transform({point: projectPoint}),
+            path = d3.geo.path().projection(transform);
+ 
+  // create path elements for each of the features
+  d3_features = g.selectAll("path")
+   .data(topojson.object(geoShape, geoShape.objects.CreditRiverParks).geometries)
+   .enter().append("path");
+alert(d3_features.length);
+  map.on("viewreset", reset);
 
-    var path = d3.geo.path()
-        .projection(projection);
+  reset();
 
-//    var color = d3.scale.linear()
-//        .domain([0,900,1100])
-//        .range(["green","yellow","white"]);
-var color = d3.scale.ordinal()
-    .domain(d3.range(23).reverse())
-    .range(["#ffffd9","#edf8b1","#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8","#253494","#081d58","#fff0d9","#edf0b1","#c7e0b4","#7fcd0b","#41b0c4","#1d90c0","#2250a8","#253404","#081058","#41b004","#1090c0","#2050a8","#203404","#080058"]);
+  // fit the SVG element to leaflet's map layer
+  function reset() {
+        
+   bounds = path.bounds(geoShape);
+
+   var topLeft = bounds[0],
+    bottomRight = bounds[1];
+
+   svg .attr("width", bottomRight[0] - topLeft[0])
+    .attr("height", bottomRight[1] - topLeft[1])
+    .style("left", topLeft[0] + "px")
+    .style("top", topLeft[1] + "px");
+
+   g .attr("transform", "translate(" + -topLeft[0] + "," 
+                                     + -topLeft[1] + ")");
+
+   // initialize the path data 
+   d3_features.attr("d", path)
+    .style("fill-opacity", 0.7)
+    .attr('fill','blue');
+  } 
+
+  // Use Leaflet to implement a D3 geometric transformation.
+  function projectPoint(x, y) {
+   var point = map.latLngToLayerPoint(new L.LatLng(y, x));
+   this.stream.point(point.x, point.y);
+  }
+
+ })       
+         
+//   var svg = d3.select(map.getPanes().overlayPane).append("svg"),
+//           g = svg.append("g").attr("class", "leaflet-zoom-hide");
+//      
+//         
+//	var zoom = d3.behavior.zoom()
+//  .on("zoom",function() {
+//    g.attr("transform","translate("+d3.event.translate.join(",")+")scale("+d3.event.scale+")")
+//  });
 //
-//var offsetL = document.getElementById('leafmap').offsetLeft+30;
-//var offsetT =document.getElementById('leafmap').offsetTop-30;
-
-
-
-function getColor(d) {
-    return d > 23 ? "#ffffd9":
-            d > 22 ? "#edf8b1":
-            d > 21 ? "#c7e9b4":
-            d > 20 ? "#7fcdbb":
-            d > 19 ? "#41b6c4":
-            d > 18 ? "#1d91c0":
-            d > 17 ? "#225ea8":
-            d > 16 ? "#253494":
-            d > 15 ? "#081d58":
-            d > 14 ? "#fff0d9":
-            d >  13 ? "#edf0b1":
-            d > 12 ? "#c7e0b4":
-            d > 11 ? "#7fcd0b":
-            d > 10 ? "#41b0c4":
-            d > 9 ? "#1d90c0":
-            d > 8 ? "#2250a8":
-            d > 7 ? "#253404":
-            d > 6 ? '#800026' :
-           d > 5  ? '#E31A1C' :
-           d > 4  ? '#FC4E2A' :
-           d > 3   ? '#FD8D3C' :
-           d > 2   ? '#FEB24C' :
-           d > 1   ? '#FED976' :
-                      '#FFEDA0';
-}
-   var svgContainer = d3.select(map.getPanes().overlayPane).append("svg"),
-    group = svgContainer.append("g").attr("class", "leaflet-zoom-hide");
- var tooltip = d3.select("#leafmap").append("div").attr("class", "leafmap_title_tooltip hidden");
-
-
-
- function style(feature) {
-    return {
-        fillColor: getColor(feature.properties.id),
-        weight: 2,
-        opacity: 1,
-        color: 'blue',
-      //  dashArray: '3',
-        fillOpacity: 0.8
-    };
-}
-
-function highlightFeature(e) {
-    var layer = e.target;
-    
- 
- 
-    layer.setStyle({
-        weight: 5,
-        color: '#666',
-        dashArray: '',
-        fillOpacity: 0.7
-    });
-
-    if (!L.Browser.ie && !L.Browser.opera) {
-        layer.bringToFront();
-    }
-    
-    
-  //   var cp = d3.mouse(this);
-//     var mouse = d3.mouse(svgContainer.node()).map( function(d) { return parseInt(d); } );
-
-   
-   
-    // Create a popup with a unique ID linked to this record
-        var popup = $("<div></div>", {
-            id: "popup-" + layer.feature.properties.id,
-            css: {
-                position: "absolute",
-                top: "5px",
-                left: "360px",
-                zIndex: 1002,
-                backgroundColor: "white",
-                padding: "5px",
-                border: "1px solid #ccc"
-            }
-        });
-        // Insert a headline into that popup
-        var hed = $("<div></div>", {
-            text: "Subwatershed: " + layer.feature.properties.subws_name ,
-            css: {fontSize: "12px", marginBottom: "0px"}
-        }).appendTo(popup);
-        // Add the popup to the map
-        popup.appendTo("#leafmap");
-      
-       
-
-}
-
-function resetHighlight(e) {
-    geojson_tj.resetStyle(e.target);
-    var layer = e.target;
-     $("#popup-" + layer.feature.properties.id).remove();
-     
-    tooltip.classed("hidden", true);
-}
-
-function zoomToFeature(e) {
-    map.fitBounds(e.target.getBounds());
-}
-function featuretip(e)
-{
-    var layer = e.target;
-    var viewbox=$('svg.leaflet-zoom-animated').offset();
-  //  alert(viewbox);
-    var mouse=map.latLngToLayerPoint(e.latlng);
- //   alert(mouse.x);
- //   alert(L.DomUtil.getViewportOffset(layer));
-    
-     tooltip.classed("hidden", false)
-        .attr("style", "left:"+(mouse.x+viewbox.left+30)+ "px;top:"+(mouse.y+viewbox.top-30)+"px")
-        .html(layer.feature.properties.subws_name + "  " + viewbox.left);
-}
-function onEachFeature(feature, layer) {
-    
-    layer.on({
-        mouseover: highlightFeature,
-        mouseout: resetHighlight,
-        mousemove: featuretip,
-        click: zoomToFeature
-    });
-}
- 
-   
-    var zoom = d3.behavior.zoom()
-        .on("zoom",function() {
-        group.attr("transform","translate("+d3.event.translate.join(",")+")scale("+d3.event.scale+")");
-    });
-
-    svgContainer.call(zoom);
-
-//var loading = group.append("text").attr({x:500,y:250}).text("Loading");
-
-    d3.json("subwatersheds.json", function(error, geoShape) {
+//svg.call(zoom)
+//
+//  //OPEN TOPOJSON-FILE
+//  d3.json("park.json", function(error, topology) {
+// 
+//  var collection2 = topojson.object(topology, topology.objects.CreditRiverParks).geometries;//lhrp000b06a_EPSG3857);
+//      var roadsTopoJSON = [collection2];
+//      
+//      console.log(roadsTopoJSON)
+//      
+//      var geojson_tj = L.geoJson(roadsTopoJSON);
+//    
+//    map.addLayer(geojson_tj);
+//    
+//    
+	//console.log(topology)
+	//READ ALL EXISTING ARCS
+//	topology.arcs.map(function(arc,i){
+//		//GET THE MEMBERS OF CURRENT ARC
+//		var members = getMembers(i);
+//		var popupContent = 'Hey, hey ... I belong to: <br>';
+//		//ADD ALL MEMBERS TO THE 'POPUPCONTENT'
+//		members.forEach(function(member){popupContent = popupContent + "<b>" + member.name + "<br>"})
+//		//GET THE Feature OF THE ARC
+//   		var arcFeature = topojson.feature(topology, {type: 'LineString', arcs:[i], members:members});
+//		//console.log(i)
+//		//D'OH...CHANGE THE COORDINATES TO FIT FOR LEAFLET-POLYLINE
+//		arcFeature.geometry.coordinates = arcFeature.geometry.coordinates.map(function(d){return [d[1],d[0]]})
+//		//MAKE A POLYLINE USING THE ARCFEATURE
+//		for (var j=0;j<members.length;j++){
+//			console.log(j)
+//			//DEFINE THE COLOR...NEEDS A MORE COMPLICATED SOLUTION FOR COMPLETELY AUTOMATIC ATTRIBUTION
+//			switch (j){
+//				case 0: color='#f00'; weight=5;
+//					break;
+//				case 1: color='#00f'; weight=3.5;
+//					break;
+//				case 2: color='#0f0'; weight=2;
+//					break;
+//			}
+//			var polyline = L.polyline(arcFeature.geometry.coordinates, {color: color, weight: weight, opacity:1})
+//				.bindPopup(popupContent)
+//				.addTo(map);
+//				//console.log(polyline)
+//			overlays["Polyline"+i+"_"+j] = polyline;	
+//		
+//		}
+//		
+//	})
+//	function getMembers(arc_id){
+//		var members = [];
+//		//CHECK FOR EXISTENCE OF ARC WITHIN EACH LINESTRING ... !!!VERYHARD CODED!!!
+//		topology.objects.linestrings.geometries.forEach(function(feature){
+//			//console.log(feature.arcs)
+//			//console.log('indexof: '+feature.arcs.indexOf(arc_id))
+//			if(feature.arcs.indexOf(arc_id)!=-1)members.push(feature.properties)
+//		})
+//		//console.log('members',members)
+//		return members;
+//	}
+// 
+//	//ADD THE LINESTRINGS TO THE LAYER-CONTROL
+//	L.control.layers(baseLayers,overlays).addTo(map);
+ //  })
         
-            //console.log(topology)
-   //   var collection2 = topojson.feature(geoShape, geoShape.objects.lhrp_100);//lhrp000b06a_EPSG3857);
-      var collection2 = topojson.feature(geoShape, geoShape.objects.subwatersheds);//lhrp000b06a_EPSG3857);
-      var roadsTopoJSON = [collection2];
-      
-      console.log(roadsTopoJSON);
-     // alert("addlay1=" + JSON.stringify(collection2));
-       geojson_tj = L.geoJson(collection2,{style: style,onEachFeature: onEachFeature});
-  //  alert("addlayer");
-    map.addLayer(geojson_tj);
-    
-    
-    var feature;
-  //  alert("reset00");
-    //  setFeature();
-      //****
-  //    alert("reset0");
-      var bounds = d3.geo.bounds(collection2);        
         
-  //    reset();
-//alert("reset1");
- //     map.on("viewreset", reset);
-    //  alert("reset2");
- //     map.on("drag", reset);
-  //alert("reset3");
+//     var width = 960,
+//    height = 475;
+//
+//var projection = d3.geo.mercator()
+//    .center([-22, 64 ])
+//    .scale(99999);
+//
+//var path = d3.geo.path()
+//    .projection(projection);
+//
+//var color = d3.scale.linear()
+//    .domain([0,900,1100])
+//    .range(["green","yellow","white"]);
+////
+////var svg = d3.select("body").append("svg")
+////    .attr("width", width)
+////    .attr("height", height);
+////
+////var g = svg.append("g");
+//
+//		var svg = d3.select(map.getPanes().overlayPane).append("svg"),
+//			g = svg.append("g").attr("class", "leaflet-zoom-hide");
+//
+//var loading = g.append("text").attr({x:500,y:250}).text("Loading")
+//
+//var zoom = d3.behavior.zoom()
+//  .on("zoom",function() {
+//    g.attr("transform","translate("+d3.event.translate.join(",")+")scale("+d3.event.scale+")")
+//  });
+//
+//svg.call(zoom)
+//
+//d3.json("flakar.json", function(error, topology) {
+//  loading.remove();
+//  g.selectAll("path")
+//    .data(topojson.object(topology, topology.objects.flakar).geometries)
+//  .enter()
+//    .append("path")
+//    .attr("d", path)
+//    .style("fill",function(d) { return color(d.properties.Z)})
+//});
+//        
+//                  alert("1="+$('.leaflet-top leaflet-right'));
+//                  alert("2="+$('.leaflet-top .leaflet-right'));
+//                  alert("3="+$('.leaflet-control-container .leaflet-top .leaflet-right'));
+//                  
+//                  $('#map-ui').appendTo($('.leaflet-top .leaflet-right')).append();
+//         
+//
+// var svgContainer= d3.select(map.getPanes().overlayPane).append("svg");
+//  var group= svgContainer.append("g").attr("class", "leaflet-zoom-hide");
+//  var path = d3.geo.path().projection(project);  
+//
+//	// Add an SVG element to Leaflet’s overlay pane
+//		var svg = d3.select(map.getPanes().overlayPane).append("svg"),
+//			g = svg.append("g").attr("class", "leaflet-zoom-hide");
+//                
+//  function onEachFeature(feature, layer){
+//    if (feature.properties) {
+//        layer.bindPopup("<b>" + feature.properties.id + "</b> is " + feature.properties.name + "km long.");
+//    }
+//  }              
+//  
+//d3.json("park.json", function(topology) {
+//    
+//    //console.log(topology)
+//      var collection2 = topojson.feature(topology, topology.objects.CreditRiverParks);//lhrp000b06a_EPSG3857);
+//      var roadsTopoJSON = [collection2];
+//      
+//      console.log(roadsTopoJSON)
+//      
+//      var geojson_tj = L.geoJson(roadsTopoJSON, {
+//          onEachFeature: onEachFeature
+//      });
+//    
+//    map.addLayer(geojson_tj);
+//    
+//    
+//    var feature;
+//      setFeature();
+//      //****
+//      
+//      var bounds = d3.geo.bounds(collection2);        
+//        
+//      reset();
+//
+//      map.on("viewreset", reset);
+//      map.on("drag", reset);
+//  
 //      feature.on("mousedown",function(d){
 //        var coordinates = d3.mouse(this);
 //
@@ -670,23 +647,20 @@ function onEachFeature(feature, layer) {
 //
 //        L.popup()
 //        .setLatLng(map.layerPointToLatLng(coordinates))
-//        .setContent("<b>" +  "</b> is " +  "km long.")
+//        .setContent("<b>" + d.properties.id + "</b> is " + d.properties.name + "km long.")
 //        .openOn(map);
 //      });
-
+//
 //      var transition_destination = -1;
 //      feature.on("mousemove",function(d){
 //        d3.select(this).transition().duration(2500).ease('bounce')
-//            .style("stroke","#0f0")
-//            .style("fill","#f00")
-//     //   .style("fill", function(d) { return color(Math.min(23, d.properties.id)); })
+//          .style("stroke","#0f0")
 //          .attr("transform", "translate(0,"+transition_destination*50+")");
 //        transition_destination=transition_destination*(-1);
-//      }) ;
-
-//      function reset(){
-//          
-//        bounds = [[map.getBounds()._southWest.lng, map.getBounds()._southWest.lat],[map.getBounds()._northEast.lng, map.getBounds()._northEast.lat]];
+//      }) 
+//
+//      function reset() {
+//        bounds = [[map.getBounds()._southWest.lng, map.getBounds()._southWest.lat],[map.getBounds()._northEast.lng, map.getBounds()._northEast.lat]]
 //        var bottomLeft = project(bounds[0]),
 //            topRight = project(bounds[1]);
 //
@@ -699,59 +673,123 @@ function onEachFeature(feature, layer) {
 //
 //        feature.attr("d", path);
 //
-//      };
+//      }
 
-////      //******Additional: hide/show overlay ******
-////      var content = "hide overlay", color='#070';
-////      svgContainer.append("text").text(content)
-////          .attr("x", 50).attr("y", 50)
-////          .style("font-size","30px").style("stroke",color)
-////          .on("mouseover",function(d){
-////              if(content=='hide overlay'){
-////                content='show overlay';color='#f70'; 
-////                group.selectAll('path').remove();
-////              }
-////              else {
-////               content='hide overlay';color='#070';
-////               setFeature();
-////               reset();
-////              }
-////              d3.select(this).text(content).style("stroke",color)
-////      });
+//      //******Additional: hide/show overlay ******
+//      var content = "hide overlay", color='#070';
+//      svgContainer.append("text").text(content)
+//          .attr("x", 50).attr("y", 50)
+//          .style("font-size","30px").style("stroke",color)
+//          .on("mouseover",function(d){
+//              if(content=='hide overlay'){
+//                content='show overlay';color='#f70'; 
+//                group.selectAll('path').remove();
+//              }
+//              else {
+//               content='hide overlay';color='#070';
+//               setFeature();
+//               reset();
+//              }
+//              d3.select(this).text(content).style("stroke",color)
+//      });
 
-      //this is just a function from the existing code...as I need it to restore the removed paths
+//      //this is just a function from the existing code...as I need it to restore the removed paths
 //      function setFeature(){
 //        feature = group.selectAll("path")
 //          .data(collection2.features)
 //          .enter()
 //          .append("path")
-//          .attr("class", function(d) { return "subws_" + d.properties.id; })
-//         
-//          .attr("d", path)
 //          .attr("id","overlay");
-//  //alert("setfeature");
 //      }
-      //***************************
-      
- //   Use Leaflet to implement a D3 geographic projection.
-//  function project(x) {
+//      //***************************
 //      
-//    var point = map.latLngToLayerPoint(new L.LatLng(x[1], x[0]));
-//    return [point.x, point.y];
-//  }  
-//        
-        
-        
-        
-        
-        
-        
-        
-    });
 
- 
+//    
+//    
+//  var transform = d3.geo.transform({point: projectPoint}),
+//      path = d3.geo.path().projection(transform);
+//        svg.append('path')
+//        .datum(topojson.feature(collection, collection.objects.lhrp000b06a_EPSG3857).features)
+//        .attr('class', 'states') // defined in CSS
+//        .attr('d', path);
+//});
+
+
+//
+//function project(point) {
+//    var latlng = new L.LatLng(point[1], point[0]);
+//    var layerPoint = map.latLngToLayerPoint(latlng);
+//    return [layerPoint.x, layerPoint.y];
+//  }  
+  
+//    var svg = d3.select("body").append("svg")
+//    .attr("width", width)
+//    .attr("height", height);
+
+//    queue()
+//    .defer(d3.json, "lh-s.json")
+//    .await(ready);
+//
+//    function ready(error, us) {
+//      svg.append("g")
+//      .attr("class", "canada")
+//      .selectAll("path")
+//      .data(topojson.feature(us, us.objects.lhrp000b06a_EPSG3857).features)
+//      .enter().append("path")
+//      .attr("class", "ontario")
+//      .attr("data-id", function(d) {return d.properties.id; })
+//      .attr("data-name", function(d) {return d.properties.name; })
+//      .attr("d", path);
+//    }
+                
+//			
+//		d3.json("lh-s.json", function(geoShape) {
+//		
+//		//  create a d3.geo.path to convert GeoJSON to SVG
+//		var transform = d3.geo.transform({point: projectPoint});
+//                 alert(transform);
+//            	var path = d3.geo.path().projection(transform);
+// alert(path);
+//		// create path elements for each of the features
+//		d3_features = g.selectAll("path")
+//			.data(geoShape.features)
+//			.enter().append("path");
+//alert(d3_features.length);
+//		map.on("viewreset", reset);
+//
+//		reset();
+//
+//		// fit the SVG element to leaflet's map layer
+//		function reset() {
+//        
+//			bounds = path.bounds(geoShape);
+//
+//			var topLeft = bounds[0],
+//				bottomRight = bounds[1];
+//
+//			svg .attr("width", bottomRight[0] - topLeft[0])
+//				.attr("height", bottomRight[1] - topLeft[1])
+//				.style("left", topLeft[0] + "px")
+//				.style("top", topLeft[1] + "px");
+//
+//			g .attr("transform", "translate(" + -topLeft[0] + "," 
+//			                                  + -topLeft[1] + ")");
+//
+//			// initialize the path data	
+//			d3_features.attr("d", path)
+//				.style("fill-opacity", 0.7)
+//				.attr('fill','blue');
+//		} 
+//
+//		// Use Leaflet to implement a D3 geometric transformation.
+//		function projectPoint(x, y) {
+//			var point = map.latLngToLayerPoint(new L.LatLng(y, x));
+//			this.stream.point(point.x, point.y);
+//		}
+//
+//	});
+
         $(window).resize();
-       $(".navbar.navbar-fixed-top").resize();
 //   OSM.Index = function(map) {
 //    var page = {};
 //
@@ -984,5 +1022,3 @@ function onEachFeature(feature, layer) {
     });
     $('.leaflet-control .control-button').tooltip({placement: 'left', container: 'body'});
 };
-
-

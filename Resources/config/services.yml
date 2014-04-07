@@ -9,4 +9,14 @@ services:
                     class: Map2u\LeafletBundle\Subscriber\TablePrefixSubscriber
                     arguments: [%map2uleafletbundle.db.table_prefix%]
                     tags:
-                        - { name: doctrine.event_subscriber }        
+                        - { name: doctrine.event_subscriber }  
+                        
+    map2uleafletbundle.block.latest_news:
+                class: Map2u\LeafletBundle\Block\LeafletMapBlockService
+                arguments:
+                    - "map2uleaflet.block.leaflet_map"
+                    - "@templating"
+                    - @doctrine.orm.entity_manager
+                tags:
+                    - {name: "sonata.block"}
+                        

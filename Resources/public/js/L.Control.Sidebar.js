@@ -12,16 +12,15 @@ L.Control.Sidebar = L.Control.extend({
         this._sidebar = $(placeholder);
         this._current = $();
         this._currentButton = $();
-            
-
-
-
+   
         // Find content container
         var content = this._contentContainer = L.DomUtil.get(placeholder);
 
         // Remove the content container from its original parent
+    
+        
         content.parentNode.removeChild(content);
-
+ 
         var l = 'leaflet-';
 
         // Create sidebar container
@@ -30,8 +29,12 @@ L.Control.Sidebar = L.Control.extend({
 
         // Style and attach content container
         L.DomUtil.addClass(content, l + 'control');
+        
+        
+        
         container.appendChild(content);
-
+        
+ 
         // Create close button and attach it if configured
         if (this.options.closeButton) {
             var close = this._closeButton =
@@ -40,23 +43,22 @@ L.Control.Sidebar = L.Control.extend({
         }
     },
     addTo: function(map) {
+        
+        
         var container = this._container;
         var content = this._contentContainer;
-
         // Attach event to close button
         if (this.options.closeButton) {
             var close = this._closeButton;
 
             L.DomEvent.on(close, 'click', this.hide, this);
         }
-
         // Attach sidebar container to controls container
         var controlContainer = map._controlContainer;
-        controlContainer.insertBefore(container, controlContainer.firstChild);
-
+       controlContainer.insertBefore(container, controlContainer.firstChild);
+ 
         this._map = map;
-
-        // Make sure we don't drag the map when we interact with the content
+       // Make sure we don't drag the map when we interact with the content
         var stop = L.DomEvent.stopPropagation;
         L.DomEvent
                 .on(content, 'click', stop)
@@ -65,7 +67,6 @@ L.Control.Sidebar = L.Control.extend({
                 .on(content, 'dblclick', stop)
                 .on(content, 'mousewheel', stop)
                 .on(content, 'MozMousePixelScroll', stop);
-
         return this;
     },
     addPane: function(pane) {
