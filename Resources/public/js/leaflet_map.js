@@ -668,18 +668,24 @@ window.onload = function() {
         }).addTo(map);
 
         geojson_tj.on('click', function(e) {
-            
-         //   alert($('.leaflet-sidebar #sidebar-left #sidebar_content'));
-         //   alert($('.leaflet-sidebar #sidebar-left #sidebar_content').length);
-            
+           // alert($('.leaflet-sidebar.left').offset().left);
+
+            //   alert($('.leaflet-sidebar #sidebar-left #sidebar_content'));
+            //   alert($('.leaflet-sidebar #sidebar-left #sidebar_content').length);
+            if ($('.leaflet-sidebar.left').offset().left === -350)
+            {
+                setTimeout(function() {
+                    leftSidebar.toggle();
+                }, 500);
+            }
             if ($('#subwatershed_showsidebarinfo_id').length) {
                 // do something
-             //   alert('subwatershed_showsidebarinfo_id exist');
-             $('#subwatershed_showsidebarinfo_id').html("<div id='subwatershed_showsidebarinfo_id'><h4>"  + e.data.properties.subws_name + ':</h4><p>More info about this subwatersshed will come here</p></div>');
+                //   alert('subwatershed_showsidebarinfo_id exist');
+                $('#subwatershed_showsidebarinfo_id').html("<div id='subwatershed_showsidebarinfo_id'><h4>" + e.data.properties.subws_name + ':</h4><p>More info about this subwatersshed will come here</p></div>');
             }
             else
             {
-                $('.leaflet-sidebar #sidebar-left #sidebar_content').prepend("<div id='subwatershed_showsidebarinfo_id'><h4>"  + e.data.properties.subws_name + ':</h4><p>More info about this subwatersshed will come here</p></div>');
+                $('.leaflet-sidebar #sidebar-left #sidebar_content').prepend("<div id='subwatershed_showsidebarinfo_id'><h4>" + e.data.properties.subws_name + ':</h4><p>More info about this subwatersshed will come here</p></div>');
                 //   $("#mydiv div:first-child").after(newDiv);
                 //   alert(e.data.properties.id + ":" + e.data.properties.subws_name);
             }
