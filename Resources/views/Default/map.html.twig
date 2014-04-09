@@ -12,9 +12,8 @@
         </div>
 
         <div id="sidebar_content">
-           
+
             <div class="narratives">
-                <div id="narratives-view" class="narratives-view">View All</div>
                 <p id="narratives-0">CVC, along with our partners, manage over 52 km of trails, which includes parts of the Bruce, and Trans-Canada trail networks.[1]</p>
                 <p id="narratives-1">Several short walks a day may have positive effects equal to that of a longer walk[2] </p>
                 <p id="narratives-2">In addition to the health benefits, regular physical activity provides older people with psychological benefits. Silverstein and Parker (2002) found that older Swedes who increased activity participation in a 9-year period showed an increase in life satisfaction.[3]</p>
@@ -22,18 +21,20 @@
                 <p id="narratives-4">Research has also demonstrated that participation in physical activity has protective effects against insomnia.[3]</p>
                 <p id="narratives-5">Wilderness experience has been associated with spiritual health and growth, self-actualization, and psychological health.[4]</p>
                 <p id="narratives-6">Take the Healthy Hikes Challenge from May 1rst to October 1rst, 2014![1]</p>
-            </div>
-            <div class="citations">
-                <p> [1] Credit Valley Conservation (CVC). (2014). "Trails and Hiking". www.creditvalleyca.ca/enjoy-the-outdoors/activities/trails/</p>
-                <p> [2] Lu, Z., Rodiek, S. D., Shepley, M. M., & Duffy, M. (2011). Influences of Physical Environment on Corridor Walking Among Assisted Living Residents: Findings From Focus Group Discussions. Journal of Applied Gerontology, 30(4), 463–484. doi:http://dx.doi.org.ezproxy.library.yorku.ca/10.1177/0733464810370325</p>
-                <p> [3] Sugiyama, T., & Thompson, C. W. (2005). Environmental Support for Outdoor Activities and Older People’s Quality of Life. Journal of Housing for the Elderly, 19(3-4), 167–185. doi:http://dx.doi.org.ezproxy.library.yorku.ca/10.1300/J081v19n03_09</p>
-                <p> [4] Largo-Wight, E. (2011). Cultivating healthy places and communities: evidenced-based nature contact recommendations. International Journal of Environmental Health Research, 21(1), 41–61. doi:10.1080/09603123.2010.499452</p>
+                <div class="citations">
+                    <p> [1] Credit Valley Conservation (CVC). (2014). "Trails and Hiking". www.creditvalleyca.ca/enjoy-the-outdoors/activities/trails/</p>
+                    <p> [2] Lu, Z., Rodiek, S. D., Shepley, M. M., & Duffy, M. (2011). Influences of Physical Environment on Corridor Walking Among Assisted Living Residents: Findings From Focus Group Discussions. Journal of Applied Gerontology, 30(4), 463–484. doi:http://dx.doi.org.ezproxy.library.yorku.ca/10.1177/0733464810370325</p>
+                    <p> [3] Sugiyama, T., & Thompson, C. W. (2005). Environmental Support for Outdoor Activities and Older People’s Quality of Life. Journal of Housing for the Elderly, 19(3-4), 167–185. doi:http://dx.doi.org.ezproxy.library.yorku.ca/10.1300/J081v19n03_09</p>
+                    <p> [4] Largo-Wight, E. (2011). Cultivating healthy places and communities: evidenced-based nature contact recommendations. International Journal of Environmental Health Research, 21(1), 41–61. doi:10.1080/09603123.2010.499452</p>
 
+                </div>
+                <div id="narratives-view" class="narratives-view">View All</div>
             </div>
-           {# {{ sonata_block_render({ 'type': 'map2ucorebundle.block.latest_news' }, {
-                'title': 'Latest News', 'number': 5, 'mode': 'public'
-            }) }}#}
-{#            {{render(controller(path('map2ucore_latestnews')))}}#}
+
+            {# {{ sonata_block_render({ 'type': 'map2ucorebundle.block.latest_news' }, {
+                 'title': 'Latest News', 'number': 5, 'mode': 'public'
+             }) }}#}
+            {#            {{render(controller(path('map2ucore_latestnews')))}}#}
             {{ sonata_block_render({ 'type': 'sonata.news.block.recent_posts' }, {
                 'title': 'Recent Posts', 'number': 5, 'mode': 'public'
             }) }}
