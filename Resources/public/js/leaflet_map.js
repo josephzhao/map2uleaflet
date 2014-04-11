@@ -105,7 +105,7 @@ I18n.translations = {'en': {
 
 (function() {
     var loaderTimeout;
-
+    var mouseposition;
     OSM.loadSidebarContent = function(path, callback) {
         clearTimeout(loaderTimeout);
 
@@ -367,7 +367,7 @@ window.onload = function() {
         }
     }).addTo(map);
     L.control.scale().addTo(map);
-    L.control.mousePosition({'emptyString': '', 'position': 'bottomleft'}).addTo(map);
+    mouseposition = L.control.mousePosition({'emptyString': '', 'position': 'bottomleft'}).addTo(map);
 
     var leftSidebar = L.control.sidebar('sidebar-left', {
         position: 'left'
@@ -530,7 +530,7 @@ window.onload = function() {
 //            group = svgContainer.append("g").attr("class", "leaflet-zoom-hide");
     var tooltip = d3.select("#leafmap").append("div").attr("class", "leafmap_title_tooltip hidden");
 //
-//
+//leaflet-popup-pane
 //
 //    function style(feature) {
 //        return {
@@ -646,6 +646,7 @@ window.onload = function() {
 
         console.log(roadsTopoJSON);
         // alert("addlay1=" + JSON.stringify(collection2));
+
         var geojson_tj = new L.D3geoJSON(collection2, {
             id: 'svg-subwatersheds',
             featureAttributes: {
@@ -668,8 +669,9 @@ window.onload = function() {
         }).addTo(map);
 
         geojson_tj.on('click', function(e) {
-           // alert($('.leaflet-sidebar.left').offset().left);
+            // alert($('.leaflet-sidebar.left').offset().left);
 
+            var mouse = d3.mouse(e.element);
             //   alert($('.leaflet-sidebar #sidebar-left #sidebar_content'));
             //   alert($('.leaflet-sidebar #sidebar-left #sidebar_content').length);
             if ($('.leaflet-sidebar.left').offset().left === -350)
@@ -693,6 +695,7 @@ window.onload = function() {
         });
 
         geojson_tj.on("mouseover", function(e) {
+          
 
             // Create a popup with a unique ID linked to this record
             var popup = $("<div></div>", {
@@ -709,7 +712,7 @@ window.onload = function() {
             });
             // Insert a headline into that popup
             var hed = $("<div></div>", {
-                text: "Subwatershed: " + e.data.properties.id + ", " + e.data.properties.subws_name,
+                text: "Subwatershed: "  + e.data.properties.subws_name,
                 css: {fontSize: "12px", marginBottom: "0px"}
             }).appendTo(popup);
             // Add the popup to the map
@@ -718,23 +721,13 @@ window.onload = function() {
             d3.select(e.element).style("fill", "gray");
         });
         geojson_tj.on('mousemove', function(e) {
-            //  alert(d.data.properties.id);
-            //  var layer=e.target;
+           
+            var mouse=L.DomEvent.getMousePosition(e.originalEvent, map._container);
 
-            var mouse = d3.mouse(e.element);
-
-            var svgPos = $('#svg-subwatersheds').offset();
-            var elementPos = $(e.element).offset();
-            //     alert(mouse);
-            //      var mouse = map.latLngToPoint(e.latlng);
-//        //  var mouse=map.latLngToPoint(e.latlng);
-            //   alert(mouse.x);
-//        //   alert(L.DomUtil.getViewportOffset(layer));
-//
             tooltip.classed("hidden", false)
-                    .attr("style", "left:" + (mouse[0] + 30) + "px;top:" + (mouse[1] - 30) + "px")
-                    .html(e.data.properties.subws_name);
-//            console.log(e);
+                    .attr("style", "left:" + (mouse.x + 30) + "px;top:" + (mouse.y - 30) + "px")
+                    .html( e.data.properties.subws_name);
+
         });
         geojson_tj.on('mouseout', function(e) {
             $("#popup-" + e.data.properties.id).remove();
