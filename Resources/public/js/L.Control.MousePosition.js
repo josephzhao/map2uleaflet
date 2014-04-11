@@ -23,10 +23,6 @@ L.Control.MousePosition = L.Control.extend({
     _onMouseMove: function(e) {
         var lng = this.options.lngFormatter ? this.options.lngFormatter(e.latlng.lng) : L.Util.formatNum(e.latlng.lng, this.options.numDigits);
         var lat = this.options.latFormatter ? this.options.latFormatter(e.latlng.lat) : L.Util.formatNum(e.latlng.lat, this.options.numDigits);
-        this._lng = lng;
-        this._lat = lat;
-        this._latlng=e.latlng;
-//        this._point=this._map.latLngToPoint(e.latlng,this._map.getZoom());
         var value = this.options.lngFirst ? lng + this.options.separator + lat : lat + this.options.separator + lng;
         var prefixAndValue = this.options.prefix + ' ' + value;
         this._container.innerHTML = prefixAndValue;
