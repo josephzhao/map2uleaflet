@@ -329,22 +329,22 @@ window.onload = function() {
 
 //       
 //    
-//var MyControl = L.Control.extend({
-//    options: {
-//        position: 'topleft'
-//    },
-//
-//    onAdd: function (map) {
-//        // create the control container with a particular class name
-//        var container = L.DomUtil.create('div', 'my-custom-control');
-//
-//        // ... initialize other DOM elements, add listeners, etc.
-//
-//        return container;
-//    }
-//});
-//
-//map.addControl(new MyControl());
+var MySidebarControl = L.Control.extend({
+    options: {
+        position: 'topleft'
+    },
+
+    onAdd: function (map) {
+        // create the control container with a particular class name
+        var container = L.DomUtil.create('div', 'custom-left-sidevar-control');
+
+        // ... initialize other DOM elements, add listeners, etc.
+
+        return container;
+    }
+});
+
+map.addControl(new MySidebarControl());
 
 //    var popup = L.popup();
 //
