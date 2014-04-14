@@ -255,7 +255,7 @@ window.onload = function() {
 ////	}
 //}).addTo(map);
 //
-    var nonswitchable_layernames = ['credit_river', 'water_ways', 'credit_valley_lakes', 'credit_river_head_waters'];
+    var nonswitchable_layernames = ['credit_river', 'water_ways', 'credit_valley_lakes']; //, 'credit_river_head_waters'
 
     var layernames = ['cvcwatersheds', 'cvcsubwatersheds',
         'conservation_areas',
@@ -336,7 +336,7 @@ var MySidebarControl = L.Control.extend({
 
     onAdd: function (map) {
         // create the control container with a particular class name
-        var container = L.DomUtil.create('div', 'custom-left-sidevar-control');
+        var container = L.DomUtil.create();
 
         // ... initialize other DOM elements, add listeners, etc.
 
@@ -637,11 +637,12 @@ map.addControl(new MySidebarControl());
 
 //var loading = group.append("text").attr({x:500,y:250}).text("Loading");
 
-    d3.json("subwatersheds.json", function(error, geoShape) {
+  //  d3.json("subwatersheds.json", function(error, geoShape) {
+  d3.json("lhrp_100.json", function(error, geoShape) {
 
         //console.log(topology)
         //   var collection2 = topojson.feature(geoShape, geoShape.objects.lhrp_100);//lhrp000b06a_EPSG3857);
-        var collection2 = topojson.feature(geoShape, geoShape.objects.subwatersheds);//lhrp000b06a_EPSG3857);
+        var collection2 = topojson.feature(geoShape, geoShape.objects.lhrp_100);//lhrp000b06a_EPSG3857);
         var roadsTopoJSON = [collection2];
 
         console.log(roadsTopoJSON);
@@ -651,7 +652,7 @@ map.addControl(new MySidebarControl());
             id: 'svg-subwatersheds',
             featureAttributes: {
                 'class': function(feature) {
-                    return 'subws_' + feature.properties.id;
+                    return 'default_fcls subws_' + feature.properties.id;
 
 //						return JSON.stringify(style(feature)).replace('"',"");
 //                    return 'fillColor:' + getColor(feature.properties.id)

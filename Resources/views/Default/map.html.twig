@@ -13,6 +13,10 @@
 
         <div id="sidebar_content">
 
+            {{ sonata_block_render({ 'type': 'map2ucorebundle.block.uploadshapefile' }, {
+                'title': 'Recent Posts', 'mode': 'public'
+            }) }}
+
             <div class="narratives">
                 <p id="narratives-0">CVC, along with our partners, manage over 52 km of trails, which includes parts of the Bruce, and Trans-Canada trail networks.[1]</p>
                 <p id="narratives-1">Several short walks a day may have positive effects equal to that of a longer walk[2] </p>
@@ -35,12 +39,12 @@
                  'title': 'Latest News', 'number': 5, 'mode': 'public'
              }) }}#}
             {#            {{render(controller(path('map2ucore_latestnews')))}}#}
-            {{ sonata_block_render({ 'type': 'sonata.news.block.recent_posts' }, {
+            {#{ sonata_block_render({ 'type': 'sonata.news.block.recent_posts' }, {
                 'title': 'Recent Posts', 'number': 5, 'mode': 'public'
-            }) }}
-            {{ sonata_block_render({ 'type': 'sonata.news.block.recent_comments' }, {
+            }) }#}
+            {#{ sonata_block_render({ 'type': 'sonata.news.block.recent_comments' }, {
                 'title': 'Recent Comments', 'number': 5, 'mode': 'public'
-            }) }}
+            }) }#}
         </div>
 
         <div class="welcome">
