@@ -13,9 +13,26 @@
 
         <div id="sidebar_content">
 
-            {{ sonata_block_render({ 'type': 'map2ucorebundle.block.uploadshapefile' }, {
+            <div style="padding: 20px 10px">
+                <div id="accordion">
+                    <h4><a>Upload Shape File</a><i class="indicator glyphicon glyphicon-chevron-right pull-right"></i></h4>
+                    <div >
+                        {{ sonata_block_render({ 'type': 'map2ucorebundle.block.uploadshapefile' }, {
                 'title': 'Recent Posts', 'mode': 'public'
             }) }}
+                    </div>
+                    <h4><a>Shape File List</a> <i class="indicator glyphicon glyphicon-chevron-right pull-right"></i></h4>
+                    <div >
+                        {{ sonata_block_render({ 'type': 'map2ucorebundle.block.shapefilelist' }, {
+                'title': 'Recent Posts', 'mode': 'public'
+            }) }}      </div>
+
+                </div>
+
+            </div>
+
+
+
 
             <div class="narratives">
                 <p id="narratives-0">CVC, along with our partners, manage over 52 km of trails, which includes parts of the Bruce, and Trans-Canada trail networks.[1]</p>
