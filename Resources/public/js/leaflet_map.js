@@ -8,8 +8,8 @@
 var mapapp;
 
 
-
-
+var map;
+var leafletmap_tooltip;
 
 
 var I18n = I18n || {};
@@ -177,7 +177,7 @@ window.onload = function() {
         $('#map-ui').height($(window).height() - 126);
         $('.leaflet-sidebar #sidebar-left').height($(window).height() - 186);
     });
-    var map = new L.MAP2U.Map('leafmap', {
+    map = new L.MAP2U.Map('leafmap', {
         'zoomControl': false
     }).setView([43.73737, -79.95987], 10);
 
@@ -528,7 +528,7 @@ map.addControl(new MySidebarControl());
     }
 //    var svgContainer = d3.select(map.getPanes().overlayPane).append("svg"),
 //            group = svgContainer.append("g").attr("class", "leaflet-zoom-hide");
-    var tooltip = d3.select("#leafmap").append("div").attr("class", "leafmap_title_tooltip hidden");
+    leafletmap_tooltip = d3.select("#leafmap").append("div").attr("class", "leafmap_title_tooltip hidden");
 //
 //leaflet-popup-pane
 //
@@ -638,118 +638,118 @@ map.addControl(new MySidebarControl());
 //var loading = group.append("text").attr({x:500,y:250}).text("Loading");
 
   //  d3.json("subwatersheds.json", function(error, geoShape) {
-  d3.json("lhrp_100.json", function(error, geoShape) {
-
-        //console.log(topology)
-        //   var collection2 = topojson.feature(geoShape, geoShape.objects.lhrp_100);//lhrp000b06a_EPSG3857);
-        var collection2 = topojson.feature(geoShape, geoShape.objects.lhrp_100);//lhrp000b06a_EPSG3857);
-        var roadsTopoJSON = [collection2];
-
-        console.log(roadsTopoJSON);
-        // alert("addlay1=" + JSON.stringify(collection2));
-
-        var geojson_tj = new L.D3geoJSON(collection2, {
-            id: 'svg-subwatersheds',
-            featureAttributes: {
-                'class': function(feature) {
-                    return 'default_fcls subws_' + feature.properties.id;
-
-//						return JSON.stringify(style(feature)).replace('"',"");
-//                    return 'fillColor:' + getColor(feature.properties.id)
-//                        + ';weight: 1'
-//                        + ';opacity: 1'
-//                        + ';color: blue'
-//                        //  dashArray: '3',
-//                        +';fillOpacity: 0.8';
-
-                }//,
-//                'style': function(feature) {
-//                    return "fill:'"+ getColor(feature.properties.id) + "'";
+//  d3.json("lhrp_100.json", function(error, geoShape) {
+//
+//        //console.log(topology)
+//        //   var collection2 = topojson.feature(geoShape, geoShape.objects.lhrp_100);//lhrp000b06a_EPSG3857);
+//        var collection2 = topojson.feature(geoShape, geoShape.objects.lhrp_100);//lhrp000b06a_EPSG3857);
+//        var roadsTopoJSON = [collection2];
+//
+//        console.log(roadsTopoJSON);
+//        // alert("addlay1=" + JSON.stringify(collection2));
+//
+//        var geojson_tj = new L.D3geoJSON(collection2, {
+//            id: 'svg-subwatersheds',
+//            featureAttributes: {
+//                'class': function(feature) {
+//                    return 'default_fcls subws_' + feature.properties.id;
+//
+////						return JSON.stringify(style(feature)).replace('"',"");
+////                    return 'fillColor:' + getColor(feature.properties.id)
+////                        + ';weight: 1'
+////                        + ';opacity: 1'
+////                        + ';color: blue'
+////                        //  dashArray: '3',
+////                        +';fillOpacity: 0.8';
+//
+//                }//,
+////                'style': function(feature) {
+////                    return "fill:'"+ getColor(feature.properties.id) + "'";
+////                }
+//            }
+//        }).addTo(map);
+//
+//        geojson_tj.on('click', function(e) {
+//            // alert($('.leaflet-sidebar.left').offset().left);
+//
+//            var mouse = d3.mouse(e.element);
+//            //   alert($('.leaflet-sidebar #sidebar-left #sidebar_content'));
+//            //   alert($('.leaflet-sidebar #sidebar-left #sidebar_content').length);
+//            if ($('.leaflet-sidebar.left').offset().left === -350)
+//            {
+//                setTimeout(function() {
+//                    leftSidebar.toggle();
+//                }, 500);
+//            }
+//            if ($('#subwatershed_showsidebarinfo_id').length) {
+//                // do something
+//                //   alert('subwatershed_showsidebarinfo_id exist');
+//                $('#subwatershed_showsidebarinfo_id').html("<div id='subwatershed_showsidebarinfo_id'><h4>" + e.data.properties.subws_name + ':</h4><p>More info about this subwatersshed will come here</p></div>');
+//            }
+//            else
+//            {
+//                $('.leaflet-sidebar #sidebar-left #sidebar_content').prepend("<div id='subwatershed_showsidebarinfo_id'><h4>" + e.data.properties.subws_name + ':</h4><p>More info about this subwatersshed will come here</p></div>');
+//                //   $("#mydiv div:first-child").after(newDiv);
+//                //   alert(e.data.properties.id + ":" + e.data.properties.subws_name);
+//            }
+//            console.log(e);
+//        });
+//
+//        geojson_tj.on("mouseover", function(e) {
+//          
+//
+//            // Create a popup with a unique ID linked to this record
+//            var popup = $("<div></div>", {
+//                id: "popup-" + e.data.properties.id,
+//                css: {
+//                    position: "absolute",
+//                    top: "5px",
+//                    left: "360px",
+//                    zIndex: 1002,
+//                    backgroundColor: "white",
+//                    padding: "5px",
+//                    border: "1px solid #ccc"
 //                }
-            }
-        }).addTo(map);
-
-        geojson_tj.on('click', function(e) {
-            // alert($('.leaflet-sidebar.left').offset().left);
-
-            var mouse = d3.mouse(e.element);
-            //   alert($('.leaflet-sidebar #sidebar-left #sidebar_content'));
-            //   alert($('.leaflet-sidebar #sidebar-left #sidebar_content').length);
-            if ($('.leaflet-sidebar.left').offset().left === -350)
-            {
-                setTimeout(function() {
-                    leftSidebar.toggle();
-                }, 500);
-            }
-            if ($('#subwatershed_showsidebarinfo_id').length) {
-                // do something
-                //   alert('subwatershed_showsidebarinfo_id exist');
-                $('#subwatershed_showsidebarinfo_id').html("<div id='subwatershed_showsidebarinfo_id'><h4>" + e.data.properties.subws_name + ':</h4><p>More info about this subwatersshed will come here</p></div>');
-            }
-            else
-            {
-                $('.leaflet-sidebar #sidebar-left #sidebar_content').prepend("<div id='subwatershed_showsidebarinfo_id'><h4>" + e.data.properties.subws_name + ':</h4><p>More info about this subwatersshed will come here</p></div>');
-                //   $("#mydiv div:first-child").after(newDiv);
-                //   alert(e.data.properties.id + ":" + e.data.properties.subws_name);
-            }
-            console.log(e);
-        });
-
-        geojson_tj.on("mouseover", function(e) {
-          
-
-            // Create a popup with a unique ID linked to this record
-            var popup = $("<div></div>", {
-                id: "popup-" + e.data.properties.id,
-                css: {
-                    position: "absolute",
-                    top: "5px",
-                    left: "360px",
-                    zIndex: 1002,
-                    backgroundColor: "white",
-                    padding: "5px",
-                    border: "1px solid #ccc"
-                }
-            });
-            // Insert a headline into that popup
-            var hed = $("<div></div>", {
-                text: "Subwatershed: "  + e.data.properties.subws_name,
-                css: {fontSize: "12px", marginBottom: "0px"}
-            }).appendTo(popup);
-            // Add the popup to the map
-            popup.appendTo("#leafmap");
-
-            d3.select(e.element).style("fill", "gray");
-        });
-        geojson_tj.on('mousemove', function(e) {
-           
-            var mouse=L.DomEvent.getMousePosition(e.originalEvent, map._container);
-
-            tooltip.classed("hidden", false)
-                    .attr("style", "left:" + (mouse.x + 30) + "px;top:" + (mouse.y - 30) + "px")
-                    .html( e.data.properties.subws_name);
-
-        });
-        geojson_tj.on('mouseout', function(e) {
-            $("#popup-" + e.data.properties.id).remove();
-            //     geojson_tj.resetStyle(e.element);
-            d3.select(e.element).style("fill", getColor(e.data.properties.id));
-            tooltip.classed("hidden", true);
-            console.log(e);
-        });
-
+//            });
+//            // Insert a headline into that popup
+//            var hed = $("<div></div>", {
+//                text: "Subwatershed: "  + e.data.properties.subws_name,
+//                css: {fontSize: "12px", marginBottom: "0px"}
+//            }).appendTo(popup);
+//            // Add the popup to the map
+//            popup.appendTo("#leafmap");
+//
+//            d3.select(e.element).style("fill", "gray");
+//        });
+//        geojson_tj.on('mousemove', function(e) {
+//           
+//            var mouse=L.DomEvent.getMousePosition(e.originalEvent, map._container);
+//
+//            tooltip.classed("hidden", false)
+//                    .attr("style", "left:" + (mouse.x + 30) + "px;top:" + (mouse.y - 30) + "px")
+//                    .html( e.data.properties.subws_name);
+//
+//        });
+//        geojson_tj.on('mouseout', function(e) {
+//            $("#popup-" + e.data.properties.id).remove();
+//            //     geojson_tj.resetStyle(e.element);
+//            d3.select(e.element).style("fill", getColor(e.data.properties.id));
+//            tooltip.classed("hidden", true);
+//            console.log(e);
+//        });
+//
 
 //     geojson_tj = L.geoJson(collection2,{style: style,onEachFeature: onEachFeature});
 //  //  alert("addlayer");
 //    map.addLayer(geojson_tj);
 //    
 
-        var feature;
+//        var feature;
         //  alert("reset00");
         //  setFeature();
         //****
         //    alert("reset0");
-        var bounds = d3.geo.bounds(collection2);
+ //       var bounds = d3.geo.bounds(collection2);
 
         //    reset();
 //alert("reset1");
@@ -841,7 +841,7 @@ map.addControl(new MySidebarControl());
 
 
 
-    });
+  //  });
 
 
     $(window).resize();
