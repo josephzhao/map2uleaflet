@@ -23,6 +23,12 @@ I18n.translations = {'en': {
                 'layers': {
                     'header': 'Map Layers',
                     'title': 'Layers',
+                    
+//                    'Bing Roads'},
+//        {'layer':
+//                    BingAerial, 'name': 'Bing Aerial'},
+//        {'layer': BingAerialWithLabels, 'name': 'Bing Aerial With Labels'}
+//        
                     'overlays': 'OverLays',
                     'baselayers': 'BaseLayers',
                     'notes': 'Notes',
@@ -193,6 +199,36 @@ window.onload = function() {
     var googleLayer_roadmap = new L.Google('ROADMAP', {attribution: ""});
     var googleLayer_hybrid = new L.Google('HYBRID', {attribution: ""});
     var googleLayer_terrain = new L.Google('TERRAIN', {attribution: ""});
+     var bingkey = 'Ahxau5mtl944aCyAb8tfmrLebWENWZDXEmMIQWRaRQjTho2U0NkHqAUpcT1nTW1v';
+ var BingAttribution = '';
+//
+//var BingRoad = new L.TileLayer.Bing(bingkey, "Road",
+//                    {
+//                        maxZoom: 21,
+//                        attribution: BingAttribution
+//                    });
+//
+//            var BingAerial = new L.TileLayer.Bing(bingkey, "Aerial",
+//                    {
+//                        maxZoom: 21,
+//                        attribution: BingAttribution
+//                    });
+//
+//            var BingAerialWithLabels = new L.TileLayer.Bing(bingkey, "AerialWithLabels",
+//                    {
+//                        maxZoom: 21,
+//                        attribution: BingAttribution
+//                    });
+//
+//    var baseMaps = {
+//                "BingRoads": BingRoad,
+//                "BingAerial": BingAerial,
+//                "BingAerialWithLabels": BingAerialWithLabels
+//            };
+
+//    var bing = new L.BingLayer('');
+//    map.addLayer(bing);
+//    
     var mapnik_minimap = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
         maxZoom: 18
@@ -269,6 +305,8 @@ window.onload = function() {
 
 
 
+   
+        
     map.baseLayers = [{'layer':
                     mapnik, 'name': 'Open Street Map'},
         {'layer':
@@ -314,12 +352,12 @@ window.onload = function() {
         map.dataLayers.push({'layer': layers[index], name: layernames[index]});
     }
 
-    var baseMaps = {
-        "Google Road Map": googleLayer_roadmap,
-        "Google Satellite": googleLayer_satellite,
-        "Google Hybrid": googleLayer_hybrid,
-        "Google Terrain": googleLayer_terrain
-    };
+//    var baseMaps = {
+//        "Google Road Map": googleLayer_roadmap,
+//        "Google Satellite": googleLayer_satellite,
+//        "Google Hybrid": googleLayer_hybrid,
+//        "Google Terrain": googleLayer_terrain
+//    };
     var overlayMaps = {
         'Credit River Parks': creditriverparks,
         'Conservation': conservationareas,

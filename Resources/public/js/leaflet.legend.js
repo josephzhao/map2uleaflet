@@ -37,7 +37,7 @@ L.MAP2U.legend = function (options) {
 //        .appendTo(list);
 //
 
-            if (layer.layer.options !== undefined)
+            if (layer.layer !== undefined && layer.layer.options !== undefined)
             {
                 list.append('<li>' + layer.name);
                 list.append('<div>');
