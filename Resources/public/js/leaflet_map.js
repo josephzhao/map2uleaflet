@@ -11,6 +11,14 @@ var mapapp;
 var map;
 var leafletmap_tooltip;
 
+var spinner;
+var spinner_target;
+
+var canvas ;
+
+var context ;
+
+var path;
 
 var I18n = I18n || {};
 I18n.translations = {'en': {
@@ -23,7 +31,6 @@ I18n.translations = {'en': {
                 'layers': {
                     'header': 'Map Layers',
                     'title': 'Layers',
-                    
 //                    'Bing Roads'},
 //        {'layer':
 //                    BingAerial, 'name': 'Bing Aerial'},
@@ -177,6 +184,13 @@ window.onload = function() {
     });
 
     $('#leafmap').height($(window).height() - 126);
+
+
+ 
+
+    spinner_target = document.getElementById('leafmap');
+    spinner = new Spinner();
+    
     $(window).resize(function() { /* do something */
 
         $('#leafmap').height($(window).height() - 126);
@@ -188,19 +202,38 @@ window.onload = function() {
     }).setView([43.73737, -79.95987], 10);
 
 
-
+//canvas = d3.select(map.getPanes().overlayPane).append("canvas")
+//    .attr("width", $('#leafmap').width())
+//    .attr("height", $('#leafmap').height());
+//
+// context = canvas.node().getContext("2d");
+//
+// path = d3.geo.path()
+//    .projection(simplify)
+//    .context(context);
 
     //add a tile layer to add to our map, in this case it's the 'standard' OpenStreetMap.org tile server
     var mapnik = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
         maxZoom: 18
-    }).addTo(map);
+    });
+
     var googleLayer_satellite = new L.Google('SATELLITE', {attribution: ""});
     var googleLayer_roadmap = new L.Google('ROADMAP', {attribution: ""});
     var googleLayer_hybrid = new L.Google('HYBRID', {attribution: ""});
     var googleLayer_terrain = new L.Google('TERRAIN', {attribution: ""});
-     var bingkey = 'Ahxau5mtl944aCyAb8tfmrLebWENWZDXEmMIQWRaRQjTho2U0NkHqAUpcT1nTW1v';
- var BingAttribution = '';
+    var bingkey = 'Ahxau5mtl944aCyAb8tfmrLebWENWZDXEmMIQWRaRQjTho2U0NkHqAUpcT1nTW1v';
+    var BingAttribution = '';
+    var bing = new L.BingLayer("AqTGBsziZHIJYYxgivLBf0hVdrAk9mWO5cQcb8Yux8sW5M8c8opEC2lZqKR1ZZXf", {type: 'Road'});
+    map.addLayer(bing);
+
+var Thunderforest_Transport = L.tileLayer('http://{s}.tile2.opencyclemap.org/transport/{z}/{x}/{y}.png', {
+	attribution: '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
+});
+    var tiles = new L.TileLayer.Canvas();
+
+    map.addLayer(tiles);
+
 //
 //var BingRoad = new L.TileLayer.Bing(bingkey, "Road",
 //                    {
@@ -234,81 +267,17 @@ window.onload = function() {
         maxZoom: 18
     });
     var miniMap = new L.Control.MiniMap(mapnik_minimap, {position: 'bottomright', width: 150, height: 150, zoomLevelOffset: -4, zoomAnimation: false, toggleDisplay: true, autoToggleDisplay: false}).addTo(map);
-    var subwatersheds = new L.TileLayer.WMS(
-            "http://cobas.juturna.ca:8080/geoserver/juturna/wms",
-            {
-                layers: 'juturna:cvcsubwatersheds',
-                format: 'image/png',
-                transparent: true,
-                srs: 'EPSG:4326',
-                attribution: ""
-            });
-    var watersheds = new L.TileLayer.WMS(
-            "http://cobas.juturna.ca:8080/geoserver/juturna/wms",
-            {
-                layers: 'juturna:cvcwatersheds',
-                format: 'image/png',
-                srs: 'EPSG:4326',
-                transparent: true,
-                attribution: ""
-            });
-    var conservationareas = new L.TileLayer.WMS(
-            "http://cobas.juturna.ca:8080/geoserver/juturna/wms",
-            {
-                layers: 'juturna:conservationareas',
-                format: 'image/png',
-                srs: 'EPSG:26917',
-                transparent: true,
-                attribution: ""
-            });
-    var creditriverparks = new L.TileLayer.WMS(
-            "http://cobas.juturna.ca:8080/geoserver/juturna/wms",
-            {
-                layers: 'juturna:creditriverparks',
-                format: 'image/png',
-                srs: 'EPSG:26917',
-                transparent: true,
-                attribution: ""
-            });
-//   var trail = new L.TileLayer.WMS(
-//            "http://cobas.juturna.ca:8080/geoserver/juturna/wms",
-//            {
-//                layers: 'juturna:trail',
-//                format: 'image/png',
-//                srs: 'EPSG:26917',
-//                transparent: true,
-//                attribution: ""
-////            });          
-//var topo=L.d3("/lh-s.json",{
-//	topojson:"1_lhrp000b06a_EPSG3857"
-////	svgClass : "Spectral"//,
-////	pathClass:function(d) {
-////		return "town q" + (10-topo.quintile(d.properties.pop/topo.path.area(d)))+"-11";
-////	},
-////	before: function(data){
-////		var _this = this;
-////		this.quintile=d3.scale.quantile().domain(data.geometries.map(function(d){return d.properties.pop/_this.path.area(d);})).range(d3.range(11));
-////	}
-//}).addTo(map);
-//
-    var nonswitchable_layernames = ['credit_river', 'water_ways', 'credit_valley_lakes']; //, 'credit_river_head_waters'
 
-    var layernames = ['cvcwatersheds', 'cvcsubwatersheds',
-        'conservation_areas',
-        'trails',
-        'trail3_clip',
-        'parks',
-        'peel_playground_pools',
-        'golf_courses',
-        'peel_community_centres'];
-    map.addLayer(mapnik);
+    // map.addLayer(mapnik);
 
 
 
-   
-        
+
+
     map.baseLayers = [{'layer':
                     mapnik, 'name': 'Open Street Map'},
+        {'layer': Thunderforest_Transport, 'name': 'Thunderforest_Transport'},
+        {'layer': bing, 'name': 'Bing'},
         {'layer':
                     googleLayer_roadmap, 'name': 'Google Road Map'},
         {'layer': new L.Google('SATELLITE'), 'name': 'Google Satellite'},
@@ -326,63 +295,25 @@ window.onload = function() {
     var index;
     var layers = [];
 
-    for (index = 0; index < nonswitchable_layernames.length; ++index) {
-        map.addLayer(new L.TileLayer.WMS(
-                "http://cobas.juturna.ca:8080/geoserver/juturna/wms",
-                {
-                    layers: 'juturna:' + nonswitchable_layernames[index],
-                    format: 'image/png',
-                    srs: 'EPSG:26917',
-                    transparent: true,
-                    attribution: ""
-                }));
-    }
 
-
-    for (index = 0; index < layernames.length; ++index) {
-        layers[index] = new L.TileLayer.WMS(
-                "http://cobas.juturna.ca:8080/geoserver/juturna/wms",
-                {
-                    layers: 'juturna:' + layernames[index],
-                    format: 'image/png',
-                    srs: 'EPSG:26917',
-                    transparent: true,
-                    attribution: ""
-                });
-        map.dataLayers.push({'layer': layers[index], name: layernames[index]});
-    }
-
-//    var baseMaps = {
-//        "Google Road Map": googleLayer_roadmap,
-//        "Google Satellite": googleLayer_satellite,
-//        "Google Hybrid": googleLayer_hybrid,
-//        "Google Terrain": googleLayer_terrain
-//    };
-    var overlayMaps = {
-        'Credit River Parks': creditriverparks,
-        'Conservation': conservationareas,
-        "Subwatersheds": subwatersheds,
-        "Watersheds": watersheds
-    };
 
 //       
 //    
-var MySidebarControl = L.Control.extend({
-    options: {
-        position: 'topleft'
-    },
+    var MySidebarControl = L.Control.extend({
+        options: {
+            position: 'topleft'
+        },
+        onAdd: function(map) {
+            // create the control container with a particular class name
+            var container = L.DomUtil.create();
 
-    onAdd: function (map) {
-        // create the control container with a particular class name
-        var container = L.DomUtil.create();
+            // ... initialize other DOM elements, add listeners, etc.
 
-        // ... initialize other DOM elements, add listeners, etc.
+            return container;
+        }
+    });
 
-        return container;
-    }
-});
-
-map.addControl(new MySidebarControl());
+    map.addControl(new MySidebarControl());
 
 //    var popup = L.popup();
 //
@@ -675,7 +606,7 @@ map.addControl(new MySidebarControl());
 
 //var loading = group.append("text").attr({x:500,y:250}).text("Loading");
 
-  //  d3.json("subwatersheds.json", function(error, geoShape) {
+    //  d3.json("subwatersheds.json", function(error, geoShape) {
 //  d3.json("lhrp_100.json", function(error, geoShape) {
 //
 //        //console.log(topology)
@@ -783,18 +714,18 @@ map.addControl(new MySidebarControl());
 //    
 
 //        var feature;
-        //  alert("reset00");
-        //  setFeature();
-        //****
-        //    alert("reset0");
- //       var bounds = d3.geo.bounds(collection2);
+    //  alert("reset00");
+    //  setFeature();
+    //****
+    //    alert("reset0");
+    //       var bounds = d3.geo.bounds(collection2);
 
-        //    reset();
+    //    reset();
 //alert("reset1");
-        //     map.on("viewreset", reset);
-        //  alert("reset2");
-        //     map.on("drag", reset);
-        //alert("reset3");
+    //     map.on("viewreset", reset);
+    //  alert("reset2");
+    //     map.on("drag", reset);
+    //alert("reset3");
 //      feature.on("mousedown",function(d){
 //        var coordinates = d3.mouse(this);
 //
@@ -851,7 +782,7 @@ map.addControl(new MySidebarControl());
 ////              d3.select(this).text(content).style("stroke",color)
 ////      });
 
-        //this is just a function from the existing code...as I need it to restore the removed paths
+    //this is just a function from the existing code...as I need it to restore the removed paths
 //      function setFeature(){
 //        feature = group.selectAll("path")
 //          .data(collection2.features)
@@ -863,9 +794,9 @@ map.addControl(new MySidebarControl());
 //          .attr("id","overlay");
 //  //alert("setfeature");
 //      }
-        //***************************
+    //***************************
 
-        //   Use Leaflet to implement a D3 geographic projection.
+    //   Use Leaflet to implement a D3 geographic projection.
 //  function project(x) {
 //      
 //    var point = map.latLngToLayerPoint(new L.LatLng(x[1], x[0]));
@@ -879,7 +810,7 @@ map.addControl(new MySidebarControl());
 
 
 
-  //  });
+    //  });
 
 
     $(window).resize();

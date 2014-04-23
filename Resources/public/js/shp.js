@@ -1344,7 +1344,7 @@ shp.unzip = function(buffer) {
          */
         var folderAdd = function(name) {
             // Check the name ends with a /
-            if (name.slice(-1) != "/") {
+            if (name.slice(-1) !== "/") {
                 name += "/"; // IE doesn't like substr(-1)
             }
 
