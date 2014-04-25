@@ -47,15 +47,20 @@ and open the template in the editor.
 .tooltip.left .tooltip-arrow{top:50%;right:-5px;margin-top:-5px;border-left-color:white;border-width:5px 0 5px 5px}
 .tooltip.bottom .tooltip-arrow{top:-5px;left:50%;margin-left:-5px;border-bottom-color:white;border-width:0 5px 5px}
 .leaflet-control .control-button{display:block;height:40px;width:40px;background-color:#333;
-               background-color:rgba(0,0,0,0.6);border-radius:4px 0 0 4px;margin-bottom:10px;outline:none
+    background-color:rgba(0,0,0,0.6);border-radius:4px 0 0 4px;margin-bottom:10px;outline:none
 }
 .leaflet-control .control-button:hover{background-color:black}
 .leaflet-control .control-button.active{background-color:#9ed485}
 .leaflet-control .control-button.disabled{background-color:#333;background-color:rgba(0,0,0,0.5);cursor:default}
 .leaflet-control .control-button .icon{margin:10px}
+
+
 .leaflet-control .zoomin,.control-layers .control-button{margin-bottom:0px;border-radius:4px 0 0 0}
 .leaflet-control .zoomout,.control-key .control-button{margin-bottom:0;border-radius:0}
 .control-locate .control-button,.control-share .control-button{border-radius:0 0 0 4px}
+
+.control-shapefile-upload .control-button{margin-bottom:0;border-radius:0}
+
 .sonata-bc #leaflet_content{overflow:hidden;position:absolute;top:125px;bottom:0;width:100%}
 .sonata-bc #sidebar {position:relative;height:100%;overflow-x:hidden;overflow-y:auto;background-color: rgba(255, 255, 255, 0.92);}
 .sonata-bc #sidebar {float:left;width:350px;font-size:12px}
