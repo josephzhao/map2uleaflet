@@ -1,14 +1,11 @@
 L.MAP2U.layers = function(options) {
     var control = L.control(options);
-    
-    var divclass='control-layers';
-    if(options.class)
-        divclass=options.class;
+
     control.onAdd = function(map) {
         var layers = options.layers;
 
         var $container = $('<div>')
-                .attr('class', divclass);
+                .attr('class', 'control-layers');
 
         var button = $('<a>')
                 .attr('class', 'control-button')
