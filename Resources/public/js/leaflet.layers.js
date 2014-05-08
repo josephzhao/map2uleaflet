@@ -213,6 +213,7 @@ L.MAP2U.layers = function(options) {
         return $container[0];
     };
     control.refreshOverlays = function() {
+        var _this=this;
         var overlay_layers_ul = $(".leaflet-control-container .section.overlay-layers > ul");
 
         overlay_layers_ul.html('');
@@ -277,7 +278,7 @@ L.MAP2U.layers = function(options) {
                         var kename = '';
                         var shapefilename = $('#shapefile_select_list option:selected').text();
                         // only current map is the same with shapefile list selected file name
-                        if (this.options.name === shapefilename.toLowerCase() || shapefilename === '')
+                        if (_this.options.name === shapefilename.toLowerCase() || shapefilename === '')
                         {
                             kename = $('#shapefile_labelfield_list option:selected').text();
                         }
