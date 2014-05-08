@@ -19,6 +19,7 @@ var canvas ;
 var context ;
 
 var path;
+var layersControl;
 
 var I18n = I18n || {};
 I18n.translations = {'en': {
@@ -225,14 +226,16 @@ window.onload = function() {
     var bingkey = 'Ahxau5mtl944aCyAb8tfmrLebWENWZDXEmMIQWRaRQjTho2U0NkHqAUpcT1nTW1v';
     var BingAttribution = '';
     var bing = new L.BingLayer("AqTGBsziZHIJYYxgivLBf0hVdrAk9mWO5cQcb8Yux8sW5M8c8opEC2lZqKR1ZZXf", {type: 'Road'});
+
     map.addLayer(bing);
 
 var Thunderforest_Transport = L.tileLayer('http://{s}.tile2.opencyclemap.org/transport/{z}/{x}/{y}.png', {
 	attribution: '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
 });
-    var tiles = new L.TileLayer.Canvas();
 
-    map.addLayer(tiles);
+//    var tiles = new L.TileLayer.Canvas();
+//
+//    map.addLayer(tiles);
 
 //
 //var BingRoad = new L.TileLayer.Bing(bingkey, "Road",
@@ -270,16 +273,23 @@ var Thunderforest_Transport = L.tileLayer('http://{s}.tile2.opencyclemap.org/tra
 
     // map.addLayer(mapnik);
 
+  var subwatersheds = new L.TileLayer.WMS(
+                "http://cobas.juturna.ca:8080/geoserver/juturna/wms",
+        {
+        layers: 'juturna:cvcsubwatersheds',
+                format: 'image/png',
+                transparent: true,
+                srs: 'EPSG:4326',
+                attribution: ""
+        });
 
+map.addLayer(subwatersheds);
 
-
-
-    map.baseLayers = [{'layer':
-                    mapnik, 'name': 'Open Street Map'},
+    map.baseLayers = [
+        {'layer':mapnik, 'name': 'Open Street Map'},
         {'layer': Thunderforest_Transport, 'name': 'Thunderforest_Transport'},
         {'layer': bing, 'name': 'Bing'},
-        {'layer':
-                    googleLayer_roadmap, 'name': 'Google Road Map'},
+        {'layer': googleLayer_roadmap, 'name': 'Google Road Map'},
         {'layer': new L.Google('SATELLITE'), 'name': 'Google Satellite'},
         {'layer': new L.Google('HYBRID'), 'name': 'Google Hybrid'},
         {'layer': new L.Google('TERRAIN'), 'name': 'Google Terrain'}
@@ -287,8 +297,8 @@ var Thunderforest_Transport = L.tileLayer('http://{s}.tile2.opencyclemap.org/tra
     ];
     map.noteLayer = new L.FeatureGroup();
     map.noteLayer.options = {code: 'N'};
-    map.dataLayers = [];//{'layer':creditriverparks, name:'Credit River Parks'}, {'layer':conservationareas, name:'Conservation'}, {'layer': subwatersheds, 'name': 'Subwatersheds'},
-    //  {'layer': watersheds, 'name': 'Watersheds'}];
+    map.dataLayers = //{'layer':creditriverparks, name:'Credit River Parks'}, {'layer':conservationareas, name:'Conservation'}, {'layer': subwatersheds, 'name': 'Subwatersheds'},
+   [ {'layer': subwatersheds, 'name': 'Subwatersheds'}];
 
 
 
@@ -350,11 +360,13 @@ var Thunderforest_Transport = L.tileLayer('http://{s}.tile2.opencyclemap.org/tra
 
 
 
-    L.MAP2U.layers({
+    layersControl=L.MAP2U.layers({
         position: position,
         layers: map.baseLayers,
         sidebar: rightSidebar
-    }).addTo(map);
+    });
+    layersControl.addTo(map);
+    
     L.MAP2U.legend({
         position: position,
         sidebar: rightSidebar

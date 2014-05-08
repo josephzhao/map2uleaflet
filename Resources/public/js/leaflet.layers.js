@@ -124,6 +124,7 @@ L.MAP2U.layers = function(options) {
             var list = $('<ul>')
                     .appendTo(overlaySection);
 
+
             function addOverlay(layer, name, maxArea) {
                 var item = $('<li>')
                         .tooltip({
@@ -209,9 +210,111 @@ L.MAP2U.layers = function(options) {
 
             $('.leaflet-control .control-button').tooltip('hide');
         }
-
         return $container[0];
     };
+    control.refreshOverlays = function() {
+        var overlay_layers_ul = $(".leaflet-control-container .section.overlay-layers > ul");
+
+        overlay_layers_ul.html('');
+        map.dataLayers.forEach(function(layer) {
+            var item = $('<li>')
+                    .tooltip({
+                        placement: 'top'
+                    })
+                    .appendTo(overlay_layers_ul);
+
+            var label = $('<label>')
+                    .appendTo(item);
+
+            var checked = map.hasLayer(layer.layer);
+
+            var input = $('<input>')
+                    .attr('type', 'checkbox')
+                    .prop('checked', checked)
+                    .appendTo(label);
+
+
+//       var input_radio = $('<input>')
+//          .attr('type', 'radio')
+//          .attr('name','activeLayer[]')
+//          .prop('checked', false)
+//          .appendTo(label);
+            var legend_label = I18n.t('javascripts.map.layers.' + layer.name);
+            if (legend_label.indexOf('missing ') === 1)
+                label.append(layer.name);
+            else
+                label.append(legend_label);
+
+            input.on('change', function() {
+                checked = input.is(':checked');
+                if (checked) {
+                    map.addLayer(layer.layer);
+                } else {
+                    map.removeLayer(layer.layer);
+                }
+                map.fire('overlaylayerchange', {layer: layer.layer});
+            });
+            if (layer.type === 'shapefile_topojson')
+            {
+                var ul = $('<ul>');
+                var li_showlabel = $('<li>');
+                ul.append(li_showlabel);
+                label.append("<br>");
+                item.append(ul);
+                var showlabel = $('<label>')
+                        .appendTo(li_showlabel);
+                var showlabel_input = $('<input>')
+                        .attr('type', 'checkbox')
+                        .prop('checked', checked)
+                        .appendTo(showlabel);
+
+                showlabel.append("Labels");
+
+                showlabel_input.on('change', function() {
+                    checked = showlabel_input.is(':checked');
+                    layer.layer.options.showLabels = checked;
+                    if (checked) {
+                        var kename = $('#shapefile_labelfield_list option:selected').text();
+                        if (kename === '' || kename === null)
+                            kename = undefined;
+                        layer.layer.showFeatureLabels(kename);
+                    } else {
+                        layer.layer.removeFeatureLabels();
+                    }
+
+                });
+
+            }
+//        input_radio.on('click', function() {
+//            input_radio.prop('checked',true);
+//        });
+//        map.on('layeradd layerremove', function() {
+//          input.prop('checked', map.hasLayer(layer));
+//        });
+
+            map.on('zoomend', function() {
+                // alert(map.getBounds().toBBoxString());
+                // alert(maxArea);
+
+                var disabled = false;//map.getBounds().getSize() >= maxArea;
+                $(input).prop('disabled', disabled);
+
+                if (disabled && $(input).is(':checked')) {
+                    $(input).prop('checked', false)
+                            .trigger('change');
+                    checked = true;
+                } else if (!disabled && !$(input).is(':checked') && checked) {
+                    $(input).prop('checked', true)
+                            .trigger('change');
+                }
+
+                $(item).attr('class', disabled ? 'disabled' : '');
+                item.attr('data-original-title', disabled ?
+                        I18n.t('javascripts.site.map_' + layer.name + '_zoom_in_tooltip') : '');
+            });
+        });
+    }
+    ;
 
     return control;
 };
