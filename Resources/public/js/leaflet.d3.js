@@ -5,6 +5,7 @@ L.D3 = L.Class.extend({
         type: "json",
         topojson: false,
         showLabels: false,
+        name:'shapefile',
         pathClass: "path",
         keyname: 'ogc_id',
         labelClass: "feature-label"
@@ -82,6 +83,7 @@ L.D3 = L.Class.extend({
         this._el = this._overlayPane.append("svg");
         this._g = this._el.append("g").attr("class", this.options.svgClass ? this.options.svgClass + " leaflet-zoom-hide" : "leaflet-zoom-hide");
         this._el.attr('id', this.options.id ? this.options.id : 'svg-shapefile');
+        this._el.attr('name', this.options.name ? this.options.name : 'shapefile');
 
         if (this._loaded) {
             this.onLoaded();

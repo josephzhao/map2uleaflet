@@ -274,7 +274,13 @@ L.MAP2U.layers = function(options) {
                     checked = showlabel_input.is(':checked');
                     layer.layer.options.showLabels = checked;
                     if (checked) {
-                        var kename = $('#shapefile_labelfield_list option:selected').text();
+                        var kename = '';
+                        var shapefilename = $('#shapefile_select_list option:selected').text();
+                        // only current map is the same with shapefile list selected file name
+                        if (this.options.name === shapefilename.toLowerCase() || shapefilename === '')
+                        {
+                            kename = $('#shapefile_labelfield_list option:selected').text();
+                        }
                         if (kename === '' || kename === null)
                             kename = undefined;
                         layer.layer.showFeatureLabels(kename);
