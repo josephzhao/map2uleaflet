@@ -213,7 +213,7 @@ L.MAP2U.layers = function(options) {
         return $container[0];
     };
     control.refreshOverlays = function() {
-        var _this=this;
+        var _this = this;
         var overlay_layers_ul = $(".leaflet-control-container .section.overlay-layers > ul");
 
         overlay_layers_ul.html('');
@@ -276,14 +276,16 @@ L.MAP2U.layers = function(options) {
                     layer.layer.options.showLabels = checked;
                     if (checked) {
                         var kename = '';
-                        var shapefilename = $('#shapefile_select_list option:selected').map(function(){
-                                  return  this.value;
+                        var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function() {
+                            return  this.text;
                         });
-                        
+
                         // only current map is the same with shapefile list selected file name
                         if (layer.layer.options.name === shapefilename.toLowerCase() || shapefilename === '')
                         {
-                            kename = $('.sonata-bc #shapefile_labelfield_list').text();
+                            kename = $('.sonata-bc #shapefile_labelfield_list').map(function() {
+                                return  this.text;
+                            });
                         }
                         if (kename === '' || kename === null)
                             kename = undefined;
