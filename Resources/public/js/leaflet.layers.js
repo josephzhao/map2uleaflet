@@ -284,7 +284,7 @@ L.MAP2U.layers = function(options) {
                         // only current map is the same with shapefile list selected file name
                         if (layer.layer.options.name === shapefilename[0].toLowerCase() || shapefilename[0] === '')
                         {
-                            field_kename = $('.sonata-bc #shapefile_labelfield_list').map(function() {
+                            field_kename = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function() {
                                 return  this.text;
                             });
                         }
