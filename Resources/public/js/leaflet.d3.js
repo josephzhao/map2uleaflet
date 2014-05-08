@@ -5,7 +5,7 @@ L.D3 = L.Class.extend({
         type: "json",
         topojson: false,
         showLabels: false,
-        name:'shapefile',
+        name: 'shapefile',
         pathClass: "path",
         keyname: 'ogc_id',
         labelClass: "feature-label"
@@ -122,7 +122,7 @@ L.D3 = L.Class.extend({
 
     },
     removeFeatureLabels: function() {
-       this._g.selectAll("text").remove();
+        this._g.selectAll("text").remove();
     },
     onLoaded: function() {
         this.bounds = d3.geo.bounds(this.data);
@@ -133,8 +133,13 @@ L.D3 = L.Class.extend({
         }
         this._feature = this._g.selectAll("path").data(this.options.topojson ? this.data.geometries : this.data.features).enter().append("path").attr("class", this.options.pathClass);
 
+
         if (this.options.showLabels)
         {
+            var data = this.options.topojson ? this.data.geometries : this.data.features;
+            var properties_key = Object.keys(data[0].properties).map(function(k) {
+                return  k;
+            });
             this._feature_labels = this._g.selectAll("." + this.options.labelClass)
                     .data(this.options.topojson ? this.data.geometries : this.data.features)
                     .enter().append("text")
@@ -144,10 +149,12 @@ L.D3 = L.Class.extend({
                     })
                     .attr("dy", ".35em")
                     .text(function(d) {
-                        if (d.properties[_this.options.keyname] !== undefined)
+                        if (d.properties[_this.options.keyname] !== undefined && _this.options.keyname !=='ogc_id')
                             return d.properties[_this.options.keyname];
+                        else if(properties_key.length > 1)
+                            return d.properties[properties_key[1]];
                         else
-                            return 'N/A';
+                            return d.properties[properties_key[0]];
                     });
         }
         this._feature.on('click', this._clickHandler)
