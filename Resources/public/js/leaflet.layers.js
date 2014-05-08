@@ -276,11 +276,11 @@ L.MAP2U.layers = function(options) {
                     layer.layer.options.showLabels = checked;
                     if (checked) {
                         var kename = '';
-                        var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').text();
+                        var shapefilename = $('.sonata-bc #shapefile_select_list').text();
                         // only current map is the same with shapefile list selected file name
                         if (layer.layer.options.name === shapefilename.toLowerCase() || shapefilename === '')
                         {
-                            kename = $('.sonata-bc #shapefile_labelfield_list option:selected').text();
+                            kename = $('.sonata-bc #shapefile_labelfield_list').text();
                         }
                         if (kename === '' || kename === null)
                             kename = undefined;
