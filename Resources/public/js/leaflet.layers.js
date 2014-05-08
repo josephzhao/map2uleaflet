@@ -276,7 +276,10 @@ L.MAP2U.layers = function(options) {
                     layer.layer.options.showLabels = checked;
                     if (checked) {
                         var kename = '';
-                        var shapefilename = $('.sonata-bc #shapefile_select_list').text();
+                        var shapefilename = $('#shapefile_select_list option:selected').map(function(){
+                                  return  this.value;
+                        });
+                        
                         // only current map is the same with shapefile list selected file name
                         if (layer.layer.options.name === shapefilename.toLowerCase() || shapefilename === '')
                         {
