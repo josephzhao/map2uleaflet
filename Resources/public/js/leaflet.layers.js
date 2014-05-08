@@ -276,19 +276,22 @@ L.MAP2U.layers = function(options) {
                     layer.layer.options.showLabels = checked;
                     if (checked) {
                         var kename = '';
+                        var field_kename = [];
                         var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function() {
                             return  this.text;
                         });
 
                         // only current map is the same with shapefile list selected file name
-                        if (layer.layer.options.name === shapefilename.toLowerCase() || shapefilename === '')
+                        if (layer.layer.options.name === shapefilename[0].toLowerCase() || shapefilename[0] === '')
                         {
-                            kename = $('.sonata-bc #shapefile_labelfield_list').map(function() {
+                            field_kename = $('.sonata-bc #shapefile_labelfield_list').map(function() {
                                 return  this.text;
                             });
                         }
-                        if (kename === '' || kename === null)
+                        if (field_kename[0] === '' || field_kename[0] === null)
                             kename = undefined;
+                        else
+                            kename = field_kename[0];
                         layer.layer.showFeatureLabels(kename);
                     } else {
                         layer.layer.removeFeatureLabels();
