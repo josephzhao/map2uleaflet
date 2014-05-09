@@ -14,9 +14,9 @@ var leafletmap_tooltip;
 var spinner;
 var spinner_target;
 
-var canvas ;
+var canvas;
 
-var context ;
+var context;
 
 var path;
 var layersControl;
@@ -187,11 +187,11 @@ window.onload = function() {
     $('#leafmap').height($(window).height() - 126);
 
 
- 
+
 
     spinner_target = document.getElementById('leafmap');
     spinner = new Spinner();
-    
+
     $(window).resize(function() { /* do something */
 
         $('#leafmap').height($(window).height() - 126);
@@ -229,9 +229,9 @@ window.onload = function() {
 
     map.addLayer(bing);
 
-var Thunderforest_Transport = L.tileLayer('http://{s}.tile2.opencyclemap.org/transport/{z}/{x}/{y}.png', {
-	attribution: '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
-});
+    var Thunderforest_Transport = L.tileLayer('http://{s}.tile2.opencyclemap.org/transport/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
+    });
 
 //    var tiles = new L.TileLayer.Canvas();
 //
@@ -273,20 +273,20 @@ var Thunderforest_Transport = L.tileLayer('http://{s}.tile2.opencyclemap.org/tra
 
     // map.addLayer(mapnik);
 
-  var subwatersheds = new L.TileLayer.WMS(
-                "http://cobas.juturna.ca:8080/geoserver/juturna/wms",
-        {
-        layers: 'juturna:cvcsubwatersheds',
+    var subwatersheds = new L.TileLayer.WMS(
+            "http://cobas.juturna.ca:8080/geoserver/juturna/wms",
+            {
+                layers: 'juturna:cvcsubwatersheds',
                 format: 'image/png',
                 transparent: true,
                 srs: 'EPSG:4326',
                 attribution: ""
-        });
+            });
 
-map.addLayer(subwatersheds);
+    map.addLayer(subwatersheds);
 
     map.baseLayers = [
-        {'layer':mapnik, 'name': 'Open Street Map'},
+        {'layer': mapnik, 'name': 'Open Street Map'},
         {'layer': Thunderforest_Transport, 'name': 'Thunderforest_Transport'},
         {'layer': bing, 'name': 'Bing'},
         {'layer': googleLayer_roadmap, 'name': 'Google Road Map'},
@@ -298,7 +298,7 @@ map.addLayer(subwatersheds);
     map.noteLayer = new L.FeatureGroup();
     map.noteLayer.options = {code: 'N'};
     map.dataLayers = //{'layer':creditriverparks, name:'Credit River Parks'}, {'layer':conservationareas, name:'Conservation'}, {'layer': subwatersheds, 'name': 'Subwatersheds'},
-   [ {'layer': subwatersheds, 'name': 'Subwatersheds'}];
+            [{'layer': subwatersheds, 'name': 'Subwatersheds'}];
 
 
 
@@ -360,13 +360,13 @@ map.addLayer(subwatersheds);
 
 
 
-    layersControl=L.MAP2U.layers({
+    layersControl = L.MAP2U.layers({
         position: position,
         layers: map.baseLayers,
         sidebar: rightSidebar
     });
     layersControl.addTo(map);
-    
+
     L.MAP2U.legend({
         position: position,
         sidebar: rightSidebar
@@ -401,7 +401,8 @@ map.addLayer(subwatersheds);
                 shapeOptions: {
                     color: '#0000FF',
                     weight: 3
-                }
+                },
+                allowIntersection: false
             },
             circle: {
                 shapeOptions: {
@@ -417,6 +418,7 @@ map.addLayer(subwatersheds);
 
 
     map.addControl(drawControl);
+
     setTimeout(function() {
         leftSidebar.toggle();
     }, 500);
