@@ -382,6 +382,7 @@ window.onload = function() {
     }).addTo(map);
     var drawnItems = new L.FeatureGroup();
     map.addLayer(drawnItems);
+    map.drawnItems = drawnItems;
     var drawControl = new L.Control.Draw({
         position: 'topleft',
         draw: {
@@ -419,6 +420,130 @@ window.onload = function() {
 
     map.addControl(drawControl);
 
+    map.on('draw:created', function(e) {
+        var type = e.layerType,
+                layer = e.layer;
+        layer.id = 0;
+        layer.type = type;
+
+        var radius = 0;
+        drawnItems.addLayer(layer);
+        layer.index = drawnItems.getLayers().length - 1;
+
+        if (type === 'circle')
+        {
+            radius = layer._mRadius.toFixed(0);
+        }
+
+     //   alert(JSON.stringify(layer.toGeoJSON()));
+        layer.on('click', function(e) {
+            var radius = 0;
+            if (e.target.type === 'circle')
+            {
+                radius = e.target._mRadius.toFixed(0);
+            }
+            $.ajax({
+                url: Routing.generate('draw_' + e.target.type),
+                method: 'GET',
+                data: {
+                    id: e.target.id,
+                    name: e.target.name,
+                    radius: radius,
+                    index: e.target.index
+                },
+                success: function(response) {
+                    if ($('body.sonata-bc #ajax-dialog').length === 0) {
+                        $('<div class="modal fade" id="ajax-dialog" role="dialog"></div>').appendTo('body');
+                    } else {
+                        $('body.sonata-bc #ajax-dialog').html('');
+                    }
+
+                    $(response).appendTo($('body.sonata-bc #ajax-dialog'));
+                    $('#ajax-dialog').modal({show: true});
+                    $('#ajax-dialog').draggable();
+                    //  alert(JSON.stringify(html));
+                }
+            });
+        });
+
+
+
+        if ($('body.sonata-bc #ajax-dialog').length === 0) {
+            $('<div class="modal fade" id="ajax-dialog" role="dialog"></div>').appendTo('body');
+        } else {
+            $('body.sonata-bc #ajax-dialog').html('');
+        }
+
+
+        $.ajax({
+            url: Routing.generate('draw_' + layer.type),
+            method: 'GET',
+            data: {
+                id: 0,
+                name: layer.name,
+                radius: radius,
+                index: layer.index
+            },
+            success: function(response) {
+                $(response).appendTo($('body.sonata-bc #ajax-dialog'));
+
+                $('#ajax-dialog').modal({show: true});
+                $('#ajax-dialog').draggable();
+                //  alert(JSON.stringify(html));
+            }
+        });
+
+        $('#ajax-dialog').on('hidden.bs.modal', function(e) {
+            // do something...
+         //   alert(drawnItems.getLayers()[drawnItems.getLayers().length - 1].id);
+
+            if (drawnItems.getLayers()[drawnItems.getLayers().length - 1].id === 0)
+            {
+                drawnItems.removeLayer(drawnItems.getLayers()[drawnItems.getLayers().length - 1]);
+            }
+            $('#ajax-dialog').remove();
+        });
+
+
+        $('#ajax-dialog').on('hide.bs.modal', function(e) {
+
+        });
+        if (type === 'marker') {
+            // Do marker specific actions
+        }
+//var item=drawnItems.getLayers();
+//var itemgeojson=item[0].toGeoJSON();
+//itemgeojson.properties.id=layer.id;
+//itemgeojson.properties.name=layer.name;
+//alert(layer._mRadius);
+//
+//alert(JSON.stringify(itemgeojson));
+//alert(JSON.stringify(layer));
+        // Do whatever else you need to. (save to db, add to map etc)
+        // map.addLayer(layer);
+    });
+
+
+    map.on('draw:edited', function(e) {
+        var layers = e.layers;
+
+        layers.eachLayer(function(layer) {
+            if (layer.label)
+                layer.label.setLatLng(layer.getBounds().getCenter());
+            if (layer instanceof L.Marker) {
+                //Do marker specific actions here
+            }
+        });
+    });
+
+    map.on('draw:deleted', function(e) {
+        var layers = e.layers;
+
+        layers.eachLayer(function(layer) {
+
+        });
+    });
+
     setTimeout(function() {
         leftSidebar.toggle();
     }, 500);
@@ -435,16 +560,16 @@ window.onload = function() {
 //        setInterval(function () {
 //            rightSidebar.toggle();
 //        }, 7000);     
-
-    map.on('draw:created', function(e) {
-        var type = e.layerType,
-                layer = e.layer;
-        if (type === 'marker') {
-            layer.bindPopup('A popup!');
-        }
-
-        drawnItems.addLayer(layer);
-    });
+//
+//    map.on('draw:created', function(e) {
+//        var type = e.layerType,
+//                layer = e.layer;
+//        if (type === 'marker') {
+//            layer.bindPopup('A popup!');
+//        }
+//
+//        drawnItems.addLayer(layer);
+//    });
 
     var overlays = {};
     var geojson_tj;
@@ -1063,3 +1188,11 @@ window.onload = function() {
 };
 
 
+function saveuserdraw() {
+    for (var i = 0; i < map.drawlayer._originalPoints.length; i++) {
+        //  layer._originalPoints.each(function(point) {
+        alert(map.drawlayer._originalPoints[i]);
+        var position = map.containerPointToLatLng(layer._originalPoints[i]);
+        alert("Lat, Lon : " + position.lng.toFixed(3) + "," + position.lat.toFixed(3));
+    }
+}
