@@ -440,7 +440,7 @@ window.onload = function() {
             var radius = 0;
             if (e.target.type === 'circle')
             {
-                radius = e.target._mRadius.toFixed(0);
+                radius = e.target._mRadius;
             }
             $.ajax({
                 url: Routing.generate('draw_' + e.target.type),
