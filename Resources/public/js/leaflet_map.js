@@ -417,7 +417,7 @@ window.onload = function() {
         }
     });
 
-
+    map.drawControl=drawControl;
     map.addControl(drawControl);
 
     map.on('draw:created', function(e) {
@@ -435,35 +435,68 @@ window.onload = function() {
             radius = layer._mRadius.toFixed(0);
         }
 
-     //   alert(JSON.stringify(layer.toGeoJSON()));
-        layer.on('click', function(e) {
-            var radius = 0;
-            if (e.target.type === 'circle')
+        //   alert(JSON.stringify(layer.toGeoJSON()));
+        layer.on('mousedown', function(e) {
+            if (e.originalEvent.button === 2)
             {
-                radius = e.target._mRadius;
-            }
-            $.ajax({
-                url: Routing.generate('draw_' + e.target.type),
-                method: 'GET',
-                data: {
-                    id: e.target.id,
-                    name: e.target.name,
-                    radius: radius,
-                    index: e.target.index
-                },
-                success: function(response) {
-                    if ($('body.sonata-bc #ajax-dialog').length === 0) {
-                        $('<div class="modal fade" id="ajax-dialog" role="dialog"></div>').appendTo('body');
-                    } else {
-                        $('body.sonata-bc #ajax-dialog').html('');
-                    }
-
-                    $(response).appendTo($('body.sonata-bc #ajax-dialog'));
-                    $('#ajax-dialog').modal({show: true});
-                    $('#ajax-dialog').draggable();
-                    //  alert(JSON.stringify(html));
+                var radius = 0;
+                if (e.target.type === 'circle')
+                {
+                    radius = e.target._mRadius;
                 }
-            });
+                $.ajax({
+                    url: Routing.generate('draw_' + e.target.type),
+                    method: 'GET',
+                    data: {
+                        id: e.target.id,
+                        name: e.target.name,
+                        radius: radius,
+                        index: e.target.index
+                    },
+                    success: function(response) {
+                        if ($('body.sonata-bc #ajax-dialog').length === 0) {
+                            $('<div class="modal fade" id="ajax-dialog" role="dialog"></div>').appendTo('body');
+                        } else {
+                            $('body.sonata-bc #ajax-dialog').html('');
+                        }
+
+                        $(response).appendTo($('body.sonata-bc #ajax-dialog'));
+                        $('#ajax-dialog').modal({show: true});
+                        $('#ajax-dialog').draggable();
+                        //  alert(JSON.stringify(html));
+                    }
+                });
+            } else {
+                if (e.originalEvent.button === 0) {
+                    var highlight = {
+                        'color': '#333333',
+                        'weight': 2,
+                        'opacity': 1
+                    };
+
+                    if (feature.selected === false || feature.selected === undefined) {
+                        feature.setStyle(highlight);
+                        feature.selected = true;
+                        var selectBoxOption = document.createElement("option");//create new option 
+                        selectBoxOption.value = feature.id;//set option value 
+                        selectBoxOption.text = feature.name;//set option display text 
+                        document.getElementById('geometries_selected').add(selectBoxOption, null);
+                    }
+                    else
+                    {
+
+                        feature.setStyle({
+                            'color': "blue",
+                            'weight': 5,
+                            'opacity': 0.6
+                        });
+                        feature.selected = false;
+                        $("#geometries_selected option[value='" + feature.id + "']").each(function() {
+                            $(this).remove();
+                        });
+                    }
+                }
+            }
         });
 
 
@@ -495,7 +528,7 @@ window.onload = function() {
 
         $('#ajax-dialog').on('hidden.bs.modal', function(e) {
             // do something...
-         //   alert(drawnItems.getLayers()[drawnItems.getLayers().length - 1].id);
+            //   alert(drawnItems.getLayers()[drawnItems.getLayers().length - 1].id);
 
             if (drawnItems.getLayers()[drawnItems.getLayers().length - 1].id === 0)
             {
