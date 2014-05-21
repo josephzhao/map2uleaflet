@@ -20,99 +20,7 @@ var context;
 
 var path;
 var layersControl;
-
-var I18n = I18n || {};
-I18n.translations = {'en': {
-        'javascripts': {
-            'map': {
-                'zoom': {
-                    'in': 'Zoom in',
-                    'out': 'Zoom out'
-                },
-                'layers': {
-                    'header': 'Map Layers',
-                    'title': 'Layers',
-//                    'Bing Roads'},
-//        {'layer':
-//                    BingAerial, 'name': 'Bing Aerial'},
-//        {'layer': BingAerialWithLabels, 'name': 'Bing Aerial With Labels'}
-//        
-                    'overlays': 'OverLays',
-                    'baselayers': 'BaseLayers',
-                    'notes': 'Notes',
-                    'Subwatersheds': 'Subwatersheds',
-                    'Watersheds': 'Watersheds',
-                    'cvcsubwatersheds': 'Subwatersheds',
-                    'cvcwatersheds': 'Watersheds',
-                    'parks': 'Parks',
-                    'conservation_areas': 'Conservation Areas',
-                    'data': 'Data',
-                    "Credit River Parks": "Credit River Parks",
-                    'golf_courses': 'Golf Courses',
-                    'peel_community_centres': 'Community Centres',
-                    "Conservation": "Conservation",
-                    "credit_river": "Credit River",
-                    "credit_river_head_waters": "Credit River Head Waters",
-                    "credit_valley_conservation": "Credit Valley Conservation",
-                    "creditriverheadwaters": "Credit River Head Waters",
-                    "creditvalleyprovincialpark": "Credit Valley Provincial Park",
-                    "creditvalleytrails": "Credit Valley Trails",
-                    "peel_golf_courses": "Peel Golf Courses",
-                    "peel_parks": "Peel Parks",
-                    "peel_playground_pools": "Peel Playground Pools",
-                    "peel_region_trails": "Peel Region Trails",
-                    "trail3_clip": "Trail Head",
-                    "trails": "Trails",
-                    "water_ways": "Water Ways"
-                },
-                'locate': {
-                    'title': 'Show my location'
-                }
-                ,
-                'share': {
-                    'title': 'Share Map Information'
-                },
-                'key': {
-                    'title': 'Show Map Legend'
-                }
-                ,
-                'legend': {
-                    'title': 'Show Map Legend'
-                }
-                ,
-                'note': {
-                    'title': 'Create Note'
-                }
-            },
-            'key': {
-                'title': 'Legend',
-                'tooltip_disabled': 'Map Legend Disabled',
-                'tooltip': 'Show Map Legend'
-            }
-            ,
-            'share': {
-                'title': 'Share',
-                'link': 'Link or HTML',
-                'include_marker': 'include marker',
-                'long_link': 'Link',
-                'short_link': 'Short Link',
-                'embed': 'HTML',
-                'image': 'Image',
-                'format': 'Format',
-                'scale': 'Scale',
-                'image_size': 'Image Size',
-                'paste_html': 'Paste HTML',
-                'custom_dimensions': 'Custom Dimensions',
-                'download': 'Download'
-
-            },
-            'site': {
-                'createnote_disabled_tooltip': 'Create Note Disabled',
-                'createnote_tooltip': 'Create Note'
-            }
-        }
-    }
-};
+var leftSidebar;
 
 
 
@@ -309,21 +217,28 @@ window.onload = function() {
 
 //       
 //    
-    var MySidebarControl = L.Control.extend({
+    var leftsidebarControl = L.Control.extend({
         options: {
             position: 'topleft'
+
         },
         onAdd: function(map) {
             // create the control container with a particular class name
-            var container = L.DomUtil.create();
-
-            // ... initialize other DOM elements, add listeners, etc.
-
+            var container = L.DomUtil.create('div', 'leftsidebar-control');
+            L.DomEvent
+                    .addListener(container, 'click', L.DomEvent.stopPropagation)
+                    .addListener(container, 'click', L.DomEvent.preventDefault)
+                    .addListener(container, 'click', function() {
+                        ShowLeftSideBar();
+                    });
+            var controlUI = L.DomUtil.create('div', 'leftsidebar-close-control hidden', container);
+            controlUI.title = 'Show Left Side Bar';
             return container;
         }
     });
 
-    map.addControl(new MySidebarControl());
+    map.addControl(new leftsidebarControl());
+
 
 //    var popup = L.popup();
 //
@@ -338,6 +253,7 @@ window.onload = function() {
 
     var position = $('html').attr('dir') === 'rtl' ? 'topleft' : 'topright';
     L.MAP2U.zoom({position: position}).addTo(map);
+
     L.control.locate({
         position: position,
         strings: {
@@ -348,7 +264,7 @@ window.onload = function() {
     L.control.scale().addTo(map);
     mouseposition = L.control.mousePosition({'emptyString': '', 'position': 'bottomleft'}).addTo(map);
 
-    var leftSidebar = L.control.sidebar('sidebar-left', {
+    leftSidebar = L.control.sidebar('sidebar-left', {
         position: 'left'
     });
     map.addControl(leftSidebar);
@@ -367,6 +283,11 @@ window.onload = function() {
     });
     layersControl.addTo(map);
 
+    L.MAP2U.shapefile_upload({position: position,
+        sidebar: rightSidebar,
+        'short': true
+    }).addTo(map);
+
     L.MAP2U.legend({
         position: position,
         sidebar: rightSidebar
@@ -376,6 +297,8 @@ window.onload = function() {
         sidebar: rightSidebar,
         'short': true
     }).addTo(map);
+
+
     L.MAP2U.note({
         position: position,
         sidebar: rightSidebar
@@ -417,7 +340,7 @@ window.onload = function() {
         }
     });
 
-    map.drawControl=drawControl;
+    map.drawControl = drawControl;
     map.addControl(drawControl);
 
     map.on('draw:created', function(e) {
@@ -581,6 +504,16 @@ window.onload = function() {
         leftSidebar.toggle();
     }, 500);
 
+// if close left sidebar, then show sidebar controller icon
+    $(".sonata-bc div.leaflet-sidebar.left a.close").click(function() {
+        if ($(".leaflet-sidebar.left").css('left') === 0 || $(".leaflet-sidebar.left").css('left') === '0px') {
+            $(".sonata-bc .leftsidebar-close-control").removeClass("hidden");
+            $(".sonata-bc .leftsidebar-close-control").show();
+        } else {
+
+            $(".sonata-bc .leftsidebar-close-control").hide();
+        }
+    });
 
 //        setTimeout(function () {
 //            rightSidebar.toggle();
@@ -1228,4 +1161,20 @@ function saveuserdraw() {
         var position = map.containerPointToLatLng(layer._originalPoints[i]);
         alert("Lat, Lon : " + position.lng.toFixed(3) + "," + position.lat.toFixed(3));
     }
+}
+
+
+function ShowLeftSideBar() {
+    if ($(".leaflet-sidebar.left").css('left') === 0 || $(".leaflet-sidebar.left").css('left') === '0px') {
+
+        $(".sonata-bc .leftsidebar-close-control").show();
+    } else {
+
+        $(".sonata-bc .leftsidebar-close-control").hide();
+    }
+
+    setTimeout(function() {
+        leftSidebar.toggle();
+    }, 500);
+
 }
