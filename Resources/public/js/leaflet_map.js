@@ -1007,6 +1007,42 @@ window.onload = function() {
 //
 //        OSM.router.load();
 
+
+            $.ajax({
+                url: Routing.generate('leaflet_userlayers'),
+                method: 'GET',
+                success: function(response) {
+                    var result=JSON.parse(response);
+                  //  alert(result.success===true);
+                    if(result.success===true) {
+                        
+                    //    alert(JSON.stringify(result.layers));
+                       // alert(result.layers.length);
+                       var keys = Object.keys(result.layers).map(function(k) {
+                           
+                            return k;
+                        });
+
+                     // alert(keys.length + "," + keys[0]);
+                       
+                        for(var k=0;k< keys.length;k++)
+                        {
+                         //  alert(keys[k]);
+                         //   alert(JSON.stringify(result.layers[keys[k]]));
+                            var layer=result.layers[keys[k]];
+                          //  alert(layer.id);
+                            map.dataLayers[map.dataLayers.length] = {'layer': null, 'layer_id':layer.id, title:layer.layerTitle,'name': layer.layerName, type: 'shapefile_topojson'};
+                        }
+                        layersControl.refreshOverlays();
+
+                    }
+                    
+                  //  alert(JSON.stringify(result.layers));
+                    //  alert(JSON.stringify(html));
+                }
+            });
+
+
     $(".search_form").on("submit", function(e) {
         e.preventDefault();
 //    $("header").addClass("closed");
