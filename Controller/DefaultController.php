@@ -168,8 +168,9 @@ class DefaultController extends Controller {
     $id = $request->get("id");
     $type = $request->get("type");
 
-    // data path for sld file and uploaded shapefiles
-    $data_path = $this->get('kernel')->getRootDir() . '/../Data';
+    // shapefiles path for uploaded shapefiles
+    $shapefiles_path = $this->get('kernel')->getRootDir() . '/../Data';
+
 
     if (!$user) {
       return new Response(\json_encode(array('success' => false, 'message' => 'Please Login first!')));
@@ -186,7 +187,7 @@ class DefaultController extends Controller {
           $geoms = array();
           $message = '';
           $success = true;
-          $json = '';
+
           foreach ($layers as $layer) {
             $geoms[$layer->getId()] = array();
             $layers_data[$layer->getId()] = array();
@@ -195,12 +196,12 @@ class DefaultController extends Controller {
             $layers_data[$layer->getId()]['layerName'] = $layer->getLayerName();
             $layers_data[$layer->getId()]['layerShowInSwitcher'] = $layer->getLayerShowInSwitcher();
             $layers_data[$layer->getId()]['shapefileName'] = $layer->getUseruploadshapefile()->getShapefileName();
-            $filename=$layer->getUseruploadshapefile()->getShapefileName();
+            $filename = $layer->getUseruploadshapefile()->getShapefileName();
             if ($layer->getTopojsonOnly() === true && $user) {
 
               $geoms[$layer->getId()]['type'] = "topojsonfile";
-              if (file_exists($data_path . '/shapefiles/' . $user->getId() . '/usershapefile-' . $layer->getUseruploadshapefile()->getId().'.json')) {
-                $the_geom = file_get_contents($data_path . '/shapefiles/' . $user->getId() . '/usershapefile-' . $layer->getUseruploadshapefile()->getId().'.json');
+              if (file_exists($shapefiles_path . '/shapefiles/' . $user->getId() . '/usershapefile-' . $layer->getUseruploadshapefile()->getId() . '.json')) {
+                $the_geom = file_get_contents($shapefiles_path . '/shapefiles/' . $user->getId() . '/usershapefile-' . $layer->getUseruploadshapefile()->getId() . '.json');
                 $geoms[$layer->getId()]['geom'] = $the_geom;
               }
               else {
@@ -220,21 +221,34 @@ class DefaultController extends Controller {
             }
           }
 
-          if ($layers[0]->getDefaultSldName() && file_exists($data_path . '/sld/' . $layers[0]->getDefaultSldName())) {
-            //    echo $layers[0]->getDefaultSldName();
-
-            $sldfile_content = file_get_contents($data_path . '/sld/' . $layers[0]->getDefaultSldName());
-            $sldstring_temp = str_replace('ogc:', '', $sldfile_content);
-            $sldstring = str_replace('sld:', '', $sldstring_temp);
-            $sldxml = simplexml_load_string($sldstring);
-
-            $json = json_encode($sldxml);
-          }
-          return new Response(\json_encode(array('success' => $success,'type'=>$type, 'filename'=>$filename, 'message' => $message, 'layers' => $layers_data, 'sld' => $json, 'data' => $geoms)));
+          $json = $this->getSldContent($layers[0]->getDefaultSldName());
+          return new Response(\json_encode(array('success' => $success, 'type' => $type, 'filename' => $filename, 'message' => $message, 'layers' => $layers_data, 'sld' => $json, 'data' => $geoms)));
         }
       }
     }
     return new Response(\json_encode(array('success' => true, 'message' => 'User draw name  not exist')));
+  }
+  /* Params sld file name $string
+   * return sld file content as json format
+   * 
+   */
+  private function getSldContent($sld_filename) {
+    // sld path for sld file
+    $sld_path = $this->get('kernel')->locateResource('@Map2uCoreBundle') . '/Data';
+    if (isset($sld_filename) && $sld_filename != '' && file_exists($sld_path . '/sld/' . $sld_filename)) {
+      //    echo $layers[0]->getDefaultSldName();
+      // read data from sld file
+      $sldfile_content = file_get_contents($sld_path . '/sld/' . $sld_filename);
+      
+      // remove prefix ogc:
+      $sldstring_temp = str_replace('ogc:', '', $sldfile_content);
+      // remove prefix sld:
+      $sldstring = str_replace('sld:', '', $sldstring_temp);
+      $sldxml = simplexml_load_string($sldstring);
+      $json = json_encode($sldxml);
+      return $json;
+    }
+    return '{}';
   }
 
 }
