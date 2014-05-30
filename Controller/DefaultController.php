@@ -250,5 +250,4 @@ class DefaultController extends Controller {
     }
     return '{}';
   }
-
 }

@@ -360,6 +360,8 @@ window.onload = function() {
 
         //   alert(JSON.stringify(layer.toGeoJSON()));
         layer.on('mousedown', function(e) {
+            alert(map.drawControl._toolbars.edit._activeMode.buttonIndex);
+            var feature = e.target;
             if (e.originalEvent.button === 2)
             {
                 var radius = 0;
@@ -396,27 +398,30 @@ window.onload = function() {
                         'weight': 2,
                         'opacity': 1
                     };
+                    if (feature !== undefined) {
+                        if (feature.selected === false || feature.selected === undefined) {
+                            feature.setStyle(highlight);
+                            feature.selected = true;
+                            if (document.getElementById('geometries_selected') !== null && document.getElementById('geometries_selected') !== undefined) {
+                                var selectBoxOption = document.createElement("option");//create new option 
+                                selectBoxOption.value = feature.id;//set option value 
+                                selectBoxOption.text = feature.name;//set option display text 
+                                document.getElementById('geometries_selected').add(selectBoxOption, null);
+                            }
+                        }
+                        else
+                        {
 
-                    if (feature.selected === false || feature.selected === undefined) {
-                        feature.setStyle(highlight);
-                        feature.selected = true;
-                        var selectBoxOption = document.createElement("option");//create new option 
-                        selectBoxOption.value = feature.id;//set option value 
-                        selectBoxOption.text = feature.name;//set option display text 
-                        document.getElementById('geometries_selected').add(selectBoxOption, null);
-                    }
-                    else
-                    {
-
-                        feature.setStyle({
-                            'color': "blue",
-                            'weight': 5,
-                            'opacity': 0.6
-                        });
-                        feature.selected = false;
-                        $("#geometries_selected option[value='" + feature.id + "']").each(function() {
-                            $(this).remove();
-                        });
+                            feature.setStyle({
+                                'color': "blue",
+                                'weight': 5,
+                                'opacity': 0.6
+                            });
+                            feature.selected = false;
+                            $("#geometries_selected option[value='" + feature.id + "']").each(function() {
+                                $(this).remove();
+                            });
+                        }
                     }
                 }
             }
@@ -1008,39 +1013,39 @@ window.onload = function() {
 //        OSM.router.load();
 
 
-            $.ajax({
-                url: Routing.generate('leaflet_userlayers'),
-                method: 'GET',
-                success: function(response) {
-                    var result=JSON.parse(response);
-                  //  alert(result.success===true);
-                    if(result.success===true) {
-                        
-                    //    alert(JSON.stringify(result.layers));
-                       // alert(result.layers.length);
-                       var keys = Object.keys(result.layers).map(function(k) {
-                           
-                            return k;
-                        });
+    $.ajax({
+        url: Routing.generate('leaflet_userlayers'),
+        method: 'GET',
+        success: function(response) {
+            var result = JSON.parse(response);
+            //  alert(result.success===true);
+            if (result.success === true) {
 
-                     // alert(keys.length + "," + keys[0]);
-                       
-                        for(var k=0;k< keys.length;k++)
-                        {
-                         //  alert(keys[k]);
-                         //   alert(JSON.stringify(result.layers[keys[k]]));
-                            var layer=result.layers[keys[k]];
-                          //  alert(layer.id);
-                            map.dataLayers[map.dataLayers.length] = {'layer': null, 'layer_id':layer.id, title:layer.layerTitle,'name': layer.layerName, type: 'shapefile_topojson'};
-                        }
-                        layersControl.refreshOverlays();
+                //    alert(JSON.stringify(result.layers));
+                // alert(result.layers.length);
+                var keys = Object.keys(result.layers).map(function(k) {
 
-                    }
-                    
-                  //  alert(JSON.stringify(result.layers));
-                    //  alert(JSON.stringify(html));
+                    return k;
+                });
+
+                // alert(keys.length + "," + keys[0]);
+
+                for (var k = 0; k < keys.length; k++)
+                {
+                    //  alert(keys[k]);
+                    //   alert(JSON.stringify(result.layers[keys[k]]));
+                    var layer = result.layers[keys[k]];
+                    //  alert(layer.id);
+                    map.dataLayers[map.dataLayers.length] = {'layer': null, 'layer_id': layer.id, title: layer.layerTitle, 'name': layer.layerName, type: 'shapefile_topojson'};
                 }
-            });
+                layersControl.refreshOverlays();
+
+            }
+
+            //  alert(JSON.stringify(result.layers));
+            //  alert(JSON.stringify(html));
+        }
+    });
 
 
     $(".search_form").on("submit", function(e) {
@@ -1049,14 +1054,15 @@ window.onload = function() {
         var query = $(this).find("input[name=query]").val();
         if (query) {
 
-            alert("search?query=" + encodeURIComponent(query));
+            //  alert("search?query=" + encodeURIComponent(query));
 
             var HOST_URL = 'http://open.mapquestapi.com';
 
             var SAMPLE_POST = HOST_URL + '/nominatim/v1/search.php?format=json';
             var searchType = '';
-            var safe = SAMPLE_POST + "&q=43.779184567693,-79.298807618514";//westminster+abbey";
-            alert(safe);
+            var safe = SAMPLE_POST + "&q=" + encodeURIComponent(query);//westminster+abbey";
+            //         var safe = SAMPLE_POST + "&q=43.779184567693,-79.298807618514";//westminster+abbey";
+            //     alert(safe);
             $.ajax({
                 url: safe,
                 method: 'GET',

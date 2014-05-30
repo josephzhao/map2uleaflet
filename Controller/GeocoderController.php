@@ -20,7 +20,7 @@ class GeocoderController extends Controller {
   /**
    * Geocoder controller.
    *
-   * @Route("/search" , name="map2uleaflet_geocoder_search")
+   * @Route("/search" , name="map2uleaflet_geocoder_search", options={"expose"=true})
    *  @Method("GET")
    * @Template()
    */
@@ -29,40 +29,53 @@ class GeocoderController extends Controller {
 
     $query = $request->get('query');
     $latlon = $this->normalize_params($query);
-    
+
     $sources = array();
     $params = array();
     if (isset($latlon['lat']) && !empty($latlon['lat']) && isset($latlon['lon']) && !empty($latlon['lon'])) {
       array_push($sources, "latlon");
-      $params=array_merge($params, array('lat'=>$latlon['lat'],'lon'=>$latlon['lon']));
+      $params = array_merge($params, array('lat' => $latlon['lat'], 'lon' => $latlon['lon']));
       array_push($sources, "osm_nominatim_reverse");
       if (isset($GEONAMES_USERNAME) && !empty($GEONAMES_USERNAME)) {
         array_push($sources, "geonames_reverse");
       }
     }
     elseif (preg_match("/^\d{5}(-\d{4})?$/", $query)) {
-      $params=array_merge($params, array('query'=>$query));
+      $params = array_merge($params, array('query' => $query));
       array_push($sources, "us_postcode");
       array_push($sources, "osm_nominatim");
     }
     elseif (preg_match("/^(GIR 0AA|[A-PR-UWYZ]([0-9]{1,2}|([A-HK-Y][0-9]|[A-HK-Y][0-9]([0-9]|[ABEHMNPRV-Y]))|[0-9][A-HJKS-UW])\s*[0-9][ABD-HJLNP-UW-Z]{2})$/i", $query)) {
-      $params=array_merge($params, array('query'=>$query));
+      $params = array_merge($params, array('query' => $query));
       array_push($sources, "uk_postcode");
       array_push($sources, "osm_nominatim");
     }
     elseif (preg_match("/^[A-Z]\d[A-Z]\s*\d[A-Z]\d$/i", $query)) {
       array_push($sources, "ca_postcode");
-      $params=array_merge($params, array('query'=>$query));
+      $params = array_merge($params, array('query' => $query));
       array_push($sources, "osm_nominatim");
     }
     else {
       array_push($sources, "osm_nominatim");
-      $params=array_merge($params, array('query'=>$query));
+      $params = array_merge($params, array('query' => $query));
       if (isset($GEONAMES_USERNAME) && !empty($GEONAMES_USERNAME)) {
         array_push($sources, "geonames");
       }
     }
-    return array('sources' => $sources,'params'=>$params);
+    var_dump($sources);
+    var_dump($params);
+    foreach($sources as $source)
+    {
+      if($source==='ca_postcode') {
+        $return=$this->search_ca_postcode($params['query']);
+        var_dump($return);
+      }
+      if($source==='osm_nominatim') {
+          $return=$this->search_osm_nominatim($params['query']);
+          var_dump($return);
+      }
+    }
+    return array('sources' => $sources, 'params' => $params);
     var_dump($sources);
 
     //  format=json&
@@ -134,7 +147,7 @@ class GeocoderController extends Controller {
       return $this->render('Map2uLeafletBundle:Geocoder:error.html.twig', array('error' => $error));
     }
     else {
-      $results = array('lat' => $lat, 'lon' => $lon, 'minlat'=>$minlat, 'minlon'=>$minlon, 'maxlat'=>$maxlat, 'maxlon'=>$maxlon,'zoom' => $request->get('zoom'), 'name' => "$lat,$lon");
+      $results = array('lat' => $lat, 'lon' => $lon, 'minlat' => $minlat, 'minlon' => $minlon, 'maxlat' => $maxlat, 'maxlon' => $maxlon, 'zoom' => $request->get('zoom'), 'name' => "$lat,$lon");
       return $this->render('Map2uLeafletBundle:Geocoder:results.html.twig', array('results' => $results));
     }
   }
@@ -145,6 +158,29 @@ class GeocoderController extends Controller {
 
   public function search_uk_postcode() {
     
+  }
+
+  private function search_ca_postcode($query) {
+    $results = array();
+    try {
+      # ask geocoder.ca (note - they have a per-day limit)
+      $response = $this->fetch_xml("http://geocoder.ca/?geoit=XML&postal=" . $this->escape_query($query));
+      $error = trim((string) $response->error);
+      # parse the response
+      if (empty($error) || strlen($error) === 0) {
+        $results = array_merge($results, array(
+          'lat' => (string) $response->latt,
+          'lon' => (string) $response->longt,
+          'zoom' => 'POSTCODE_ZOOM',
+          'name' => strtoupper($query)
+        ));
+      }
+      return  $results;
+//      return $this->render('Map2uLeafletBundle:Geocoder:results.html.twig', array('results' => $results));
+    } catch (Exception $ex) {
+      $error = "Error contacting geocoder.ca: " . $ex;
+      return $this->render('Map2uLeafletBundle:Geocoder:error.html.twig', array('error' => $error));
+    }
   }
 
   /**
@@ -161,15 +197,15 @@ class GeocoderController extends Controller {
       # ask geocoder.ca (note - they have a per-day limit)
       $response = $this->fetch_xml("http://geocoder.ca/?geoit=XML&postal=" . $this->escape_query($query));
 
-      $error=trim((string)$response->error);
+      $error = trim((string) $response->error);
       # parse the response
-      if (empty($error) || strlen($error)===0) {
-        $results=array_merge($results, array(
-            'lat' => (string) $response->latt,
-            'lon' => (string) $response->longt,
-            'zoom' => 'POSTCODE_ZOOM',
-            'name' => strtoupper($query)
-          ));
+      if (empty($error) || strlen($error) === 0) {
+        $results = array_merge($results, array(
+          'lat' => (string) $response->latt,
+          'lon' => (string) $response->longt,
+          'zoom' => 'POSTCODE_ZOOM',
+          'name' => strtoupper($query)
+        ));
       }
       return $this->render('Map2uLeafletBundle:Geocoder:results.html.twig', array('results' => $results));
     } catch (Exception $ex) {
@@ -177,7 +213,10 @@ class GeocoderController extends Controller {
       return $this->render('Map2uLeafletBundle:Geocoder:error.html.twig', array('error' => $error));
     }
   }
-
+private function search_osm_nominatim($query) {
+     $response = $this->fetch_xml("http://open.mapquestapi.com/nominatim/v1/search?format=xml&q=".$this->escape_query($query));
+    return $response;//
+}
   /**
    * Geocoder controller.
    *
@@ -186,8 +225,7 @@ class GeocoderController extends Controller {
   public function search_osm_nominatimAction(Request $request) {
     $query = $request->get('query');
     $results = array();
- //   var_dump($request);
-
+    //   var_dump($request);
     //    # get query parameters
 //    query = params[:query]
 //    minlon = params[:minlon]
@@ -278,7 +316,6 @@ class GeocoderController extends Controller {
       $results = array('lat' => $lat, 'lon' => $lon, 'zoom' => $request->get('zoom'), 'name' => "$lat,$lon");
       return $this->render('Map2uLeafletBundle:Geocoder:results.html.twig', array('results' => $results));
     }
-
   }
 
   /**
@@ -384,8 +421,8 @@ class GeocoderController extends Controller {
     }
     elseif ($latlon = preg_match_all("/^\s*([+-]?\d+(\.\d*)?)\s*[\s,]\s*([+-]?\d+(\.\d*)?)\s*$/", $query, $matches)) {
 
-   //   var_dump($matches);
-      
+      //   var_dump($matches);
+
       return array('lat' => floatval($matches[1][0]), 'lon' => floatval($matches[3][0]));
     }
   }
