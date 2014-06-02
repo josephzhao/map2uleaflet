@@ -359,11 +359,39 @@ window.onload = function() {
         }
 
         //   alert(JSON.stringify(layer.toGeoJSON()));
-        layer.on('mousedown', function(e) {
-            alert(map.drawControl._toolbars.edit._activeMode.buttonIndex);
+        layer.on('click', function(e) {
             var feature = e.target;
-            if (e.originalEvent.button === 2)
-            {
+            if (map.drawControl._toolbars.edit._activeMode === null) {
+                var highlight = {
+                    'color': '#333333',
+                    'weight': 2,
+                    'opacity': 1
+                };
+                if (feature.selected === false || feature.selected === undefined) {
+                    feature.setStyle(highlight);
+                    feature.selected = true;
+                    var selectBoxOption = document.createElement("option");//create new option 
+                    selectBoxOption.value = feature.id;//set option value 
+                    selectBoxOption.text = feature.name;//set option display text 
+                    document.getElementById('geometries_selected').add(selectBoxOption, null);
+                }
+                else
+                {
+
+                    feature.setStyle({
+                        'color': "blue",
+                        'weight': 5,
+                        'opacity': 0.6
+                    });
+                    feature.selected = false;
+                    $("#geometries_selected option[value='" + feature.id + "']").each(function() {
+                        $(this).remove();
+                    });
+                }
+
+            }
+            else if (map.drawControl._toolbars.edit._activeMode && map.drawControl._toolbars.edit._activeMode.handler.type === 'edit') {
+
                 var radius = 0;
                 if (e.target.type === 'circle')
                 {
@@ -391,40 +419,8 @@ window.onload = function() {
                         //  alert(JSON.stringify(html));
                     }
                 });
-            } else {
-                if (e.originalEvent.button === 0) {
-                    var highlight = {
-                        'color': '#333333',
-                        'weight': 2,
-                        'opacity': 1
-                    };
-                    if (feature !== undefined) {
-                        if (feature.selected === false || feature.selected === undefined) {
-                            feature.setStyle(highlight);
-                            feature.selected = true;
-                            if (document.getElementById('geometries_selected') !== null && document.getElementById('geometries_selected') !== undefined) {
-                                var selectBoxOption = document.createElement("option");//create new option 
-                                selectBoxOption.value = feature.id;//set option value 
-                                selectBoxOption.text = feature.name;//set option display text 
-                                document.getElementById('geometries_selected').add(selectBoxOption, null);
-                            }
-                        }
-                        else
-                        {
-
-                            feature.setStyle({
-                                'color': "blue",
-                                'weight': 5,
-                                'opacity': 0.6
-                            });
-                            feature.selected = false;
-                            $("#geometries_selected option[value='" + feature.id + "']").each(function() {
-                                $(this).remove();
-                            });
-                        }
-                    }
-                }
             }
+            ;
         });
 
 
