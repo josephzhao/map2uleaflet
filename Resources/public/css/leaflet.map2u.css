@@ -75,6 +75,10 @@ and open the template in the editor.
 .sonata-bc #sidebar .search_form {  margin-bottom:0px;padding-bottom:0px;}
 .sonata-bc #sidebar h3,.sonata-bc #sidebar h4{margin-top:20px;margin-bottom:10px;font-size:13px}
 .sonata-bc #sidebar .icon.close{float:right;cursor:pointer}
+.sonata-bc ul#shapefilelist-ul > img {
+    cursor:pointer
+}
+                    
 .sonata-bc .welcome{display:none}
 .sonata-bc .overlay-sidebar #sidebar{position:absolute;z-index:1000;height:auto;border-bottom-right-radius:5px;overflow:hidden}
 .sonata-bc .overlay-sidebar #sidebar .welcome{display:block}
