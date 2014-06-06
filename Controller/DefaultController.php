@@ -258,7 +258,8 @@ class DefaultController extends Controller {
 
   private function getSldContent($sld_filename) {
     // sld path for sld file
-    $sld_path = $this->get('kernel')->locateResource('@Map2uCoreBundle') . '/Data';
+    $sld_path = $this->get('kernel')->getRootDir() . '/../Data';;
+   
     if (isset($sld_filename) && $sld_filename != '' && file_exists($sld_path . '/sld/' . $sld_filename)) {
       //    echo $layers[0]->getDefaultSldName();
       // read data from sld file
