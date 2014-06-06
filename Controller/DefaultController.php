@@ -97,7 +97,7 @@ class DefaultController extends Controller {
           ->createQuery('SELECT p FROM Map2uCoreBundle:UploadShapefileLayer p where  p.published = true ORDER BY p.layerName ASC')
           ->getResult();
     }
-    var_dump($layers);
+ //   var_dump($layers);
     if ($layers) {
       $layers_data = array();
       $conn = $this->get('database_connection');
@@ -176,7 +176,7 @@ class DefaultController extends Controller {
       return new Response(\json_encode(array('success' => false, 'message' => 'Please Login first!')));
     }
     else {
-      if ($type === 'topojson') {
+      if ($type === 'topojson' || $type === 'shapefile_topojson') {
 
         $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UploadShapefileLayer p where p.id=' . $id)
             ->getResult();
@@ -225,13 +225,37 @@ class DefaultController extends Controller {
           return new Response(\json_encode(array('success' => $success, 'type' => $type, 'filename' => $filename, 'message' => $message, 'layers' => $layers_data, 'sld' => $json, 'data' => $geoms)));
         }
       }
+      if ($type === 'geojson') {
+        if (intval($id) === -1) {
+          $geoms = $this->getUserDrawGeometries();
+          return new Response(\json_encode(array('success' => true, 'message' => 'User draw name  not exist', 'type' => 'geojson', 'filename' => 'draw', 'data' => $geoms)));
+        }
+      }
     }
     return new Response(\json_encode(array('success' => true, 'message' => 'User draw name  not exist')));
   }
+
+  /* Params none
+   * return user draw geometries as json format
+   * 
+   */
+
+  private function getUserDrawGeometries() {
+    $user = $this->getUser();
+    if (!$user) {
+      return null;
+    }
+    $conn = $this->get('database_connection');
+    $tsql = "select a.id as ogc_fid,a.id as ogc_id, a.name as keyname , a.geom_type , a.radius , a.buffer ,st_asgeojson(b.the_geom) as feature from userdrawgeometries a, userdrawgeometries_geom b where a.user_id=" . $user->getId() . " and a.id=b.userdrawgeometries_id";
+    $stmt = $conn->fetchAll($tsql);
+    return $stmt;
+  }
+
   /* Params sld file name $string
    * return sld file content as json format
    * 
    */
+
   private function getSldContent($sld_filename) {
     // sld path for sld file
     $sld_path = $this->get('kernel')->locateResource('@Map2uCoreBundle') . '/Data';
@@ -239,7 +263,7 @@ class DefaultController extends Controller {
       //    echo $layers[0]->getDefaultSldName();
       // read data from sld file
       $sldfile_content = file_get_contents($sld_path . '/sld/' . $sld_filename);
-      
+
       // remove prefix ogc:
       $sldstring_temp = str_replace('ogc:', '', $sldfile_content);
       // remove prefix sld:
@@ -250,4 +274,5 @@ class DefaultController extends Controller {
     }
     return '{}';
   }
+
 }

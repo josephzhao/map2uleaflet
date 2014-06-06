@@ -29,6 +29,8 @@ and open the template in the editor.
 .icon.close:hover{background-position:-200px -20px}
 .icon.shapefile-upload{background-position:0px -20px}
 .control-button.disabled .icon.shapefile-upload{background-position:0px -40px}
+.icon.shapefile-list{background-position:-20px -20px}
+.control-button.disabled .icon.shapefile-list{background-position:-20px -40px}
 
 .icon.check{background-position:-220px 0}
 .icon.note{background-position:-240px 0}
@@ -63,6 +65,7 @@ and open the template in the editor.
 .control-locate .control-button,.control-share .control-button{border-radius:0 0 0 4px}
 
 .control-shapefile-upload .control-button{margin-bottom:0;border-radius:0}
+.control-shapefile-list .control-button{margin-bottom:0;border-radius:0}
 
 
 .sonata-bc #leaflet_content{overflow:hidden;position:absolute;top:125px;bottom:0;width:100%}

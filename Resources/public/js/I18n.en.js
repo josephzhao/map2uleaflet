@@ -75,6 +75,9 @@ I18n.translations = {'en': {
             'shapefile-upload': {
                         'title':'Upload Shapefile'
             },
+            'shapefile-list': {
+                        'title':'Shapefile List'
+            },
             'share': {
                 'title': 'Share',
                 'link': 'Link or HTML',
@@ -94,6 +97,8 @@ I18n.translations = {'en': {
             'site': {
                 'shapefile_upload_disabled_tooltip': 'Upload Shapefile Disabled',
                 'shapefile_upload_tooltip': 'Upload Shapefile',
+                'shapefile_list_disabled_tooltip': 'Shapefile List Disabled',
+                'shapefile_list_tooltip': 'Shapefile List',
                 'createnote_disabled_tooltip': 'Create Note Disabled',
                 'createnote_tooltip': 'Create Note'
             }

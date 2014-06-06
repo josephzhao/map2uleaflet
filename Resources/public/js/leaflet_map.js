@@ -288,6 +288,11 @@ window.onload = function() {
         'short': true
     }).addTo(map);
 
+    L.MAP2U.shapefile_list({position: position,
+        sidebar: rightSidebar,
+        'short': true
+    }).addTo(map);
+
     L.MAP2U.legend({
         position: position,
         sidebar: rightSidebar
@@ -370,10 +375,12 @@ window.onload = function() {
                 if (feature.selected === false || feature.selected === undefined) {
                     feature.setStyle(highlight);
                     feature.selected = true;
-                    var selectBoxOption = document.createElement("option");//create new option 
-                    selectBoxOption.value = feature.id;//set option value 
-                    selectBoxOption.text = feature.name;//set option display text 
-                    document.getElementById('geometries_selected').add(selectBoxOption, null);
+                    if (document.getElementById('geometries_selected')) {
+                        var selectBoxOption = document.createElement("option");//create new option 
+                        selectBoxOption.value = feature.id;//set option value 
+                        selectBoxOption.text = feature.name;//set option display text 
+                        document.getElementById('geometries_selected').add(selectBoxOption, null);
+                    }
                 }
                 else
                 {
@@ -485,20 +492,67 @@ window.onload = function() {
         var layers = e.layers;
 
         layers.eachLayer(function(layer) {
-            if (layer.label)
-                layer.label.setLatLng(layer.getBounds().getCenter());
-            if (layer instanceof L.Marker) {
-                //Do marker specific actions here
+            if (confirm("Modify user draw geometry id:" + layer.id + ",name:" + layer.name + "?"))
+            {
+
+                var itemgeojson = layer.toGeoJSON();
+                var radius = 0;
+                if (layer._mRadius !== undefined)
+                    radius = layer._mRadius;
+                $.ajax({
+                    url: Routing.generate('draw_save'),
+                    method: 'POST',
+                    data: {
+                        id: layer.id,
+                        name: layer.name,
+                        feature: itemgeojson,
+                        type: layer.type,
+                        radius: radius
+                    },
+                    success: function(response) {
+                        var results = JSON.parse(response);
+                        if (results.success === false)
+                            alert(results.message);
+                        else {
+                            //    alert("Geometry has been successfully updated!");
+                        }
+                    }
+                });
             }
         });
     });
 
     map.on('draw:deleted', function(e) {
         var layers = e.layers;
-
         layers.eachLayer(function(layer) {
+            if (confirm("Delete user draw item id:" + layer.id + ",name:" + layer.name + "?"))
+            {
 
+                $.ajax({
+                    url: Routing.generate('draw_delete'),
+                    method: 'POST',
+                    data: {
+                        id: layer.id
+                    },
+                    success: function(response) {
+                        var result = JSON.parse(response);
+                        if (result.success === true) {
+
+                            $("#geometries_select option[value='" + layer.id + "']").each(function() {
+                                $(this).remove();
+                            });
+                            $("#geometries_selected option[value='" + layer.id + "']").each(function() {
+                                $(this).remove();
+                            });
+                        }
+                        else
+                            alert(result.message);
+                        //  alert(JSON.stringify(html));
+                    }
+                });
+            }
         });
+
     });
 
     setTimeout(function() {
@@ -1015,10 +1069,11 @@ window.onload = function() {
         success: function(response) {
             var result = JSON.parse(response);
             //  alert(result.success===true);
-            if (result.success === true) {
+            if (result.success === true && result.layers) {
 
                 //    alert(JSON.stringify(result.layers));
                 // alert(result.layers.length);
+                
                 var keys = Object.keys(result.layers).map(function(k) {
 
                     return k;
@@ -1034,6 +1089,8 @@ window.onload = function() {
                     //  alert(layer.id);
                     map.dataLayers[map.dataLayers.length] = {'layer': null, 'layer_id': layer.id, title: layer.layerTitle, 'name': layer.layerName, type: 'shapefile_topojson'};
                 }
+                map.dataLayers[map.dataLayers.length] = {'layer': null, 'layer_id': -1, title: "User draw geometries", 'name': 'User draw geometries', type: 'geojson'};
+
                 layersControl.refreshOverlays();
 
             }
@@ -1048,34 +1105,111 @@ window.onload = function() {
         e.preventDefault();
 //    $("header").addClass("closed");
         var query = $(this).find("input[name=query]").val();
-        if (query) {
+        if (query !== undefined && query.trim() !== '') {
 
-            //  alert("search?query=" + encodeURIComponent(query));
 
-            var HOST_URL = 'http://open.mapquestapi.com';
 
-            var SAMPLE_POST = HOST_URL + '/nominatim/v1/search.php?format=json';
-            var searchType = '';
-            var safe = SAMPLE_POST + "&q=" + encodeURIComponent(query);//westminster+abbey";
-            //         var safe = SAMPLE_POST + "&q=43.779184567693,-79.298807618514";//westminster+abbey";
-            //     alert(safe);
-            $.ajax({
-                url: safe,
-                method: 'GET',
-//                data: {
-//                  zoom: map.getZoom(),
-//                  minlon: map.getBounds().getWest(),
-//                  minlat: map.getBounds().getSouth(),
-//                  maxlon: map.getBounds().getEast(),
-//                  maxlat: map.getBounds().getNorth()
-//                },
-                success: function(html) {
-                    alert(html[0].display_name)
-                    //  alert(JSON.stringify(html));
+
+
+
+            var geocoder = new google.maps.Geocoder();
+            geocoder.geocode({'address': query}, function(results, status) {
+
+
+                if (status === google.maps.GeocoderStatus.OK)
+                {
+                    var pt = results[0].geometry.location;
+                    var layers=map.drawnItems.getLayers();
+                    for(var i=layers.length-1;i >=0 ;i--) {
+                        if(layers[i].source!==undefined && layers[i].source === 'searchbox_query') {
+                            map.drawnItems.removeLayer(layers[i]);
+                        }
+                    }
+
+                    var feature = L.marker([pt.lat(), pt.lng()]);
+                    feature.bindLabel(results[0].formatted_address);
+                    feature.id = 0;
+                    feature.name = results[0].formatted_address;
+                    feature.index = map.drawnItems.getLayers().length;
+                    feature.type = 'marker';
+                    feature.source = 'searchbox_query';
+                    feature.on('click', function(e) {
+
+                        if (map.drawControl._toolbars.edit._activeMode === null) {
+
+
+
+                        }
+                        else if (map.drawControl._toolbars.edit._activeMode && map.drawControl._toolbars.edit._activeMode.handler.type === 'edit') {
+
+                            var radius = 0;
+
+                            $.ajax({
+                                url: Routing.generate('draw_' + e.target.type),
+                                method: 'GET',
+                                data: {
+                                    id: e.target.id,
+                                    name: e.target.name,
+                                    radius: radius,
+                                    index: e.target.index
+                                },
+                                success: function(response) {
+                                    if ($('body.sonata-bc #ajax-dialog').length === 0) {
+                                        $('<div class="modal fade" id="ajax-dialog" role="dialog"></div>').appendTo('body');
+                                    } else {
+                                        $('body.sonata-bc #ajax-dialog').html('');
+                                    }
+
+                                    $(response).appendTo($('body.sonata-bc #ajax-dialog'));
+                                    $('#ajax-dialog').modal({show: true});
+                                    $('#ajax-dialog').draggable();
+                                    //  alert(JSON.stringify(html));
+                                }
+                            });
+                        }
+                        ;
+
+
+                    });
+
+                    map.drawnItems.addLayer(feature);
+//                    pt = pt.replace(")", "");
+//                    pt = pt.replace("(", "");
+//                    pt = pt.split(",");
+
                 }
+                ;
+
             });
+
+
+
+//            //  alert("search?query=" + encodeURIComponent(query));
 //
-//function showBasicSearchURL() {
+//            var HOST_URL = 'http://open.mapquestapi.com';
+//
+//            var SAMPLE_POST = HOST_URL + '/nominatim/v1/search.php?format=json';
+//            var searchType = '';
+//            var safe = SAMPLE_POST + "&q=" + encodeURIComponent(query);//westminster+abbey";
+//            //         var safe = SAMPLE_POST + "&q=43.779184567693,-79.298807618514";//westminster+abbey";
+//            //     alert(safe);
+//            $.ajax({
+//                url: safe,
+//                method: 'GET',
+////                data: {
+////                  zoom: map.getZoom(),
+////                  minlon: map.getBounds().getWest(),
+////                  minlat: map.getBounds().getSouth(),
+////                  maxlon: map.getBounds().getEast(),
+////                  maxlat: map.getBounds().getNorth()
+////                },
+//                success: function(html) {
+//                    alert(html[0].display_name)
+//                    //  alert(JSON.stringify(html));
+//                }
+//            });
+////
+////function showBasicSearchURL() {
 //    var safe = SAMPLE_POST + "&q=westminster+abbey";
 //    document.getElementById('divBasicSearchUrl').innerHTML = safe.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 //};
@@ -1146,6 +1280,7 @@ window.onload = function() {
 //}
 //      OSM.router.route("/search?query=" + encodeURIComponent(query) + OSM.formatHash(map));
         } else {
+            alert("search can not be empty!");
 //      OSM.router.route("/" + OSM.formatHash(map));
         }
     });
