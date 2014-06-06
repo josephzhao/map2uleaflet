@@ -89,11 +89,15 @@ and open the template in the editor.
 }      
 
 // show svg map topojson / geojson format with leaflet.d3.js
+svg {
+    position: relative;
+}
+
 .svg-shapefile path {
     fill: #000;
-    fill-opacity: .2;
+    fill-opacity: .3;
     stroke: #fff;
-    stroke-width: 1.5px;
+    stroke-width: 1.2px;
 }
 
 .svg-shapefile path:hover {
