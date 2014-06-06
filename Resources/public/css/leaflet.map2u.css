@@ -52,7 +52,7 @@ and open the template in the editor.
 .tooltip.left .tooltip-arrow{top:50%;right:-5px;margin-top:-5px;border-left-color:white;border-width:5px 0 5px 5px}
 .tooltip.bottom .tooltip-arrow{top:-5px;left:50%;margin-left:-5px;border-bottom-color:white;border-width:0 5px 5px}
 .leaflet-control .control-button{display:block;height:40px;width:40px;background-color:#333;
-    background-color:rgba(0,0,0,0.6);border-radius:4px 0 0 4px;margin-bottom:10px;outline:none
+                                 background-color:rgba(0,0,0,0.6);border-radius:4px 0 0 4px;margin-bottom:10px;outline:none
 }
 .leaflet-control .control-button:hover{background-color:black}
 .leaflet-control .control-button.active{background-color:#9ed485}
@@ -75,10 +75,42 @@ and open the template in the editor.
 .sonata-bc #sidebar .search_form {  margin-bottom:0px;padding-bottom:0px;}
 .sonata-bc #sidebar h3,.sonata-bc #sidebar h4{margin-top:20px;margin-bottom:10px;font-size:13px}
 .sonata-bc #sidebar .icon.close{float:right;cursor:pointer}
-.sonata-bc ul#shapefilelist-ul > img {
-    cursor:pointer
+
+// show shapefile list block
+.sonata-bc #shapefilelist-ul > li {
+    margin-left: -25px;
+    list-style: decimal;
+    list-style-type: decimal;
+    list-style-image: none;
+    list-style-position: outside;
 }
-                    
+.sonata-bc #shapefilelist-ul > li img:hover {
+    cursor: pointer;
+}      
+
+// show svg map topojson / geojson format with leaflet.d3.js
+.svg-shapefile path {
+    fill: #000;
+    fill-opacity: .2;
+    stroke: #fff;
+    stroke-width: 1.5px;
+}
+
+.svg-shapefile path:hover {
+    fill: brown;
+    fill-opacity: .7;
+}
+.place,
+.place-label {
+    fill: #444;
+}
+
+.svg-shapefile text {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 10px;
+    pointer-events: none;
+}
+
 .sonata-bc .welcome{display:none}
 .sonata-bc .overlay-sidebar #sidebar{position:absolute;z-index:1000;height:auto;border-bottom-right-radius:5px;overflow:hidden}
 .sonata-bc .overlay-sidebar #sidebar .welcome{display:block}
