@@ -224,8 +224,8 @@ L.MAP2U.layers = function(options) {
         }
         return $container[0];
     };
-    control.loadTopoJSONLayer = function(id, type, layer) {
-        if (type === 'shapefile_topojson' || type === 'topojson' || type === 'geojson') {
+    control.loadTopoJSONLayer = function(layer) {
+        if (layer.type === 'shapefile_topojson' || layer.type === 'topojson' || layer.type === 'geojson') {
             $.ajax({
                 url: Routing.generate('leaflet_maplayer'),
                 type: 'GET',
@@ -419,7 +419,7 @@ L.MAP2U.layers = function(options) {
                                     }
                                     ;
                                 });
-                                layer = map.drawnItems;
+                                layer.layer = map.drawnItems;
                                 map.drawnItems.addLayer(feature);
                             }
                         });
@@ -430,16 +430,22 @@ L.MAP2U.layers = function(options) {
 
                         //  alert(result.sld);
 
-                        d3.select("#svg-shapefile").remove();
-
-                        $.each(map.dataLayers, function(i) {
-                            if (map.dataLayers[i].type === 'shapefile_topojson') {
-                                map.dataLayers.splice(i, 1);
-                                return false;
-                            }
+                        d3.selectAll("#svg-shapefile").each(function() {
+                            var elt = d3.select(this);
+                           
+                            if (elt.attr("name").toString().toLowerCase() === result.filename.toString().toLowerCase())
+                                elt.remove();
+                            
                         });
+//
+//                        $.each(map.dataLayers, function(i) {
+//                            if (map.dataLayers[i].type === 'shapefile_topojson') {
+//                                map.dataLayers.splice(i, 1);
+//                                return false;
+//                            }
+//                        });
 
-                        $("#leafmap").attr("shapefilename", result.filename);
+                        //    $("#leafmap").attr("shapefilename", result.filename);
                         // alert(result.data.length);
                         var keys = Object.keys(result.data, function(k) {
                             return k;
@@ -456,10 +462,12 @@ L.MAP2U.layers = function(options) {
                             var collection = topojson.feature(json_data, json_data.objects[key]);
                             var geojson_shapefile = new L.D3(collection, {
                                 id: 'svg-shapefile',
-                                //    layer_id: result.layers[keys[k]]['id'],
+                                layer_id: layer.layer_id,
                                 svgClass: 'svg-shapefile',
                                 name: result.filename.toLowerCase(),
                                 showLabels: true,
+                                type:result.type,
+                               
                                 featureAttributes: {
                                     'layer_id': result.layers[keys[k]]['id']
 //                        'class': function(feature) {
@@ -468,7 +476,7 @@ L.MAP2U.layers = function(options) {
                                 }
                             });
                             geojson_shapefile.addTo(map);
-                            layer = geojson_shapefile;
+                            layer.layer = geojson_shapefile;
                             geojson_shapefile.on('click', function(e) {
                                 if (parseInt(e.target.options.layer_id) === parseInt($("select#activelayer_id.layers-ui").val())) {
 
@@ -563,7 +571,7 @@ L.MAP2U.layers = function(options) {
                 error: errorHandler = function() {
                     spinner.stop();
                 },
-                data: {id: id, type: type}
+                data: {id: layer.layer_id, type: layer.type}
             });
         }
     };
@@ -610,12 +618,19 @@ L.MAP2U.layers = function(options) {
                 if (checked) {
                     if (!layer.layer)
                     {
-                        control.loadTopoJSONLayer(layer.layer_id, layer.type, layer.layer);
+                        control.loadTopoJSONLayer(layer);
 
                     }
                     else
                         map.addLayer(layer.layer);
                 } else {
+                    if(layer.type==='shapefile_topojson') {
+                        
+                        
+                    }
+                    if(layer.type==='geojson' || layer.name==='My draw geometries') {
+                        
+                    }
                     if (layer.layer)
                         map.removeLayer(layer.layer);
                 }

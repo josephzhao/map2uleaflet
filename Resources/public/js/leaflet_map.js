@@ -492,7 +492,7 @@ window.onload = function() {
         var layers = e.layers;
 
         layers.eachLayer(function(layer) {
-            if (confirm("Modify user draw geometry id:" + layer.id + ",name:" + layer.name + "?"))
+            if (confirm("Modify my draw geometry id:" + layer.id + ",name:" + layer.name + "?"))
             {
 
                 var itemgeojson = layer.toGeoJSON();
@@ -525,7 +525,7 @@ window.onload = function() {
     map.on('draw:deleted', function(e) {
         var layers = e.layers;
         layers.eachLayer(function(layer) {
-            if (confirm("Delete user draw item id:" + layer.id + ",name:" + layer.name + "?"))
+            if (confirm("Delete my draw item id:" + layer.id + ",name:" + layer.name + "?"))
             {
 
                 $.ajax({
@@ -1089,7 +1089,7 @@ window.onload = function() {
                     //  alert(layer.id);
                     map.dataLayers[map.dataLayers.length] = {'layer': null, 'layer_id': layer.id, title: layer.layerTitle, 'name': layer.layerName, type: 'shapefile_topojson'};
                 }
-                map.dataLayers[map.dataLayers.length] = {'layer': null, 'layer_id': -1, title: "User draw geometries", 'name': 'User draw geometries', type: 'geojson'};
+                map.dataLayers[map.dataLayers.length] = {'layer': null, 'layer_id': -1, title: "My draw geometries", 'name': 'My draw geometries', type: 'geojson'};
 
                 layersControl.refreshOverlays();
 
