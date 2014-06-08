@@ -194,6 +194,9 @@ class DefaultController extends Controller {
           $layers_data[$layer->getId()]['id'] = $layer->getId();
           $layers_data[$layer->getId()]['layerTitle'] = $layer->getLayerTitle();
           $layers_data[$layer->getId()]['layerName'] = $layer->getLayerName();
+          $layers_data[$layer->getId()]['tip_field'] = $layer->getTipFiled();
+          $layers_data[$layer->getId()]['labelField'] = $layer->getLabelField();
+          $layers_data[$layer->getId()]['showLabels'] = $layer->getLabelField();
           $layers_data[$layer->getId()]['layerShowInSwitcher'] = $layer->getLayerShowInSwitcher();
           $layers_data[$layer->getId()]['shapefileName'] = $layer->getUseruploadshapefile()->getShapefileName();
           $filename = $layer->getUseruploadshapefile()->getShapefileName();

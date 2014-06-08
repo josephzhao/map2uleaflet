@@ -465,8 +465,10 @@ L.MAP2U.layers = function(options) {
                                 layer_id: layer.layer_id,
                                 svgClass: 'svg-shapefile',
                                 name: result.filename.toLowerCase(),
-                                showLabels: true,
+                                showLabels: result.showLabels,
                                 type: result.type,
+                                tip_field: result.tip_field,
+                                label_field:result.label_field,
                                 featureAttributes: {
                                     'layer_id': result.layers[keys[k]]['id']
 //                        'class': function(feature) {
@@ -538,8 +540,8 @@ L.MAP2U.layers = function(options) {
                                             return  this.text;
                                         });
 
-                                        if (result.label_field !== '') {
-                                            p = e.data.properties[result.label_field];
+                                        if (result.tip_field !== '') {
+                                            p = e.data.properties[result.tip_field];
                                         }
                                         else {
                                             if (fieldkey === '' || fieldkey[0] === '' || fieldkey[0] === undefined)
@@ -675,6 +677,7 @@ L.MAP2U.layers = function(options) {
                                 kename = undefined;
                             else
                                 kename = field_kename[0];
+                            
                             layer.layer.showFeatureLabels(kename);
                         } else {
                             layer.layer.removeFeatureLabels();
