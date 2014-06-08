@@ -77,14 +77,14 @@ and open the template in the editor.
 .sonata-bc #sidebar .icon.close{float:right;cursor:pointer}
 
 // show shapefile list block
-.sonata-bc #shapefilelist-ul > li {
+ul#shapefilelist-ul > li {
     margin-left: -25px;
     list-style: decimal;
     list-style-type: decimal;
     list-style-image: none;
     list-style-position: outside;
 }
-.sonata-bc #shapefilelist-ul > li img:hover {
+ul#shapefilelist-ul > li img:hover {
     cursor: pointer;
 }      
 

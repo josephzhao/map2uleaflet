@@ -149,8 +149,8 @@ L.D3 = L.Class.extend({
                     })
                     .attr("dy", ".35em")
                     .text(function(d) {
-                        if (d.properties[_this.options.keyname] !== undefined && _this.options.keyname !=='ogc_id')
-                            return d.properties[_this.options.keyname];
+                        if (d.properties[_this.options.label_field] !== undefined && _this.options.label_field !=='ogc_id')
+                            return d.properties[_this.options.label_field];
                         else if(properties_key.length > 1)
                             return d.properties[properties_key[1]];
                         else

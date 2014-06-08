@@ -29,7 +29,12 @@ L.MAP2U.layers = function(options) {
         ActiveLayerLabel.append("Active Layer");
         var activeLayerSelect = $('<select id="activelayer_id" class="layers-ui" style="margin-left:4px;width:155px;"></select>').appendTo($ui);
         activeLayerSelect.on('change', function() {
-
+          
+            var _this = this;
+            map.dataLayers.forEach(function(layer) {
+                if (parseInt(layer.id) === parseInt(_this.value))
+                    layer.layer.bringToFront();
+            });
         });
 
         var barContent = $('<div>')
@@ -465,10 +470,10 @@ L.MAP2U.layers = function(options) {
                                 layer_id: layer.layer_id,
                                 svgClass: 'svg-shapefile',
                                 name: result.filename.toLowerCase(),
-                                showLabels: result.showLabels,
+                                showLabels: (result.layers[keys[k]]['label_field'] !== '' && result.layers[keys[k]]['label_field'] !== null),
                                 type: result.type,
-                                tip_field: result.tip_field,
-                                label_field:result.label_field,
+                                tip_field: result.layers[keys[k]]['tip_field'],
+                                label_field: result.layers[keys[k]]['label_field'],
                                 featureAttributes: {
                                     'layer_id': result.layers[keys[k]]['id']
 //                        'class': function(feature) {
@@ -540,8 +545,8 @@ L.MAP2U.layers = function(options) {
                                             return  this.text;
                                         });
 
-                                        if (result.tip_field !== '') {
-                                            p = e.data.properties[result.tip_field];
+                                        if (e.target.options.tip_field !== '') {
+                                            p = e.data.properties[e.target.options.tip_field ];
                                         }
                                         else {
                                             if (fieldkey === '' || fieldkey[0] === '' || fieldkey[0] === undefined)
@@ -673,11 +678,16 @@ L.MAP2U.layers = function(options) {
                                     return  this.text;
                                 });
                             }
-                            if (field_kename[0] === '' || field_kename[0] === null)
-                                kename = undefined;
+                            if (field_kename.length === 0 && layer.layer.options.label_field !== '' && layer.layer.options.label_field !== null) {
+                                kename = layer.layer.options.label_field;
+                            }
                             else
-                                kename = field_kename[0];
-                            
+                            {
+                                if (field_kename[0] === '' || field_kename[0] === null)
+                                    kename = undefined;
+                                else
+                                    kename = field_kename[0];
+                            }
                             layer.layer.showFeatureLabels(kename);
                         } else {
                             layer.layer.removeFeatureLabels();
