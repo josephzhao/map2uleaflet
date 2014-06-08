@@ -281,8 +281,8 @@ L.MAP2U.layers = function(options) {
                                 }
 
                                 //  feature.editing.enable();
-
-                                feature.bindLabel(result.data[i].keyname);
+                                if (feature.bindLabel)
+                                    feature.bindLabel(result.data[i].keyname);
                                 feature.id = result.data[i].ogc_fid;
                                 feature.name = result.data[i].keyname;
                                 feature.index = map.drawnItems.getLayers().length;
@@ -432,10 +432,10 @@ L.MAP2U.layers = function(options) {
 
                         d3.selectAll("#svg-shapefile").each(function() {
                             var elt = d3.select(this);
-                           
+
                             if (elt.attr("name").toString().toLowerCase() === result.filename.toString().toLowerCase())
                                 elt.remove();
-                            
+
                         });
 //
 //                        $.each(map.dataLayers, function(i) {
@@ -466,8 +466,7 @@ L.MAP2U.layers = function(options) {
                                 svgClass: 'svg-shapefile',
                                 name: result.filename.toLowerCase(),
                                 showLabels: true,
-                                type:result.type,
-                               
+                                type: result.type,
                                 featureAttributes: {
                                     'layer_id': result.layers[keys[k]]['id']
 //                        'class': function(feature) {
@@ -624,12 +623,12 @@ L.MAP2U.layers = function(options) {
                     else
                         map.addLayer(layer.layer);
                 } else {
-                    if(layer.type==='shapefile_topojson') {
-                        
-                        
+                    if (layer.type === 'shapefile_topojson') {
+
+
                     }
-                    if(layer.type==='geojson' || layer.name==='My draw geometries') {
-                        
+                    if (layer.type === 'geojson' || layer.name === 'My draw geometries') {
+
                     }
                     if (layer.layer)
                         map.removeLayer(layer.layer);
