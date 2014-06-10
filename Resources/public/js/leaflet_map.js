@@ -205,10 +205,10 @@ window.onload = function() {
     ];
     map.noteLayer = new L.FeatureGroup();
     map.noteLayer.options = {code: 'N'};
-    map.dataLayers = //{'layer':creditriverparks, name:'Credit River Parks'}, {'layer':conservationareas, name:'Conservation'}, {'layer': subwatersheds, 'name': 'Subwatersheds'},
-            [{'layer': subwatersheds, 'name': 'Subwatersheds'}];
+    //   map.dataLayers = //{'layer':creditriverparks, name:'Credit River Parks'}, {'layer':conservationareas, name:'Conservation'}, {'layer': subwatersheds, 'name': 'Subwatersheds'},
+    //          [{'layer': subwatersheds, 'name': 'Subwatersheds'}];
 
-
+    map.dataLayers = [];
 
     var index;
     var layers = [];
@@ -1073,7 +1073,7 @@ window.onload = function() {
 
                 //    alert(JSON.stringify(result.layers));
                 // alert(result.layers.length);
-                
+
                 var keys = Object.keys(result.layers).map(function(k) {
 
                     return k;
@@ -1119,9 +1119,9 @@ window.onload = function() {
                 if (status === google.maps.GeocoderStatus.OK)
                 {
                     var pt = results[0].geometry.location;
-                    var layers=map.drawnItems.getLayers();
-                    for(var i=layers.length-1;i >=0 ;i--) {
-                        if(layers[i].source!==undefined && layers[i].source === 'searchbox_query') {
+                    var layers = map.drawnItems.getLayers();
+                    for (var i = layers.length - 1; i >= 0; i--) {
+                        if (layers[i].source !== undefined && layers[i].source === 'searchbox_query') {
                             map.drawnItems.removeLayer(layers[i]);
                         }
                     }
@@ -1341,13 +1341,14 @@ function ShowLeftSideBar() {
     if ($(".leaflet-sidebar.left").css('left') === 0 || $(".leaflet-sidebar.left").css('left') === '0px') {
 
         $(".sonata-bc .leftsidebar-close-control").show();
+        setTimeout(function() {
+            leftSidebar.hide();
+        }, 500);
     } else {
 
         $(".sonata-bc .leftsidebar-close-control").hide();
+        setTimeout(function() {
+            leftSidebar.show();
+        }, 500);
     }
-
-    setTimeout(function() {
-        leftSidebar.toggle();
-    }, 500);
-
 }

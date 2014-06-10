@@ -29,11 +29,12 @@ L.MAP2U.layers = function(options) {
         ActiveLayerLabel.append("Active Layer");
         var activeLayerSelect = $('<select id="activelayer_id" class="layers-ui" style="margin-left:4px;width:155px;"></select>').appendTo($ui);
         activeLayerSelect.on('change', function() {
-          
             var _this = this;
-            map.dataLayers.forEach(function(layer) {
-                if (parseInt(layer.id) === parseInt(_this.value))
+            map.dataLayers.forEach(function(layer,i) {
+                if(map.dataLayers[i].layer_id !== undefined) {
+                   if (parseInt(map.dataLayers[i].layer_id) === parseInt(_this.value) && layer.layer !== null && layer.layer !== undefined)
                     layer.layer.bringToFront();
+                }
             });
         });
 
@@ -529,7 +530,7 @@ L.MAP2U.layers = function(options) {
                             });
                             geojson_shapefile.on('mousemove', function(e) {
 
-                                if (parseInt(e.target.options.layer_id) === parseInt($("select#activelayer_id.layers-ui").val())) {
+                            //    if (parseInt(e.target.options.layer_id) === parseInt($("select#activelayer_id.layers-ui").val())) {
 
                                     var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function() {
                                         return  this.text;
@@ -558,7 +559,7 @@ L.MAP2U.layers = function(options) {
                                                 .attr("style", "left:" + (mouse.x + 30) + "px;top:" + (mouse.y - 35) + "px")
                                                 .html(p);
                                     }
-                                }
+                               // }
                             });
                             geojson_shapefile.on('mouseout', function(e) {
 

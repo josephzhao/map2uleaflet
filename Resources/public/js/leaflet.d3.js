@@ -77,10 +77,14 @@ L.D3 = L.Class.extend({
             var point = map.latLngToLayerPoint(new L.LatLng(x[1], x[0]));
             return [point.x, point.y];
         };
-        this._overlayPane = d3.select(this._map.getPanes().overlayPane);
-        this._overlayPane.selectAll("#" + this.options.id ? this.options.id : 'svg-shapefile').remove();
+        this._initContainer();
+//        this._overlayPane = d3.select(this._map.getPanes().overlayPane);
+//        
+//        this._overlayPane.selectAll("#" + this.options.id ? this.options.id : 'svg-shapefile').remove();
 
-        this._el = this._overlayPane.append("svg");
+  //      this._el = this._overlayPane.append("svg");
+  
+         this._el = d3.select(this._container).append("svg");
         this._g = this._el.append("g").attr("class", this.options.svgClass ? this.options.svgClass + " leaflet-zoom-hide" : "leaflet-zoom-hide");
         this._el.attr('id', this.options.id ? this.options.id : 'svg-shapefile');
         this._el.attr('name', this.options.name ? this.options.name : 'shapefile');
@@ -149,9 +153,9 @@ L.D3 = L.Class.extend({
                     })
                     .attr("dy", ".35em")
                     .text(function(d) {
-                        if (d.properties[_this.options.label_field] !== undefined && _this.options.label_field !=='ogc_id')
+                        if (d.properties[_this.options.label_field] !== undefined && _this.options.label_field !== 'ogc_id')
                             return d.properties[_this.options.label_field];
-                        else if(properties_key.length > 1)
+                        else if (properties_key.length > 1)
                             return d.properties[properties_key[1]];
                         else
                             return d.properties[properties_key[0]];
@@ -202,6 +206,86 @@ L.D3 = L.Class.extend({
         }, this);
 
     },
+    bringToFront: function() {
+        var pane = this._map._panes.overlayPane;
+
+        if (this._container) {
+            pane.appendChild(this._container);
+            this._setAutoZIndex(pane, Math.max);
+        }
+
+        return this;
+    },
+    bringToBack: function() {
+        var pane = this._map._panes.overlayPane;
+
+        if (this._container) {
+            pane.insertBefore(this._container, pane.firstChild);
+            this._setAutoZIndex(pane, Math.min);
+        }
+
+        return this;
+    },
+    _updateZIndex: function () {
+		if (this._container && this.options.zIndex !== undefined) {
+			this._container.style.zIndex = this.options.zIndex;
+		}
+	},
+
+	_setAutoZIndex: function (pane, compare) {
+
+		var layers = pane.children,
+		    edgeZIndex = -compare(Infinity, -Infinity), // -Infinity for max, Infinity for min
+		    zIndex, i, len;
+
+		for (i = 0, len = layers.length; i < len; i++) {
+
+			if (layers[i] !== this._container) {
+				zIndex = parseInt(layers[i].style.zIndex, 10);
+
+				if (!isNaN(zIndex)) {
+					edgeZIndex = compare(edgeZIndex, zIndex);
+				}
+			}
+		}
+
+		this.options.zIndex = this._container.style.zIndex =
+		        (isFinite(edgeZIndex) ? edgeZIndex : 0) + compare(1, -1);
+	},
+
+	_updateOpacity: function () {
+		L.DomUtil.setOpacity(this._container, this.options.opacity);
+
+		// stupid webkit hack to force redrawing of tiles
+		var i,
+		    tiles = this._tiles;
+
+		if (L.Browser.webkit) {
+			for (i in tiles) {
+				if (tiles.hasOwnProperty(i)) {
+					tiles[i].style.webkitTransform += ' translate(0,0)';
+				}
+			}
+		}
+	},
+
+	_initContainer: function () {
+		var overlayPane = this._map._panes.overlayPane;
+
+		if (!this._container || overlayPane.empty) {
+			this._container = L.DomUtil.create('div', 'leaflet-layer');
+
+			this._updateZIndex();
+
+			overlayPane.appendChild(this._container);
+
+			if (this.options.opacity < 1) {
+				this._updateOpacity();
+			}
+		}
+	},
+
+
     onRefreshSLD: function(sld) {
         this._popup = L.popup();
         this._popupContent = content;
