@@ -28,7 +28,7 @@ class GeocoderController extends Controller {
 
 
     $query = $request->get('query');
-    $latlon = $this->normalize_params($query);
+    $latlon = $this->normalizeParams($query);
 
     $sources = array();
     $params = array();
@@ -64,15 +64,14 @@ class GeocoderController extends Controller {
     }
     var_dump($sources);
     var_dump($params);
-    foreach($sources as $source)
-    {
-      if($source==='ca_postcode') {
-        $return=$this->search_ca_postcode($params['query']);
+    foreach ($sources as $source) {
+      if ($source === 'ca_postcode') {
+        $return = $this->searchCaPostcode($params['query']);
         var_dump($return);
       }
-      if($source==='osm_nominatim') {
-          $return=$this->search_osm_nominatim($params['query']);
-          var_dump($return);
+      if ($source === 'osm_nominatim') {
+        $return = $this->searchOsmNominatim($params['query']);
+        var_dump($return);
       }
     }
     return array('sources' => $sources, 'params' => $params);
@@ -89,7 +88,7 @@ class GeocoderController extends Controller {
 //var_dump($jsondata);
 //
 //      
-//      $url='http://www.openstreetmap.org/geocoder/search_osm_nominatim_reverse?lat=43.7787&lon=-79.2984&xhr=1';
+//      $url='http://www.openstreetmap.org/geocoder/searchOsmNominatimReverse?lat=43.7787&lon=-79.2984&xhr=1';
 //  //     http_request (HTTP_METH_PUT, 'www.example.com');
 //$response = http_get($url, array("timeout"=>1), $info);
 //
@@ -152,19 +151,19 @@ class GeocoderController extends Controller {
     }
   }
 
-  public function search_us_postcode() {
+  public function searchUsPostcode() {
     
   }
 
-  public function search_uk_postcode() {
+  public function searchUkPostcode() {
     
   }
 
-  private function search_ca_postcode($query) {
+  private function searchCaPostcode($query) {
     $results = array();
     try {
       # ask geocoder.ca (note - they have a per-day limit)
-      $response = $this->fetch_xml("http://geocoder.ca/?geoit=XML&postal=" . $this->escape_query($query));
+      $response = $this->fetchXml("http://geocoder.ca/?geoit=XML&postal=" . $this->escapeQuery($query));
       $error = trim((string) $response->error);
       # parse the response
       if (empty($error) || strlen($error) === 0) {
@@ -175,7 +174,7 @@ class GeocoderController extends Controller {
           'name' => strtoupper($query)
         ));
       }
-      return  $results;
+      return $results;
 //      return $this->render('Map2uLeafletBundle:Geocoder:results.html.twig', array('results' => $results));
     } catch (Exception $ex) {
       $error = "Error contacting geocoder.ca: " . $ex;
@@ -186,16 +185,16 @@ class GeocoderController extends Controller {
   /**
    * Geocoder controller.
    *
-   * @Route("/search_ca_postcode" , name="map2uleaflet_geocoder_search_ca_postcode")
+   * @Route("/searchCaPostcode" , name="map2uleaflet_geocoder_searchCaPostcode")
    */
-  public function search_ca_postcodeAction(Request $request) {
+  public function searchCaPostcodeAction(Request $request) {
     $query = $request->get('query');
     $results = array();
     try {
 
 
       # ask geocoder.ca (note - they have a per-day limit)
-      $response = $this->fetch_xml("http://geocoder.ca/?geoit=XML&postal=" . $this->escape_query($query));
+      $response = $this->fetchXml("http://geocoder.ca/?geoit=XML&postal=" . $this->escapeQuery($query));
 
       $error = trim((string) $response->error);
       # parse the response
@@ -213,16 +212,18 @@ class GeocoderController extends Controller {
       return $this->render('Map2uLeafletBundle:Geocoder:error.html.twig', array('error' => $error));
     }
   }
-private function search_osm_nominatim($query) {
-     $response = $this->fetch_xml("http://open.mapquestapi.com/nominatim/v1/search?format=xml&q=".$this->escape_query($query));
-    return $response;//
-}
+
+  private function searchOsmNominatim($query) {
+    $response = $this->fetchXml("http://open.mapquestapi.com/nominatim/v1/search?format=xml&q=" . $this->escapeQuery($query));
+    return $response; //
+  }
+
   /**
    * Geocoder controller.
    *
-   * @Route("/search_osm_nominatim" , name="map2uleaflet_geocoder_search_osm_nominatim")
+   * @Route("/searchOsmNominatim" , name="map2uleaflet_geocoder_searchOsmNominatim")
    */
-  public function search_osm_nominatimAction(Request $request) {
+  public function searchOsmNominatimAction(Request $request) {
     $query = $request->get('query');
     $results = array();
     //   var_dump($request);
@@ -244,7 +245,7 @@ private function search_osm_nominatim($query) {
 //    end
 //
 //    # ask nominatim
-//    response = fetch_xml("#{NOMINATIM_URL}search?format=xml&q=#{escape_query(query)}#{viewbox}#{exclude}&accept-language=#{http_accept_language.user_preferred_languages.join(',')}")
+//    response = fetchXml("#{NOMINATIM_URL}search?format=xml&q=#{escapeQuery(query)}#{viewbox}#{exclude}&accept-language=#{http_accept_language.user_preferred_languages.join(',')}")
 //
 //    # create result array
 //    @results = Array.new
@@ -266,13 +267,13 @@ private function search_osm_nominatim($query) {
 //      if type.empty?
 //        prefix_name = ""
 //      else
-//        prefix_name = t "geocoder.search_osm_nominatim.prefix.#{klass}.#{type}", :default => type.gsub("_", " ").capitalize
+//        prefix_name = t "geocoder.searchOsmNominatim.prefix.#{klass}.#{type}", :default => type.gsub("_", " ").capitalize
 //      end
 //      if klass == 'boundary' and type == 'administrative'
 //        rank = (place.attributes["place_rank"].to_i + 1) / 2
-//        prefix_name = t "geocoder.search_osm_nominatim.admin_levels.level#{rank}", :default => prefix_name
+//        prefix_name = t "geocoder.searchOsmNominatim.admin_levels.level#{rank}", :default => prefix_name
 //      end
-//      prefix = t "geocoder.search_osm_nominatim.prefix_format", :name => prefix_name
+//      prefix = t "geocoder.searchOsmNominatim.prefix_format", :name => prefix_name
 //      object_type = place.attributes["osm_type"]
 //      object_id = place.attributes["osm_id"]
 //
@@ -292,16 +293,16 @@ private function search_osm_nominatim($query) {
     return new Response();
   }
 
-  public function search_geonames($param) {
+  public function searchGeonames($param) {
     
   }
 
   /**
    * Geocoder controller.
    *
-   * @Route("/search_osm_nominatim_reverse" , name="map2uleaflet_geocoder_search_osm_nominatim_reverse")
+   * @Route("/searchOsmNominatimReverse" , name="map2uleaflet_geocoder_searchOsmNominatimReverse")
    */
-  public function search_osm_nominatim_reverseAction(Request $request) {
+  public function searchOsmNominatimReverseAction(Request $request) {
     $lat = floatval($request->get('lat'));
     $lon = floatval($request->get('lon'));
     if ($lat < -90 || $lat > 90) {
@@ -321,25 +322,25 @@ private function search_osm_nominatim($query) {
   /**
    * Geocoder controller.
    *
-   * @Route("/search_geonames_reverseAction" , name="map2uleaflet_geocoder_search_geonames_reverseAction")
+   * @Route("/searchGeonames_reverseAction" , name="map2uleaflet_geocoder_searchGeonames_reverseAction")
    */
-  public function search_geonames_reverseAction($param) {
+  public function searchGeonames_reverseAction($param) {
     
   }
 
-  private function fetch_text($url) {
+  private function fetchText($url) {
     return file_get_contents($url);
   }
 
-  private function fetch_xml($url) {
-    return simplexml_load_string($this->fetch_text($url));
+  private function fetchXml($url) {
+    return simplexml_load_string($this->fetchText($url));
   }
 
-  private function format_distance($distance) {
+  private function formatDistance($distance) {
     return t("geocoder.distance", array('count' => 'distance'));
   }
 
-  private function format_direction($bearing) {
+  private function formatDirection($bearing) {
     if ($bearing >= 22.5 && $bearing < 67.5)
       return t("geocoder.direction.south_west");
     if ($bearing >= 67.5 && $bearing < 112.5)
@@ -357,11 +358,11 @@ private function search_osm_nominatim($query) {
     return t("geocoder.direction.west");
   }
 
-  private function format_name($name) {
+  private function formatName($name) {
     return preg_replace("/( *\[[^\]]*\])*$/", "", $name);
   }
 
-  private function count_results($results) {
+  private function countResults($results) {
     $count = 0;
 
     foreach ($results as $source) {
@@ -371,17 +372,18 @@ private function search_osm_nominatim($query) {
     return $count;
   }
 
-  private function escape_query($query) {
+  private function escapeQuery($query) {
     return urlencode($query); //URI.escape(query, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]", false, 'N'));
   }
 
-  private function normalize_params($query) {
+  private function normalizeParams($query) {
     // query = params[:query]
-    if (!isset($query) || $query == null)
+    if (!isset($query) || $query == null) {
       return null;
-
+    }
     $query = trim($query);
-
+    $latlon = $query;
+    
 //    preg_match_all("/^([NS])\s*(\d{1,3}(\.\d*)?)\W*([EW])\s*(\d{1,3}(\.\d*)?)$/", $query,$matches);
 //    var_dump( $matches);
 //
@@ -401,29 +403,32 @@ private function search_osm_nominatim($query) {
 //    var_dump( $matches);
 
 
-    if ($latlon = preg_match_all("/^([NS])\s*(\d{1,3}(\.\d*)?)\W*([EW])\s*(\d{1,3}(\.\d*)?)$/", $query, $matches)) { //# [NSEW] decimal degrees
+    if ($latlon == preg_match_all("/^([NS])\s*(\d{1,3}(\.\d*)?)\W*([EW])\s*(\d{1,3}(\.\d*)?)$/", $query, $matches)) { //# [NSEW] decimal degrees
       return $this->nsew_to_decdeg($matches);
     }
-    elseif ($latlon = preg_match_all("/^(\d{1,3}(\.\d*)?)\s*([NS])\W*(\d{1,3}(\.\d*)?)\s*([EW])$/", $query, $matches)) {// # decimal degrees [NSEW]
+    elseif ($latlon == preg_match_all("/^(\d{1,3}(\.\d*)?)\s*([NS])\W*(\d{1,3}(\.\d*)?)\s*([EW])$/", $query, $matches)) {// # decimal degrees [NSEW]
       return $this->nsew_to_decdeg($matches);
     }
-    elseif ($latlon = preg_match_all("/^([NS])\s*(\d{1,3})°?\s*(\d{1,3}(\.\d*)?)?['′]?\W*([EW])\s*(\d{1,3})°?\s*(\d{1,3}(\.\d*)?)?['′]?$/", $query, $matches)) {// # [NSEW] degrees, decimal minutes
+    elseif ($latlon == preg_match_all("/^([NS])\s*(\d{1,3})°?\s*(\d{1,3}(\.\d*)?)?['′]?\W*([EW])\s*(\d{1,3})°?\s*(\d{1,3}(\.\d*)?)?['′]?$/", $query, $matches)) {// # [NSEW] degrees, decimal minutes
       return $this->ddm_to_decdeg($matches);
     }
-    elseif ($latlon = preg_match_all("/^(\d{1,3})°?\s*(\d{1,3}(\.\d*)?)?['′]?\s*([NS])\W*(\d{1,3})°?\s*(\d{1,3}(\.\d*)?)?['′]?\s*([EW])$/", $query, $matches)) {// # degrees, decimal minutes [NSEW]
+    elseif ($latlon == preg_match_all("/^(\d{1,3})°?\s*(\d{1,3}(\.\d*)?)?['′]?\s*([NS])\W*(\d{1,3})°?\s*(\d{1,3}(\.\d*)?)?['′]?\s*([EW])$/", $query, $matches)) {// # degrees, decimal minutes [NSEW]
       return $this->ddm_to_decdeg($matches);
     }
-    elseif ($latlon = preg_match_all("/^([NS])\s*(\d{1,3})°?\s*(\d{1,2})['′]?\s*(\d{1,3}(\.\d*)?)?[\"″]?\W*([EW])\s*(\d{1,3})°?\s*(\d{1,2})['′]?\s*(\d{1,3}(\.\d*)?)?[\"″]?$/", $query, $matches)) {// # [NSEW] degrees, minutes, decimal seconds
-      return $this->dms_to_decdeg($matches);
+    elseif ($latlon == preg_match_all("/^([NS])\s*(\d{1,3})°?\s*(\d{1,2})['′]?\s*(\d{1,3}(\.\d*)?)?[\"″]?\W*([EW])\s*(\d{1,3})°?\s*(\d{1,2})['′]?\s*(\d{1,3}(\.\d*)?)?[\"″]?$/", $query, $matches)) {// # [NSEW] degrees, minutes, decimal seconds
+      return $this->dmsToDecdeg($matches);
     }
-    elseif ($latlon = preg_match_all("/^(\d{1,3})°?\s*(\d{1,2})['′]?\s*(\d{1,3}(\.\d*)?)?[\"″]\s*([NS])\W*(\d{1,3})°?\s*(\d{1,2})['′]?\s*(\d{1,3}(\.\d*)?)?[\"″]?\s*([EW])$/", $query, $matches)) {// # degrees, minutes, decimal seconds [NSEW]
-      return $this->dms_to_decdeg($matches);
+    elseif ($latlon == preg_match_all("/^(\d{1,3})°?\s*(\d{1,2})['′]?\s*(\d{1,3}(\.\d*)?)?[\"″]\s*([NS])\W*(\d{1,3})°?\s*(\d{1,2})['′]?\s*(\d{1,3}(\.\d*)?)?[\"″]?\s*([EW])$/", $query, $matches)) {// # degrees, minutes, decimal seconds [NSEW]
+      return $this->dmsToDecdeg($matches);
     }
-    elseif ($latlon = preg_match_all("/^\s*([+-]?\d+(\.\d*)?)\s*[\s,]\s*([+-]?\d+(\.\d*)?)\s*$/", $query, $matches)) {
+    elseif ($latlon == preg_match_all("/^\s*([+-]?\d+(\.\d*)?)\s*[\s,]\s*([+-]?\d+(\.\d*)?)\s*$/", $query, $matches)) {
 
       //   var_dump($matches);
 
       return array('lat' => floatval($matches[1][0]), 'lon' => floatval($matches[3][0]));
+    }
+    else {
+      return array();
     }
   }
 
@@ -461,7 +466,7 @@ private function search_osm_nominatim($query) {
 //    {:lat => lat, :lon => lon}
 //  end
 //
-  private function dms_to_decdeg($captures) {
+  private function dmsToDecdeg($captures) {
     try {
       strtolower($captures[4]) != 's' ? $lat = floatval($captures[0]) + (floatval($captures[1]) + floatval($captures[2]) / 60) / 60 : $lat = -(floatval($captures[0]) + (floatval($captures[1]) + floatval($captures[2]) / 60) / 60);
       strtolower($captures[9]) != 'w' ? $lon = floatval($captures[5]) + (floatval($captures[6]) + floatval($captures[7]) / 60) / 60 : $lon = -(floatval($captures[5]) + (floatval($captures[6]) + floatval($captures[7]) / 60) / 60);
@@ -507,7 +512,7 @@ private function search_osm_nominatim($query) {
 //  before_filter :require_oauth, :only => [:search]
 //
 //  def search
-//    normalize_params
+//    normalizeParams
 //
 //    @sources = []
 //    if params[:lat] && params[:lon]
@@ -549,7 +554,7 @@ private function search_osm_nominatim($query) {
 //    end
 //  end
 //
-//  def search_us_postcode
+//  def searchUsPostcode
 //    # get query parameters
 //    query = params[:query]
 //
@@ -557,7 +562,7 @@ private function search_osm_nominatim($query) {
 //    @results = Array.new
 //
 //    # ask geocoder.us (they have a non-commercial use api)
-//    response = fetch_text("http://rpc.geocoder.us/service/csv?zip=#{escape_query(query)}")
+//    response = fetchText("http://rpc.geocoder.us/service/csv?zip=#{escapeQuery(query)}")
 //
 //    # parse the response
 //    unless response.match(/couldn't find this zip/)
@@ -574,7 +579,7 @@ private function search_osm_nominatim($query) {
 //    render :action => "error"
 //  end
 //
-//  def search_uk_postcode
+//  def searchUkPostcode
 //    # get query parameters
 //    query = params[:query]
 //
@@ -582,7 +587,7 @@ private function search_osm_nominatim($query) {
 //    @results = Array.new
 //
 //    # ask npemap.org.uk to do a combined npemap + freethepostcode search
-//    response = fetch_text("http://www.npemap.org.uk/cgi/geocoder.fcgi?format=text&postcode=#{escape_query(query)}")
+//    response = fetchText("http://www.npemap.org.uk/cgi/geocoder.fcgi?format=text&postcode=#{escapeQuery(query)}")
 //
 //    # parse the response
 //    unless response.match(/Error/)
@@ -600,13 +605,13 @@ private function search_osm_nominatim($query) {
 //    render :action => "error"
 //  end
 //
-//  def search_ca_postcode
+//  def searchCaPostcode
 //    # get query parameters
 //    query = params[:query]
 //    @results = Array.new
 //
 //    # ask geocoder.ca (note - they have a per-day limit)
-//    response = fetch_xml("http://geocoder.ca/?geoit=XML&postal=#{escape_query(query)}")
+//    response = fetchXml("http://geocoder.ca/?geoit=XML&postal=#{escapeQuery(query)}")
 //
 //    # parse the response
 //    if response.get_elements("geodata/error").empty?
@@ -622,7 +627,7 @@ private function search_osm_nominatim($query) {
 //    render :action => "error"
 //  end
 //
-//  def search_osm_nominatim
+//  def searchOsmNominatim
 //    # get query parameters
 //    query = params[:query]
 //    minlon = params[:minlon]
@@ -641,7 +646,7 @@ private function search_osm_nominatim($query) {
 //    end
 //
 //    # ask nominatim
-//    response = fetch_xml("#{NOMINATIM_URL}search?format=xml&q=#{escape_query(query)}#{viewbox}#{exclude}&accept-language=#{http_accept_language.user_preferred_languages.join(',')}")
+//    response = fetchXml("#{NOMINATIM_URL}search?format=xml&q=#{escapeQuery(query)}#{viewbox}#{exclude}&accept-language=#{http_accept_language.user_preferred_languages.join(',')}")
 //
 //    # create result array
 //    @results = Array.new
@@ -663,13 +668,13 @@ private function search_osm_nominatim($query) {
 //      if type.empty?
 //        prefix_name = ""
 //      else
-//        prefix_name = t "geocoder.search_osm_nominatim.prefix.#{klass}.#{type}", :default => type.gsub("_", " ").capitalize
+//        prefix_name = t "geocoder.searchOsmNominatim.prefix.#{klass}.#{type}", :default => type.gsub("_", " ").capitalize
 //      end
 //      if klass == 'boundary' and type == 'administrative'
 //        rank = (place.attributes["place_rank"].to_i + 1) / 2
-//        prefix_name = t "geocoder.search_osm_nominatim.admin_levels.level#{rank}", :default => prefix_name
+//        prefix_name = t "geocoder.searchOsmNominatim.admin_levels.level#{rank}", :default => prefix_name
 //      end
-//      prefix = t "geocoder.search_osm_nominatim.prefix_format", :name => prefix_name
+//      prefix = t "geocoder.searchOsmNominatim.prefix_format", :name => prefix_name
 //      object_type = place.attributes["osm_type"]
 //      object_id = place.attributes["osm_id"]
 //
@@ -687,7 +692,7 @@ private function search_osm_nominatim($query) {
 //#    render :action => "error"
 //  end
 //
-//  def search_geonames
+//  def searchGeonames
 //    # get query parameters
 //    query = params[:query]
 //
@@ -698,7 +703,7 @@ private function search_osm_nominatim($query) {
 //    @results = Array.new
 //
 //    # ask geonames.org
-//    response = fetch_xml("http://api.geonames.org/search?q=#{escape_query(query)}&lang=#{lang}&maxRows=20&username=#{GEONAMES_USERNAME}")
+//    response = fetchXml("http://api.geonames.org/search?q=#{escapeQuery(query)}&lang=#{lang}&maxRows=20&username=#{GEONAMES_USERNAME}")
 //
 //    # parse the response
 //    response.elements.each("geonames/geoname") do |geoname|
@@ -718,7 +723,7 @@ private function search_osm_nominatim($query) {
 //    render :action => "error"
 //  end
 //
-//  def search_osm_nominatim_reverse
+//  def searchOsmNominatimReverse
 //    # get query parameters
 //    lat = params[:lat]
 //    lon = params[:lon]
@@ -728,7 +733,7 @@ private function search_osm_nominatim($query) {
 //    @results = Array.new
 //
 //    # ask nominatim
-//    response = fetch_xml("#{NOMINATIM_URL}reverse?lat=#{lat}&lon=#{lon}&zoom=#{zoom}&accept-language=#{http_accept_language.user_preferred_languages.join(',')}")
+//    response = fetchXml("#{NOMINATIM_URL}reverse?lat=#{lat}&lon=#{lon}&zoom=#{zoom}&accept-language=#{http_accept_language.user_preferred_languages.join(',')}")
 //
 //    # parse the response
 //    response.elements.each("reversegeocode/result") do |result|
@@ -750,7 +755,7 @@ private function search_osm_nominatim($query) {
 //    render :action => "error"
 //  end
 //
-//  def search_geonames_reverse
+//  def searchGeonames_reverse
 //    # get query parameters
 //    lat = params[:lat]
 //    lon = params[:lon]
@@ -762,7 +767,7 @@ private function search_osm_nominatim($query) {
 //    @results = Array.new
 //
 //    # ask geonames.org
-//    response = fetch_xml("http://api.geonames.org/countrySubdivision?lat=#{lat}&lng=#{lon}&lang=#{lang}&username=#{GEONAMES_USERNAME}")
+//    response = fetchXml("http://api.geonames.org/countrySubdivision?lat=#{lat}&lng=#{lon}&lang=#{lang}&username=#{GEONAMES_USERNAME}")
 //
 //    # parse the response
 //    response.elements.each("geonames/countrySubdivision") do |geoname|
@@ -782,19 +787,19 @@ private function search_osm_nominatim($query) {
 //
 //private
 //
-//  def fetch_text(url)
+//  def fetchText(url)
 //    return Net::HTTP.get(URI.parse(url))
 //  end
 //
-//  def fetch_xml(url)
-//    return REXML::Document.new(fetch_text(url))
+//  def fetchXml(url)
+//    return REXML::Document.new(fetchText(url))
 //  end
 //
-//  def format_distance(distance)
+//  def formatDistance(distance)
 //    return t("geocoder.distance", :count => distance)
 //  end
 //
-//  def format_direction(bearing)
+//  def formatDirection(bearing)
 //    return t("geocoder.direction.south_west") if bearing >= 22.5 and bearing < 67.5
 //    return t("geocoder.direction.south") if bearing >= 67.5 and bearing < 112.5
 //    return t("geocoder.direction.south_east") if bearing >= 112.5 and bearing < 157.5
@@ -805,11 +810,11 @@ private function search_osm_nominatim($query) {
 //    return t("geocoder.direction.west")
 //  end
 //
-//  def format_name(name)
+//  def formatName(name)
 //    return name.gsub(/( *\[[^\]]*\])*$/, "")
 //  end
 //
-//  def count_results(results)
+//  def countResults(results)
 //    count = 0
 //
 //    results.each do |source|
@@ -819,11 +824,11 @@ private function search_osm_nominatim($query) {
 //    return count
 //  end
 //
-//  def escape_query(query)
+//  def escapeQuery(query)
 //    return URI.escape(query, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]", false, 'N'))
 //  end
 //
-//  def normalize_params
+//  def normalizeParams
 //    query = params[:query]
 //    return unless query
 //
@@ -840,9 +845,9 @@ private function search_osm_nominatim($query) {
 //      params.merge!(ddm_to_decdeg(latlon)).delete(:query)
 //
 //    elsif latlon = query.match(/^([NS])\s*(\d{1,3})°?\s*(\d{1,2})['′]?\s*(\d{1,3}(\.\d*)?)?["″]?\W*([EW])\s*(\d{1,3})°?\s*(\d{1,2})['′]?\s*(\d{1,3}(\.\d*)?)?["″]?$/).try(:captures) # [NSEW] degrees, minutes, decimal seconds
-//      params.merge!(dms_to_decdeg(latlon)).delete(:query)
+//      params.merge!(dmsToDecdeg(latlon)).delete(:query)
 //    elsif latlon = query.match(/^(\d{1,3})°?\s*(\d{1,2})['′]?\s*(\d{1,3}(\.\d*)?)?["″]\s*([NS])\W*(\d{1,3})°?\s*(\d{1,2})['′]?\s*(\d{1,3}(\.\d*)?)?["″]?\s*([EW])$/).try(:captures) # degrees, minutes, decimal seconds [NSEW]
-//      params.merge!(dms_to_decdeg(latlon)).delete(:query)
+//      params.merge!(dmsToDecdeg(latlon)).delete(:query)
 //
 //    elsif latlon = query.match(/^\s*([+-]?\d+(\.\d*)?)\s*[\s,]\s*([+-]?\d+(\.\d*)?)\s*$/)
 //      params.merge!({:lat => latlon[1].to_f, :lon => latlon[3].to_f}).delete(:query)
@@ -873,7 +878,7 @@ private function search_osm_nominatim($query) {
 //    {:lat => lat, :lon => lon}
 //  end
 //
-//  def dms_to_decdeg(captures)
+//  def dmsToDecdeg(captures)
 //    begin
 //      Float(captures[0])
 //      captures[4].downcase != 's' ? lat = captures[0].to_f + (captures[1].to_f + captures[2].to_f/60)/60 : lat = -(captures[0].to_f + (captures[1].to_f + captures[2].to_f/60)/60)

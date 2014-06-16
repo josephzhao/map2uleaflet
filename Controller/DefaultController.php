@@ -55,19 +55,19 @@ class DefaultController extends Controller {
     }
 
     if ($layers) {
-      $layers_data = array();
+      $layersData = array();
 
       $message = '';
       $success = true;
       foreach ($layers as $layer) {
-        $layers_data[$layer->getId()] = array();
-        $layers_data[$layer->getId()]['id'] = $layer->getId();
-        $layers_data[$layer->getId()]['layerTitle'] = $layer->getLayerTitle();
-        $layers_data[$layer->getId()]['layerName'] = $layer->getLayerName();
-        $layers_data[$layer->getId()]['layerShowInSwitcher'] = $layer->getLayerShowInSwitcher();
-        $layers_data[$layer->getId()]['shapefileName'] = $layer->getUseruploadshapefile()->getShapefileName();
+        $layersData[$layer->getId()] = array();
+        $layersData[$layer->getId()]['id'] = $layer->getId();
+        $layersData[$layer->getId()]['layerTitle'] = $layer->getLayerTitle();
+        $layersData[$layer->getId()]['layerName'] = $layer->getLayerName();
+        $layersData[$layer->getId()]['layerShowInSwitcher'] = $layer->isLayerShowInSwitcher();
+        $layersData[$layer->getId()]['shapefileName'] = $layer->getUseruploadshapefile()->getShapefileName();
       }
-      return new Response(\json_encode(array('success' => $success, 'message' => $message, 'layers' => $layers_data)));
+      return new Response(\json_encode(array('success' => $success, 'message' => $message, 'layers' => $layersData)));
     }
     return new Response(\json_encode(array('success' => true, 'message' => 'User draw name  not exist')));
   }
@@ -85,7 +85,7 @@ class DefaultController extends Controller {
     $user = $this->getUser();
 
     // data path for sld file and uploaded shapefiles
-    $data_path = $this->get('kernel')->getRootDir() . '/../Data';
+    $dataPath = $this->get('kernel')->getRootDir() . '/../Data';
     echo $user;
     if ($user && $user !== '') {
       $layers = $em//->getRepository('Map2uCoreBundle:UploadShapefileLayer')//->find(array('userId' => $user->getId()));
@@ -99,27 +99,27 @@ class DefaultController extends Controller {
     }
     //   var_dump($layers);
     if ($layers) {
-      $layers_data = array();
+      $layersData = array();
       $conn = $this->get('database_connection');
       $geoms = array();
       $message = '';
       $success = true;
       foreach ($layers as $layer) {
         $geoms[$layer->getId()] = array();
-        $layers_data[$layer->getId()] = array();
-        $layers_data[$layer->getId()]['id'] = $layer->getId();
-        $layers_data[$layer->getId()]['layerTitle'] = $layer->getLayerTitle();
-        $layers_data[$layer->getId()]['layerName'] = $layer->getLayerName();
-        $layers_data[$layer->getId()]['layerShowInSwitcher'] = $layer->getLayerShowInSwitcher();
-        $layers_data[$layer->getId()]['shapefileName'] = $layer->getUseruploadshapefile()->getShapefileName();
+        $layersData[$layer->getId()] = array();
+        $layersData[$layer->getId()]['id'] = $layer->getId();
+        $layersData[$layer->getId()]['layerTitle'] = $layer->getLayerTitle();
+        $layersData[$layer->getId()]['layerName'] = $layer->getLayerName();
+        $layersData[$layer->getId()]['layerShowInSwitcher'] = $layer->getLayerShowInSwitcher();
+        $layersData[$layer->getId()]['shapefileName'] = $layer->getUseruploadshapefile()->getShapefileName();
 
         if ($layer->getTopojsonOnly() === true && $user) {
 
           $geoms[$layer->getId()]['type'] = "topojsonfile";
           //    /uploads/shapefiles/' . $user->getId() . '/u' . $useruploadshapefile->getId() . '_' . $useruploadshapefile->getTopojsonfileName()
-          if (file_exists($data_path . '/shapefiles/' . $user->getId() . '/u' . $layer->getUseruploadshapefile()->getId() . '_' . $layer->getUseruploadshapefile()->getTopojsonfileName())) {
-            $the_geom = file_get_contents('/uploads/shapefiles/' . $user->getId() . '/u' . $layer->getUseruploadshapefile()->getId() . '_' . $layer->getUseruploadshapefile()->getTopojsonfileName());
-            $geoms[$layer->getId()]['geom'] = $the_geom;
+          if (file_exists($dataPath . '/shapefiles/' . $user->getId() . '/u' . $layer->getUseruploadshapefile()->getId() . '_' . $layer->getUseruploadshapefile()->getTopojsonfileName())) {
+            $theGeom = file_get_contents('/uploads/shapefiles/' . $user->getId() . '/u' . $layer->getUseruploadshapefile()->getId() . '_' . $layer->getUseruploadshapefile()->getTopojsonfileName());
+            $geoms[$layer->getId()]['geom'] = $theGeom;
           }
           else {
             $message = 'Topojson file ' . $layer->getUseruploadshapefile()->getTopojsonfileName() . ' not exist!';
@@ -138,18 +138,18 @@ class DefaultController extends Controller {
         }
       }
 
-      if ($layers[0]->getDefaultSldName() && file_exists($data_path . '/sld/' . $layers[0]->getDefaultSldName())) {
+      if ($layers[0]->getDefaultSldName() && file_exists($dataPath . '/sld/' . $layers[0]->getDefaultSldName())) {
         //    echo $layers[0]->getDefaultSldName();
 
-        $sldfile_content = file_get_contents($data_path . '/sld/' . $layers[0]->getDefaultSldName());
-        $sldstring = str_replace('ogc:', '', $sldfile_content);
+        $sldFileContent = file_get_contents($dataPath . '/sld/' . $layers[0]->getDefaultSldName());
+        $sldstring = str_replace('ogc:', '', $sldFileContent);
         $sldxml = simplexml_load_string($sldstring);
         var_dump($sldxml);
         $json = json_encode($sldxml);
 
         var_dump($json);
       }
-      return new Response(\json_encode(array('success' => $success, 'message' => $message, 'layers' => $layers_data, 'sld' => $json, 'data' => $geoms)));
+      return new Response(\json_encode(array('success' => $success, 'message' => $message, 'layers' => $layersData, 'sld' => $json, 'data' => $geoms)));
     }
     return new Response(\json_encode(array('success' => true, 'message' => 'User draw name  not exist')));
   }
@@ -164,12 +164,12 @@ class DefaultController extends Controller {
   public function mapLayerAction(Request $request) {
 
     $em = $this->getDoctrine()->getManager();
-    $user = $this->getUser();
+ //   $user = $this->getUser();
     $id = $request->get("id");
     $type = $request->get("type");
 
     // shapefiles path for uploaded shapefiles
-    $shapefiles_path = $this->get('kernel')->getRootDir() . '/../Data';
+    $shapefilesPath = $this->get('kernel')->getRootDir() . '/../Data';
 
 
 //    if (!$user) {
@@ -182,7 +182,7 @@ class DefaultController extends Controller {
           ->getResult();
 
       if ($layers) {
-        $layers_data = array();
+        $layersData = array();
         $conn = $this->get('database_connection');
         $geoms = array();
         $message = '';
@@ -190,23 +190,23 @@ class DefaultController extends Controller {
 
         foreach ($layers as $layer) {
           $geoms[$layer->getId()] = array();
-          $layers_data[$layer->getId()] = array();
-          $layers_data[$layer->getId()]['id'] = $layer->getId();
-          $layers_data[$layer->getId()]['layerTitle'] = $layer->getLayerTitle();
-          $layers_data[$layer->getId()]['layerName'] = $layer->getLayerName();
-          $layers_data[$layer->getId()]['tip_field'] = $layer->getUseruploadshapefile()->getTipField();
-          $layers_data[$layer->getId()]['label_field'] = $layer->getUseruploadshapefile()->getLabelField();
+          $layersData[$layer->getId()] = array();
+          $layersData[$layer->getId()]['id'] = $layer->getId();
+          $layersData[$layer->getId()]['layerTitle'] = $layer->getLayerTitle();
+          $layersData[$layer->getId()]['layerName'] = $layer->getLayerName();
+          $layersData[$layer->getId()]['tip_field'] = $layer->getUseruploadshapefile()->getTipField();
+          $layersData[$layer->getId()]['label_field'] = $layer->getUseruploadshapefile()->getLabelField();
     
-          $layers_data[$layer->getId()]['layerShowInSwitcher'] = $layer->getLayerShowInSwitcher();
-          $layers_data[$layer->getId()]['shapefileName'] = $layer->getUseruploadshapefile()->getShapefileName();
+          $layersData[$layer->getId()]['layerShowInSwitcher'] = $layer->isLayerShowInSwitcher();
+          $layersData[$layer->getId()]['shapefileName'] = $layer->getUseruploadshapefile()->getShapefileName();
           $filename = $layer->getUseruploadshapefile()->getShapefileName();
           
-          if ($layer->getTopojsonOnly() === true) {
+          if ($layer->isTopojsonOnly() === true) {
 
             $geoms[$layer->getId()]['type'] = "topojsonfile";
-            if (file_exists($shapefiles_path . '/shapefiles/' . $layer->getUserId() . '/usershapefile-' . $layer->getUseruploadshapefile()->getId() . '.json')) {
-              $the_geom = file_get_contents($shapefiles_path . '/shapefiles/' . $layer->getUserId() . '/usershapefile-' . $layer->getUseruploadshapefile()->getId() . '.json');
-              $geoms[$layer->getId()]['geom'] = $the_geom;
+            if (file_exists($shapefilesPath . '/shapefiles/' . $layer->getUserId() . '/usershapefile-' . $layer->getUseruploadshapefile()->getId() . '.json')) {
+              $theGeom = file_get_contents($shapefilesPath . '/shapefiles/' . $layer->getUserId() . '/usershapefile-' . $layer->getUseruploadshapefile()->getId() . '.json');
+              $geoms[$layer->getId()]['geom'] = $theGeom;
             }
             else {
               $message = 'Topojson file ' . $layer->getUseruploadshapefile()->getTopojsonfileName() . ' not exist!';
@@ -226,7 +226,7 @@ class DefaultController extends Controller {
         }
 
         $json = $this->getSldContent($layers[0]->getDefaultSldName());
-        return new Response(\json_encode(array('success' => $success, 'type' => $type,  'filename' => $filename, 'message' => $message, 'layers' => $layers_data, 'sld' => $json, 'data' => $geoms)));
+        return new Response(\json_encode(array('success' => $success, 'type' => $type,  'filename' => $filename, 'message' => $message, 'layers' => $layersData, 'sld' => $json, 'data' => $geoms)));
       }
     }
     if ($type === 'geojson') {
@@ -260,20 +260,20 @@ class DefaultController extends Controller {
    * 
    */
 
-  private function getSldContent($sld_filename) {
+  private function getSldContent($sldFilename) {
     // sld path for sld file
-    $sld_path = $this->get('kernel')->getRootDir() . '/../Data';
-    ;
+    $sldPath = $this->get('kernel')->getRootDir() . '/../Data';
+    
 
-    if (isset($sld_filename) && $sld_filename != '' && file_exists($sld_path . '/sld/' . $sld_filename)) {
+    if (isset($sldFilename) && $sldFilename != '' && file_exists($sldPath . '/sld/' . $sldFilename)) {
       //    echo $layers[0]->getDefaultSldName();
       // read data from sld file
-      $sldfile_content = file_get_contents($sld_path . '/sld/' . $sld_filename);
+      $sldFileContent = file_get_contents($sldPath . '/sld/' . $sldFilename);
 
       // remove prefix ogc:
-      $sldstring_temp = str_replace('ogc:', '', $sldfile_content);
+      $sldstringTemp = str_replace('ogc:', '', $sldFileContent);
       // remove prefix sld:
-      $sldstring = str_replace('sld:', '', $sldstring_temp);
+      $sldstring = str_replace('sld:', '', $sldstringTemp);
       $sldxml = simplexml_load_string($sldstring);
       $json = json_encode($sldxml);
       return $json;
