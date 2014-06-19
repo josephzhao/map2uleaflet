@@ -191,7 +191,7 @@ window.onload = function() {
                 attribution: ""
             });
 
-    map.addLayer(subwatersheds);
+ //   map.addLayer(subwatersheds);
 
     map.baseLayers = [
         {'layer': mapnik, 'name': 'Open Street Map'},

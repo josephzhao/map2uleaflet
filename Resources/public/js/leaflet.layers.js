@@ -456,15 +456,17 @@ L.MAP2U.layers = function(options) {
 
                     if (result.success === true && (result.type === 'topojson' || result.type === 'shapefile_topojson')) {
 
-                          alert(result.sld);
+                    //      alert(result.sld);
                           var sld=JSON.parse(result.sld);
- alert(sld.NamedLayer);
- alert(sld.NamedLayer.Name);
- alert(sld.NamedLayer.UserStyle);
- alert(sld.NamedLayer.UserStyle.Name);
- alert(sld.NamedLayer.UserStyle.FeatureTypeStyle);
- alert(sld.NamedLayer.UserStyle.FeatureTypeStyle.Rule);
- alert(sld.NamedLayer.UserStyle.FeatureTypeStyle.Rule.PointSymbolizer);
+                        //  var sld = $.parseXML(result.sld);
+                     //   var $xmlDoc = $($.parseXML(result.sld));
+// alert(sld.NamedLayer);
+// alert(sld.NamedLayer.Name);
+// alert(sld.NamedLayer.UserStyle);
+// alert(sld.NamedLayer.UserStyle.Name);
+// alert(sld.NamedLayer.UserStyle.FeatureTypeStyle);
+// alert(sld.NamedLayer.UserStyle.FeatureTypeStyle.Rule);
+// alert(sld.NamedLayer.UserStyle.FeatureTypeStyle.Rule.PointSymbolizer);
  
                         d3.selectAll("#svg-shapefile").each(function() {
                             var elt = d3.select(this);
@@ -513,6 +515,8 @@ L.MAP2U.layers = function(options) {
                                 }
                             });
                             geojson_shapefile.addTo(map);
+                            geojson_shapefile.onLoadSLD(sld);
+                        //    geojson_shapefile.onLoadSLD($xmlDoc);
                             layer.layer = geojson_shapefile;
                             geojson_shapefile.on('click', function(e) {
                                 //   if (parseInt(e.target.options.layer_id) === parseInt($("select#activelayer_id.layers-ui").val())) {
