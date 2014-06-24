@@ -50,6 +50,7 @@
 
 .leaflet-sidebar.left.visible {
     left: 0;
+    z-index:inherit;
 }
 
 .leaflet-sidebar.right.visible {
@@ -75,7 +76,7 @@
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     padding: 0px 14px 8px 14px;
-    z-index: inherit;
+
     font-size: 1.1em;
 
     background: rgba(255, 255, 255, 0.50);
