@@ -3,7 +3,7 @@
     height: 20px;
     background: white;
     border: 1px solid #333;
-   
+
 }
 .sidebar_content {
     border-top: 1px solid #ddd ;
@@ -18,8 +18,8 @@
     margin-left: -10px;
 }
 
- .leaflet-sidebar.right .sidebar_content input[type="radio"] { margin-top:-1px; margin-right:3px;}
- .leaflet-sidebar.right .sidebar_content input[type="checkbox"] { margin-top:-1px; margin-right:3px;}
+.leaflet-sidebar.right .sidebar_content input[type="radio"] { margin-top:-1px; margin-right:3px;}
+.leaflet-sidebar.right .sidebar_content input[type="checkbox"] { margin-top:-1px; margin-right:3px;}
 
 .leaflet-sidebar {
     position: absolute;
@@ -70,12 +70,12 @@
 
     overflow: hidden;
     -webkit-overflow-scrolling: touch;
-    
+
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     padding: 0px 14px 8px 14px;
-  
+    z-index: inherit;
     font-size: 1.1em;
 
     background: rgba(255, 255, 255, 0.50);
@@ -93,7 +93,7 @@
     box-shadow: none;
     border: 2px solid rgba(0,0,0,0.2);
     background-clip: padding-box;
- 
+
 }
 
 @media(max-width:767px){
@@ -112,7 +112,7 @@
 
     .leaflet-sidebar.left.visible {
         left: 0;
-           background-color: rgba(255, 255, 255, 0.80);
+        background-color: rgba(255, 255, 255, 0.80);
     }
 
     .leaflet-sidebar.right.visible {
@@ -175,16 +175,16 @@
     .leaflet-sidebar.left {
         width: 350px;
     }
-   .leaflet-sidebar.right {
+    .leaflet-sidebar.right {
         width: 280px;
     }
     .leaflet-sidebar.left.visible ~ .leaflet-left {
         left: 350px;
-         
+
     }
     .leaflet-sidebar.right.visible ~ .leaflet-right {
         right: 280px;
-         
+
     }
 }
 
