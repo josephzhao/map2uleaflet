@@ -309,6 +309,8 @@ window.onload = function() {
         sidebar: rightSidebar
     }).addTo(map);
     var drawnItems = new L.FeatureGroup();
+    $(drawnItems).attr({"id":'user_draw_features'});
+  
     map.addLayer(drawnItems);
     map.drawnItems = drawnItems;
     var drawControl = new L.Control.Draw({
@@ -353,7 +355,7 @@ window.onload = function() {
                 layer = e.layer;
         layer.id = 0;
         layer.type = type;
-
+        $(layer).addClass('userdraw_class');
         var radius = 0;
         drawnItems.addLayer(layer);
         layer.index = drawnItems.getLayers().length - 1;
@@ -1083,20 +1085,15 @@ window.onload = function() {
 
                 for (var k = 0; k < keys.length; k++)
                 {
-                    //  alert(keys[k]);
-                    //   alert(JSON.stringify(result.layers[keys[k]]));
                     var layer = result.layers[keys[k]];
-                    //  alert(layer.id);
-                    map.dataLayers[map.dataLayers.length] = {'layer': null, 'layer_id': layer.id, title: layer.layerTitle, 'name': layer.layerName, type: 'shapefile_topojson'};
+                    // layer_id => UploadShapefileLayer.id
+                    // index_id => display sequence id on screen
+                    
+                    map.dataLayers[map.dataLayers.length] = {'layer': null,'minZoom':layer.minZoom,'maxZoom':layer.maxZoom,'index_id':k, 'layer_id': layer.id, title: layer.layerTitle, 'name': layer.layerName, type: 'shapefile_topojson'};
                 }
-                map.dataLayers[map.dataLayers.length] = {'layer': null, 'layer_id': -1, title: "My draw geometries", 'name': 'My draw geometries', type: 'geojson'};
-
+                map.dataLayers[map.dataLayers.length] = {'layer': null, 'index_id':-1, 'layer_id': -1, title: "My draw geometries", 'name': 'My draw geometries', type: 'geojson'};
                 layersControl.refreshOverlays();
-
             }
-
-            //  alert(JSON.stringify(result.layers));
-            //  alert(JSON.stringify(html));
         }
     });
 
@@ -1173,6 +1170,8 @@ window.onload = function() {
                     });
 
                     map.drawnItems.addLayer(feature);
+                    if(pt !== undefined && pt.lat !== undefined && pt.lng !== undefined )
+                        map.panTo(new L.LatLng(pt.lat(), pt.lng()));
 //                    pt = pt.replace(")", "");
 //                    pt = pt.replace("(", "");
 //                    pt = pt.split(",");
@@ -1181,104 +1180,6 @@ window.onload = function() {
                 ;
 
             });
-
-
-
-//            //  alert("search?query=" + encodeURIComponent(query));
-//
-//            var HOST_URL = 'http://open.mapquestapi.com';
-//
-//            var SAMPLE_POST = HOST_URL + '/nominatim/v1/search.php?format=json';
-//            var searchType = '';
-//            var safe = SAMPLE_POST + "&q=" + encodeURIComponent(query);//westminster+abbey";
-//            //         var safe = SAMPLE_POST + "&q=43.779184567693,-79.298807618514";//westminster+abbey";
-//            //     alert(safe);
-//            $.ajax({
-//                url: safe,
-//                method: 'GET',
-////                data: {
-////                  zoom: map.getZoom(),
-////                  minlon: map.getBounds().getWest(),
-////                  minlat: map.getBounds().getSouth(),
-////                  maxlon: map.getBounds().getEast(),
-////                  maxlat: map.getBounds().getNorth()
-////                },
-//                success: function(html) {
-//                    alert(html[0].display_name)
-//                    //  alert(JSON.stringify(html));
-//                }
-//            });
-////
-////function showBasicSearchURL() {
-//    var safe = SAMPLE_POST + "&q=westminster+abbey";
-//    document.getElementById('divBasicSearchUrl').innerHTML = safe.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-//};
-//
-//function doBasicSearchClick() {
-//	searchType = "helloworld";
-//    var newURL = SAMPLE_POST + "&q=westminster+abbey";
-//	var script = document.createElement('script');
-//    script.type = 'text/javascript';
-//    script.src = newURL;
-//    document.body.appendChild(script);
-//};
-//
-//function renderBasicSearchNarrative(response) {
-//     var html = '';
-//    var i = 0;
-//    var j = 0;
-//	
-//	if(response){
-//		html += '<table><tr><th colspan="5">Search Results</th></tr>'
-//		html += '<tr><td><b>#</b></td><td><b>Type</b></td><td style="min-width:150px;"><b>Name</b></td><td><b>Lat/Long</b></td><td><b>Fields</b></td></tr>';
-//		html += '<tbody>'
-//		
-//		for(var i =0; i < response.length; i++){
-//			var result = response[i];
-//			var resultNum = i+1;			
-//			
-//			html += "<tr valign=\"top\">";
-//			html += "<td>" + resultNum + "</td>";
-//			html += "<td>" + result.type + "</td>";
-//			
-//			html += "<td>";
-//			if(result.display_name){
-//				var new_display_name = result.display_name.replace(/,/g, ",<br />")
-//				html += new_display_name;				
-//			}
-//			html += "</td>";
-//			
-//			html += "<td>" + result.lat + ", " + result.lon + "</td>";
-//			
-//			html += "<td>"
-//			if(result){
-//				for (var obj in result){
-//					var f = result[obj];
-//					html += "<b>" + obj + ":</b> " + f + "<br/>";					
-//				}
-//			}
-//			html += "</td></tr>";
-//		}		
-//		html += '</tbody></table>';
-//	}
-//	
-//    
-//    switch (searchType) {
-//		case "helloworld":
-//			document.getElementById('divBasicSearchResults').style.display = "";
-//			document.getElementById('divBasicSearchResults').innerHTML = html;
-//			break;
-//	}
-//}
-//
-//function collapseResults(type) {
-//	switch(type) {
-//		case "helloworld":
-//			document.getElementById('divBasicSearchResults').style.display = "none";
-//			break;
-//	}
-//}
-//      OSM.router.route("/search?query=" + encodeURIComponent(query) + OSM.formatHash(map));
         } else {
             alert("search can not be empty!");
 //      OSM.router.route("/" + OSM.formatHash(map));

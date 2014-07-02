@@ -46,26 +46,28 @@ class DefaultController extends Controller {
         $em = $this->getDoctrine()->getManager();
 
         if ($this->getUser()) {
-            $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UploadShapefileLayer p where p.userId=' . $this->getUser()->getId() . ' or p.published = true ORDER BY p.layerName ASC')
-                ->getResult();
-        }
-        else {
-            $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UploadShapefileLayer p where  p.published = true ORDER BY p.layerName ASC')
-                ->getResult();
+            $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UploadShapefileLayer p where p.userId=' . $this->getUser()->getId() . ' or p.published = true ORDER BY p.seq ASC')
+                    ->getResult();
+        } else {
+            $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UploadShapefileLayer p where  p.published = true ORDER BY p.seq ASC')
+                    ->getResult();
         }
 
         if ($layers) {
             $layersData = array();
-
             $message = '';
             $success = true;
             foreach ($layers as $layer) {
-                $layersData[$layer->getId()] = array();
-                $layersData[$layer->getId()]['id'] = $layer->getId();
-                $layersData[$layer->getId()]['layerTitle'] = $layer->getLayerTitle();
-                $layersData[$layer->getId()]['layerName'] = $layer->getLayerName();
-                $layersData[$layer->getId()]['layerShowInSwitcher'] = $layer->isLayerShowInSwitcher();
-                $layersData[$layer->getId()]['shapefileName'] = $layer->getUseruploadshapefile()->getShapefileName();
+                $layerData = array();
+                $layerData['id'] = $layer->getId();
+                $layerData['layerTitle'] = $layer->getLayerTitle();
+                $layerData['layerName'] = $layer->getLayerName();
+                $layerData['seq'] = $layer->getSeq();
+                $layerData['minZoom'] = $layer->getMinZoom();
+                $layerData['maxZoom'] = $layer->getMaxZoom();
+                $layerData['layerShowInSwitcher'] = $layer->isLayerShowInSwitcher();
+                $layerData['shapefileName'] = $layer->getUseruploadshapefile()->getShapefileName();
+                array_push($layersData, $layerData);
             }
             return new Response(\json_encode(array('success' => $success, 'message' => $message, 'layers' => $layersData)));
         }
@@ -89,13 +91,12 @@ class DefaultController extends Controller {
         echo $user;
         if ($user && $user !== '') {
             $layers = $em//->getRepository('Map2uCoreBundle:UploadShapefileLayer')//->find(array('userId' => $user->getId()));
-                ->createQuery('SELECT p FROM Map2uCoreBundle:UploadShapefileLayer p where p.userId=' . $user->getId() . ' or p.published = true ORDER BY p.layerName ASC')
-                ->getResult();
-        }
-        else {
+                    ->createQuery('SELECT p FROM Map2uCoreBundle:UploadShapefileLayer p where p.userId=' . $user->getId() . ' or p.published = true ORDER BY p.seq ASC')
+                    ->getResult();
+        } else {
             $layers = $em//->getRepository('Map2uCoreBundle:UploadShapefileLayer')//->find(array('userId' => $user->getId()));
-                ->createQuery('SELECT p FROM Map2uCoreBundle:UploadShapefileLayer p where  p.published = true ORDER BY p.layerName ASC')
-                ->getResult();
+                    ->createQuery('SELECT p FROM Map2uCoreBundle:UploadShapefileLayer p where  p.published = true ORDER BY p.seq ASC')
+                    ->getResult();
         }
         //   var_dump($layers);
         if ($layers) {
@@ -110,6 +111,9 @@ class DefaultController extends Controller {
                 $layersData[$layer->getId()]['id'] = $layer->getId();
                 $layersData[$layer->getId()]['layerTitle'] = $layer->getLayerTitle();
                 $layersData[$layer->getId()]['layerName'] = $layer->getLayerName();
+                $layersData[$layer->getId()]['seq'] = $layer->getSeq();
+                $layersData[$layer->getId()]['minZoom'] = $layer->getMinZoom();
+                $layersData[$layer->getId()]['maxZoom'] = $layer->getMaxZoom();
                 $layersData[$layer->getId()]['layerShowInSwitcher'] = $layer->getLayerShowInSwitcher();
                 $layersData[$layer->getId()]['shapefileName'] = $layer->getUseruploadshapefile()->getShapefileName();
 
@@ -120,8 +124,7 @@ class DefaultController extends Controller {
                     if (file_exists($dataPath . '/shapefiles/' . $user->getId() . '/u' . $layer->getUseruploadshapefile()->getId() . '_' . $layer->getUseruploadshapefile()->getTopojsonfileName())) {
                         $theGeom = file_get_contents('/uploads/shapefiles/' . $user->getId() . '/u' . $layer->getUseruploadshapefile()->getId() . '_' . $layer->getUseruploadshapefile()->getTopojsonfileName());
                         $geoms[$layer->getId()]['geom'] = $theGeom;
-                    }
-                    else {
+                    } else {
                         $message = 'Topojson file ' . $layer->getUseruploadshapefile()->getTopojsonfileName() . ' not exist!';
                         $success = false;
                         $sql = "select st_asgeojson(st_transform(the_geom,4326)) from useruploadshapefile_geoms_" . $layer->getId();
@@ -129,8 +132,7 @@ class DefaultController extends Controller {
                         $geoms[$layer->getId()]['type'] = "geojson";
                         $geoms[$layer->getId()]['geom'] = $conn->fetchAll($sql);
                     }
-                }
-                else {
+                } else {
                     $sql = "select st_asgeojson(the_geom) from useruploadshapefile_geoms_" . $layer->getId();
 
                     $geoms[$layer->getId()]['type'] = "geojson";
@@ -179,7 +181,7 @@ class DefaultController extends Controller {
         if ($type === 'topojson' || $type === 'shapefile_topojson') {
 
             $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UploadShapefileLayer p where p.id=' . $id)
-                ->getResult();
+                    ->getResult();
 
             if ($layers) {
                 $layersData = array();
@@ -207,8 +209,7 @@ class DefaultController extends Controller {
                         if (file_exists($shapefilesPath . '/shapefiles/' . $layer->getUserId() . '/usershapefile-' . $layer->getUseruploadshapefile()->getId() . '.json')) {
                             $theGeom = file_get_contents($shapefilesPath . '/shapefiles/' . $layer->getUserId() . '/usershapefile-' . $layer->getUseruploadshapefile()->getId() . '.json');
                             $geoms[$layer->getId()]['geom'] = $theGeom;
-                        }
-                        else {
+                        } else {
                             $message = 'Topojson file ' . $layer->getUseruploadshapefile()->getTopojsonfileName() . ' not exist!';
                             $success = false;
                             $sql = "select st_asgeojson(st_transform(the_geom,4326)) as geometry from useruploadshapefile_geoms_" . $layer->getId();
@@ -216,8 +217,7 @@ class DefaultController extends Controller {
                             $geoms[$layer->getId()]['type'] = "geojson";
                             $geoms[$layer->getId()]['geom'] = $conn->fetchAll($sql);
                         }
-                    }
-                    else {
+                    } else {
                         $sql = "select st_asgeojson(the_geom) as geometry from useruploadshapefile_geoms_" . $layer->getId();
                         $geoms[$layer->getId()]['type'] = "geojson";
                         $type = "geojson";
@@ -232,7 +232,7 @@ class DefaultController extends Controller {
         if ($type === 'geojson') {
             if (intval($id) === -1) {
                 $geoms = $this->getUserDrawGeometries();
-                return new Response(\json_encode(array('success' => true, 'message' => 'User draw name  not exist', 'type' => 'geojson', 'filename' => 'draw', 'data' => $geoms)));
+                return new Response(\json_encode(array('success' => true, 'message' => 'User draw geometries', 'type' => 'geojson', 'filename' => 'draw', 'data' => $geoms)));
             }
         }
         //  }
@@ -263,8 +263,6 @@ class DefaultController extends Controller {
     private function getSldContent($sldFilename) {
         // sld path for sld file
         $sldPath = $this->get('kernel')->getRootDir() . '/../Data';
-
-
         if (isset($sldFilename) && $sldFilename != '' && file_exists($sldPath . '/sld/' . $sldFilename)) {
             //    echo $layers[0]->getDefaultSldName();
             // read data from sld file
@@ -272,17 +270,70 @@ class DefaultController extends Controller {
             $doc = new \DOMDocument();
             $sdlText = str_replace('sld:', '', $sldFileContent);
             $doc->loadXML(str_replace('ogc:', '', $sdlText));
+            $json = array();
+            $featureTypeStyles = $doc->getElementsByTagName('FeatureTypeStyle');
+            foreach ($featureTypeStyles as $featureTypeStyle) {
+                array_push($json, ["$featureTypeStyle->nodeName" => $this->processChild($featureTypeStyle, $json)]);
+            }
+            return json_encode($json[0]);
+        }
+        return '';
+    }
 
+    private function processChild($children, $returnJson) {
+
+        $responseJson = array();
+        $res_array = array();
+        if ($children->hasChildNodes()) {
+            $i = 0;
+            foreach ($children->childNodes as $child) {
+                if ($child->hasChildNodes() && $child->nodeType === 1) {
+                    $childrray = $this->processChild($child, $res_array);
+                    if ($child->getAttribute('name') !== null && $child->getAttribute('name') !== '') {
+                        $returnJson[$child->getAttribute('name')] = $child->nodeValue;
+                    } else {
+                        if ($childrray) {
+
+                            if (array_key_exists($child->nodeName, $returnJson)) {
+                                array_push($returnJson, [$child->nodeName => $childrray]);
+                            } else {
+                                if ($child->nodeName === 'Rule')
+                                    array_push($returnJson, [$child->nodeName => $childrray]);
+                                else
+                                    $returnJson[$child->nodeName] = $childrray;
+                            }
+                        } else {
+                            if ($child->nodeType === 1 && $child->nodeName && trim($child->nodeValue))
+                                $returnJson[$child->nodeName] = trim($child->nodeValue);
+                        }
+                    }
+                }
+            }
+        }
+        return $returnJson;
+    }
+
+    private function getSldContent_origin($sldFilename) {
+        // sld path for sld file
+        $sldPath = $this->get('kernel')->getRootDir() . '/../Data';
+        if (isset($sldFilename) && $sldFilename != '' && file_exists($sldPath . '/sld/' . $sldFilename)) {
+            //    echo $layers[0]->getDefaultSldName();
+            // read data from sld file
+            $sldFileContent = file_get_contents($sldPath . '/sld/' . $sldFilename);
+            $doc = new \DOMDocument();
+            $sdlText = str_replace('sld:', '', $sldFileContent);
+            $doc->loadXML(str_replace('ogc:', '', $sdlText));
             $json = array();
             $featureTypeStyles = $doc->getElementsByTagName('FeatureTypeStyle');
             foreach ($featureTypeStyles as $featureTypeStyle) {
                 $rules = $featureTypeStyle->getElementsByTagName('Rule');
                 foreach ($rules as $rule) {
                     $titles = $rule->getElementsByTagName('Title');
+                    $title_name = '';
                     foreach ($titles as $title) {
                         $title_name = $title->nodeValue;
                     }
-                   array_push($json,["title"=>$title_name, 'sld'=>$this->processRule($rule)]);
+                    array_push($json, ["title" => $title_name, 'sld' => $this->processRule($rule)]);
                 }
             }
             return json_encode($json);
@@ -294,6 +345,7 @@ class DefaultController extends Controller {
         $ruleJson = array();
         $filters = $rule->getElementsByTagName('Filter');
         $polygons = $rule->getElementsByTagName('PolygonSymbolizer');
+        $pointSymbJsons = $rule->getElementsByTagName('PolygonSymbolizer');
 
         foreach ($filters as $filter) {
             $ruleJson[$filter->nodeName] = $this->processFilter($filter);
@@ -301,6 +353,10 @@ class DefaultController extends Controller {
         foreach ($polygons as $polygon) {
             $ruleJson[$polygon->nodeName] = $this->processPolygonSymbolizer($polygon);
         }
+        foreach ($pointSymbJsons as $pointSymbJson) {
+            $ruleJson[$pointSymbJson->nodeName] = $this->processPointSymbolizer($pointSymbJson);
+        }
+
         return $ruleJson;
     }
 
@@ -335,6 +391,70 @@ class DefaultController extends Controller {
         return $polygonJson;
     }
 
+    private function processPointSymbolizer($pointSymb) {
+        $pointSymbJson = array();
+        $graphics = $pointSymb->getElementsByTagName('Graphic');
+        foreach ($graphics as $graphic) {
+            $graphicArray = $this->processGraphic($graphic);
+            $pointSymbJson[$graphic->nodeName] = $graphicArray;
+        }
+
+        $marks = $graphics->getElementsByTagName('Mark');
+        foreach ($marks as $mark) {
+            $markArray = $this->processMark($mark);
+            if ($mark->hasChildNodes()) {
+                foreach ($mark->childNodes as $child) {
+                    if ($child->nodeType === 1)
+                        $markArray[$child->getAttribute('name')] = $child->nodeValue;
+                }
+            }
+            $pointSymbJson[$graphic->nodeName] = $markArray;
+        }
+
+        $fills = $pointSymb->getElementsByTagName('Fill');
+        foreach ($fills as $fill) {
+            $fillArray = array();
+
+            if ($fill->hasChildNodes()) {
+                foreach ($fill->childNodes as $child) {
+                    if ($child->nodeType === 1)
+                        $fillArray[$child->getAttribute('name')] = $child->nodeValue;
+                }
+            }
+            $pointSymbJson[$fill->nodeName] = $fillArray;
+        }
+        $strokes = $pointSymb->getElementsByTagName('Stroke');
+        foreach ($strokes as $stroke) {
+            $strokeArray = array();
+            if ($stroke->hasChildNodes()) {
+
+                foreach ($stroke->childNodes as $child) {
+                    if ($child->nodeType === 1)
+                        $strokeArray[$child->getAttribute('name')] = $child->nodeValue;
+                }
+            }
+            if ($stroke->nodeType === 1)
+                $polygonJson[$stroke->nodeName] = $strokeArray;
+        }
+
+        return $polygonJson;
+    }
+
+    private function processGraphic($graphic) {
+        $graphicArray = array();
+        if ($graphic->hasChildNodes()) {
+            foreach ($graphic->childNodes as $child) {
+                if ($child->nodeType === 1) {
+                    $graphicArray[$child->getAttribute('name')] = $child->nodeValue;
+                }
+            }
+        }
+    }
+
+    private function processMark($mark) {
+        
+    }
+
     private function processFilter($filter) {
         $filterJson = array();
         if ($filter->hasChildNodes()) {
@@ -342,8 +462,7 @@ class DefaultController extends Controller {
                 if ($child->hasChildNodes()) {
 
                     $filterJson[$child->nodeName] = $this->processFilterChildNodes($child);
-                }
-                else {
+                } else {
 
                     if ($child->nodeType === 1)
                         $filterJson[$child->nodeName] = $child->nodeValue;
