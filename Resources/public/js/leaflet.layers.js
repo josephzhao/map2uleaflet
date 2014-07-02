@@ -787,17 +787,19 @@ L.MAP2U.layers = function(options) {
                         }
                     }
                 });
-
+                if (layer.defaultShowOnMap === true)
+                {
+                    $(input).prop('checked', true)
+                            .trigger('change');
+                }
             }
-
-
             map.on('zoomend', function() {
                 // alert(map.getBounds().toBBoxString());
                 // alert(maxArea);
                 var zoom = this.getZoom();
                 var mindisplayed = false;
-                 var maxdisplayed = false;
-                 var displayed = false;
+                var maxdisplayed = false;
+                var displayed = false;
                 if (!isNaN(layer.minZoom) && layer.minZoom !== '')
                 {
                     if (zoom > layer.minZoom)
@@ -808,12 +810,12 @@ L.MAP2U.layers = function(options) {
                     if (zoom < layer.maxZoom)
                         maxdisplayed = true;
                 }
-                if(maxdisplayed&&mindisplayed)
-                    displayed=true;
+                if (maxdisplayed && mindisplayed)
+                    displayed = true;
                 if (layer.layer) {
 
 
-                    if (displayed === false ) {
+                    if (displayed === false) {
                         if (map.hasLayer(layer.layer))
                             map.removeLayer(layer.layer);
                     } else {
@@ -826,7 +828,7 @@ L.MAP2U.layers = function(options) {
                     if (displayed && !$(input).is(':checked') && layer.layer) {
                         $(input).prop('checked', displayed)
                                 .trigger('change');
-                        
+
                     } else if (!displayed && $(input).is(':checked')) {
                         $(input).prop('checked', displayed)
                                 .trigger('change');

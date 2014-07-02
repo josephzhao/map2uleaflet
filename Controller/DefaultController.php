@@ -66,6 +66,7 @@ class DefaultController extends Controller {
                 $layerData['minZoom'] = $layer->getMinZoom();
                 $layerData['maxZoom'] = $layer->getMaxZoom();
                 $layerData['layerShowInSwitcher'] = $layer->isLayerShowInSwitcher();
+                $layerData['defaultShowOnMap'] = $layer->isDefaultShowOnMap();
                 $layerData['shapefileName'] = $layer->getUseruploadshapefile()->getShapefileName();
                 array_push($layersData, $layerData);
             }
