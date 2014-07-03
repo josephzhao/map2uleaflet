@@ -451,8 +451,9 @@ L.D3 = L.Class.extend({
                         for (var key in keys) {
                             var varFeatureTypeStyle = varFeatureTypeStyles[key];
                             if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle.Rule !== undefined && varFeatureTypeStyle !== undefined) {
+                                var rule = varFeatureTypeStyle.Rule;
                                 if (varFeatureTypeStyle.Rule.Filter !== undefined) { // if there are conditions set
-                                    var rule = varFeatureTypeStyle.Rule;
+
                                     if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
                                         if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] !== undefined)
                                         {
@@ -483,8 +484,9 @@ L.D3 = L.Class.extend({
                         for (var key in keys) {
                             var varFeatureTypeStyle = varFeatureTypeStyles[key];
                             if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle.Rule !== undefined && varFeatureTypeStyle !== undefined) {
+                                var rule = varFeatureTypeStyle.Rule;
                                 if (varFeatureTypeStyle.Rule.Filter !== undefined) { // if there are conditions set
-                                    var rule = varFeatureTypeStyle.Rule;
+
                                     if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
                                         if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] !== undefined)
                                         {
@@ -517,8 +519,9 @@ L.D3 = L.Class.extend({
                         for (var key in keys) {
                             var varFeatureTypeStyle = varFeatureTypeStyles[key];
                             if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle.Rule !== undefined && varFeatureTypeStyle !== undefined) {
+                                var rule = varFeatureTypeStyle.Rule;
                                 if (varFeatureTypeStyle.Rule.Filter !== undefined) { // if there are conditions set
-                                    var rule = varFeatureTypeStyle.Rule;
+
                                     if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
                                         if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] !== undefined)
                                         {
@@ -551,8 +554,9 @@ L.D3 = L.Class.extend({
                         for (var key in keys) {
                             var varFeatureTypeStyle = varFeatureTypeStyles[key];
                             if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle.Rule !== undefined && varFeatureTypeStyle !== undefined) {
+                                var rule = varFeatureTypeStyle.Rule;
                                 if (varFeatureTypeStyle.Rule.Filter !== undefined) { // if there are conditions set
-                                    var rule = varFeatureTypeStyle.Rule;
+
                                     if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
                                         if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] !== undefined)
                                         {
