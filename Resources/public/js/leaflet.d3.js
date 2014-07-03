@@ -343,7 +343,7 @@ L.D3 = L.Class.extend({
                         var keys = Object.keys(varFeatureTypeStyles);
                         for (var key in keys) {
                             var varFeatureTypeStyle = varFeatureTypeStyles[key];
-                            if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle !== undefined  && varFeatureTypeStyle.Rule !== undefined) {
+                            if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle !== undefined && varFeatureTypeStyle.Rule !== undefined) {
                                 var rule = varFeatureTypeStyle.Rule;
                                 if (rule.Filter !== undefined) { // if there are conditions set
                                     if (rule.Filter.PropertyIsEqualTo) {
@@ -381,8 +381,9 @@ L.D3 = L.Class.extend({
                         for (var key in keys) {
                             var varFeatureTypeStyle = varFeatureTypeStyles[key];
                             if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle.Rule !== undefined && varFeatureTypeStyle !== undefined) {
+                                var rule = varFeatureTypeStyle.Rule;
                                 if (varFeatureTypeStyle.Rule.Filter !== undefined) { // if there are conditions set
-                                    var rule = varFeatureTypeStyle.Rule;
+
                                     if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
                                         if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] !== undefined)
                                         {
@@ -398,11 +399,16 @@ L.D3 = L.Class.extend({
                                     }
                                 }
                                 else { // if no condition set
-
+                                    var marktype = 6 * 6;
+                                    if (rule.PointSymbolizer && rule.PointSymbolizer.Graphic && rule.PointSymbolizer.Graphic.Size)
+                                    {
+                                        marksize = rule.PointSymbolizer.Graphic.Size * rule.PointSymbolizer.Graphic.Size;
+                                    }
+                                    return marksize;
                                 }
                             }
                         }
-
+                        return 6 * 6;
                     })
                     )
                     .style("fill", function(d) {
@@ -411,8 +417,9 @@ L.D3 = L.Class.extend({
                         for (var key in keys) {
                             var varFeatureTypeStyle = varFeatureTypeStyles[key];
                             if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle.Rule !== undefined && varFeatureTypeStyle !== undefined) {
+                                var rule = varFeatureTypeStyle.Rule;
                                 if (varFeatureTypeStyle.Rule.Filter !== undefined) { // if there are conditions set
-                                    var rule = varFeatureTypeStyle.Rule;
+
                                     if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
                                         if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] !== undefined)
                                         {
@@ -428,7 +435,11 @@ L.D3 = L.Class.extend({
                                     }
                                 }
                                 else { // if no condition set
+                                    var fill_color = "#ccc";
 
+                                    if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Fill && rule.PointSymbolizer.Graphic.Mark.Fill.fill)
+                                        fill_color = rule.PointSymbolizer.Graphic.Mark.Fill.fill;
+                                    return fill_color;
                                 }
                             }
                         }
@@ -457,11 +468,14 @@ L.D3 = L.Class.extend({
                                     }
                                 }
                                 else { // if no condition set
-
+                                    var fill_opacity = "0.8";
+                                    if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Fill && rule.PointSymbolizer.Graphic.Mark.Fill['fill-opacity'])
+                                        fill_opacity = rule.PointSymbolizer.Graphic.Mark.Fill['fill-opacity'];
+                                    return fill_opacity;
                                 }
                             }
                         }
-                        return 1.0;
+                        return 0.8;
                     })
                     .style("stroke", function(d) {
                         var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
@@ -486,11 +500,16 @@ L.D3 = L.Class.extend({
                                     }
                                 }
                                 else { // if no condition set
+                                    var stroke = "#FFF";
+
+                                    if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Stroke && rule.PointSymbolizer.Graphic.Mark.Stroke.stroke)
+                                        stroke = rule.PointSymbolizer.Graphic.Mark.Stroke.stroke;
+                                    return stroke;
 
                                 }
                             }
                         }
-                        return "#000";
+                        return "#FFF";
                     })
                     .style("stroke-width", function(d) {
                         var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
@@ -515,10 +534,16 @@ L.D3 = L.Class.extend({
                                     }
                                 }
                                 else { // if no condition set
+                                    var stroke_width = 1.0;
+
+                                    if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Stroke && rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-width'])
+                                        stroke_width = rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-width'];
+                                    return stroke_width;
 
                                 }
                             }
                         }
+                        return 1.0;
                     })
                     .style("stroke-opacity", function(d) {
                         var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
@@ -543,10 +568,16 @@ L.D3 = L.Class.extend({
                                     }
                                 }
                                 else { // if no condition set
+                                    var stroke_opacity = 1.0;
+
+                                    if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Stroke && rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-opacity'])
+                                        stroke_opacity = rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-opacity'];
+                                    return stroke_opacity;
 
                                 }
                             }
                         }
+                        return 1.0;
                     })
                     .attr("transform", function(d) {
                         return "translate(" + _this.path.centroid(d) + ")";
