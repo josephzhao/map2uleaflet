@@ -239,7 +239,8 @@ L.D3 = L.Class.extend({
         if (this.options.showLabels && this._feature_labels)
         {
             this._feature_labels.attr("transform", function(d) {
-                return "translate(" + _this.path.centroid(d) + ")";
+                var point=_this.path.centroid(d);
+                return "translate(" +(point[0]+8) +"," +point[1] + ")";
             });
         }
 
