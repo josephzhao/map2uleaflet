@@ -597,7 +597,7 @@ L.D3 = L.Class.extend({
                                         stroke_opacity = rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-opacity'];
                                     else {
                                         if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Opacity && rule.PointSymbolizer.Graphic.Opacity.Literal)
-                                            stroke_opacity = rule.PointSymbolizer.Graphic.Mark.Opacity.Literal.trim();
+                                            stroke_opacity = rule.PointSymbolizer.Graphic.Opacity.Literal.trim();
                                     }
                                     return stroke_opacity;
 
