@@ -391,8 +391,12 @@ L.D3 = L.Class.extend({
                                             {
                                                 var marksize = 6 * 6;
 
-                                                if (rule.PointSymbolizer.Graphic.Size)
+                                                if (rule.PointSymbolizer.Graphic.Size && typeof rule.PointSymbolizer.Graphic.Size !== 'object')
                                                     marksize = rule.PointSymbolizer.Graphic.Size * rule.PointSymbolizer.Graphic.Size;
+                                                else {
+                                                    if (rule.PointSymbolizer.Graphic.Size && rule.PointSymbolizer.Graphic.Size.Literal)
+                                                        marksize = rule.PointSymbolizer.Graphic.Size.Literal * rule.PointSymbolizer.Graphic.Size.Literal;
+                                                }
                                                 return marksize;
                                             }
                                         }
@@ -400,9 +404,11 @@ L.D3 = L.Class.extend({
                                 }
                                 else { // if no condition set
                                     var marksize = 6 * 6;
-                                    if (rule.PointSymbolizer && rule.PointSymbolizer.Graphic && rule.PointSymbolizer.Graphic.Size)
-                                    {
+                                    if (rule.PointSymbolizer.Graphic.Size && typeof rule.PointSymbolizer.Graphic.Size !== 'object')
                                         marksize = rule.PointSymbolizer.Graphic.Size * rule.PointSymbolizer.Graphic.Size;
+                                    else {
+                                        if (rule.PointSymbolizer.Graphic.Size && rule.PointSymbolizer.Graphic.Size.Literal)
+                                            marksize = rule.PointSymbolizer.Graphic.Size.Literal * rule.PointSymbolizer.Graphic.Size.Literal;
                                     }
                                     return marksize;
                                 }
@@ -428,7 +434,7 @@ L.D3 = L.Class.extend({
                                                 var fill_color = "#ccc";
 
                                                 if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Fill && rule.PointSymbolizer.Graphic.Mark.Fill.fill)
-                                                    fill_color = rule.PointSymbolizer.Graphic.Mark.Fill.fill;
+                                                    fill_color = rule.PointSymbolizer.Graphic.Mark.Fill.fill.trim();
                                                 return fill_color;
                                             }
                                         }
@@ -463,6 +469,10 @@ L.D3 = L.Class.extend({
 
                                                 if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Fill && rule.PointSymbolizer.Graphic.Mark.Fill['fill-opacity'])
                                                     fill_opacity = rule.PointSymbolizer.Graphic.Mark.Fill['fill-opacity'];
+                                                else {
+                                                    if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Opacity && rule.PointSymbolizer.Graphic.Mark.Opacity.Literal)
+                                                        fill_opacity = rule.PointSymbolizer.Graphic.Mark.Opacity.Literal;
+                                                }
                                                 return fill_opacity;
                                             }
                                         }
@@ -472,6 +482,10 @@ L.D3 = L.Class.extend({
                                     var fill_opacity = "0.8";
                                     if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Fill && rule.PointSymbolizer.Graphic.Mark.Fill['fill-opacity'])
                                         fill_opacity = rule.PointSymbolizer.Graphic.Mark.Fill['fill-opacity'];
+                                    else {
+                                        if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Opacity && rule.PointSymbolizer.Graphic.Mark.Opacity.Literal)
+                                            fill_opacity = rule.PointSymbolizer.Graphic.Mark.Opacity.Literal.trim();
+                                    }
                                     return fill_opacity;
                                 }
                             }
@@ -495,7 +509,7 @@ L.D3 = L.Class.extend({
                                                 var stroke = "#FFF";
 
                                                 if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Stroke && rule.PointSymbolizer.Graphic.Mark.Stroke.stroke)
-                                                    stroke = rule.PointSymbolizer.Graphic.Mark.Stroke.stroke;
+                                                    stroke = rule.PointSymbolizer.Graphic.Mark.Stroke.stroke.trim();
                                                 return stroke;
                                             }
                                         }
@@ -505,7 +519,7 @@ L.D3 = L.Class.extend({
                                     var stroke = "#FFF";
 
                                     if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Stroke && rule.PointSymbolizer.Graphic.Mark.Stroke.stroke)
-                                        stroke = rule.PointSymbolizer.Graphic.Mark.Stroke.stroke;
+                                        stroke = rule.PointSymbolizer.Graphic.Mark.Stroke.stroke.trim();
                                     return stroke;
 
                                 }
@@ -530,7 +544,8 @@ L.D3 = L.Class.extend({
                                                 var stroke_width = 1.0;
 
                                                 if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Stroke && rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-width'])
-                                                    stroke_width = rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-width'];
+                                                    stroke_width = rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-width'].trim();
+
                                                 return stroke_width;
                                             }
                                         }
@@ -566,6 +581,10 @@ L.D3 = L.Class.extend({
 
                                                 if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Stroke && rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-opacity'])
                                                     stroke_opacity = rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-opacity'];
+                                                else {
+                                                    if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Opacity && rule.PointSymbolizer.Graphic.Mark.Opacity.Literal)
+                                                        stroke_opacity = rule.PointSymbolizer.Graphic.Mark.Opacity.Literal.trim();
+                                                }
                                                 return stroke_opacity;
                                             }
                                         }
@@ -576,6 +595,10 @@ L.D3 = L.Class.extend({
 
                                     if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Stroke && rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-opacity'])
                                         stroke_opacity = rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-opacity'];
+                                    else {
+                                        if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Opacity && rule.PointSymbolizer.Graphic.Mark.Opacity.Literal)
+                                            stroke_opacity = rule.PointSymbolizer.Graphic.Mark.Opacity.Literal.trim();
+                                    }
                                     return stroke_opacity;
 
                                 }
