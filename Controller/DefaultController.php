@@ -274,7 +274,7 @@ class DefaultController extends Controller {
             $json = array();
             $featureTypeStyles = $doc->getElementsByTagName('FeatureTypeStyle');
             foreach ($featureTypeStyles as $featureTypeStyle) {
-                array_push($json, ["$featureTypeStyle->nodeName" => $this->processChild($featureTypeStyle, $json)]);
+                array_push($json, array("$featureTypeStyle->nodeName" => $this->processChild($featureTypeStyle, $json)));
             }
             return json_encode($json[0]);
         }
@@ -296,10 +296,10 @@ class DefaultController extends Controller {
                         if ($childrray) {
 
                             if (array_key_exists($child->nodeName, $returnJson)) {
-                                array_push($returnJson, [$child->nodeName => $childrray]);
+                                array_push($returnJson, array($child->nodeName => $childrray));
                             } else {
                                 if ($child->nodeName === 'Rule')
-                                    array_push($returnJson, [$child->nodeName => $childrray]);
+                                    array_push($returnJson, array($child->nodeName => $childrray));
                                 else
                                     $returnJson[$child->nodeName] = $childrray;
                             }
