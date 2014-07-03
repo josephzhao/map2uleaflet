@@ -334,7 +334,7 @@ class DefaultController extends Controller {
                     foreach ($titles as $title) {
                         $title_name = $title->nodeValue;
                     }
-                    array_push($json, ["title" => $title_name, 'sld' => $this->processRule($rule)]);
+                    array_push($json, array("title" => $title_name, 'sld' => $this->processRule($rule)));
                 }
             }
             return json_encode($json);
