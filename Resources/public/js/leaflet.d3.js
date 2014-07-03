@@ -143,7 +143,7 @@ L.D3 = L.Class.extend({
         var northEast = corners.getNorthEast();
         var southWest = corners.getSouthWest();
         this.bounds = d3.geo.bounds(this.data);
-        this.bounds = [[Math.min(southWest.lng,this.bounds[0][0]),Math.min(southWest.lat,this.bounds[0][1])], [Math.max(northEast.lng,this.bounds[1][0]),Math.max(northEast.lat,this.bounds[1][1])]];
+        this.bounds = [[Math.min(southWest.lng, this.bounds[0][0]), Math.min(southWest.lat, this.bounds[0][1])], [Math.max(northEast.lng, this.bounds[1][0]), Math.max(northEast.lat, this.bounds[1][1])]];
 
         this.path = d3.geo.path().projection(this._project).pointRadius(8);
         this._symbols = {
@@ -210,7 +210,7 @@ L.D3 = L.Class.extend({
         var northEast = corners.getNorthEast();
         var southWest = corners.getSouthWest();
         this.bounds = d3.geo.bounds(this.data);
-        this.bounds = [[Math.min(southWest.lng,this.bounds[0][0]),Math.min(southWest.lat,this.bounds[0][1])], [Math.max(northEast.lng,this.bounds[1][0]),Math.max(northEast.lat,this.bounds[1][1])]];
+        this.bounds = [[Math.min(southWest.lng, this.bounds[0][0]), Math.min(southWest.lat, this.bounds[0][1])], [Math.max(northEast.lng, this.bounds[1][0]), Math.max(northEast.lat, this.bounds[1][1])]];
 
 
         var bottomLeft = this._project(this.bounds[0]),
@@ -343,10 +343,10 @@ L.D3 = L.Class.extend({
                         var keys = Object.keys(varFeatureTypeStyles);
                         for (var key in keys) {
                             var varFeatureTypeStyle = varFeatureTypeStyles[key];
-                            if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle.Rule !== undefined && varFeatureTypeStyle !== undefined) {
-                                if (varFeatureTypeStyle.Rule.Filter !== undefined) { // if there are conditions set
-                                    var rule = varFeatureTypeStyle.Rule;
-                                    if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
+                            if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle !== undefined  && varFeatureTypeStyle.Rule !== undefined) {
+                                var rule = varFeatureTypeStyle.Rule;
+                                if (rule.Filter !== undefined) { // if there are conditions set
+                                    if (rule.Filter.PropertyIsEqualTo) {
                                         if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] !== undefined)
                                         {
                                             if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] === rule.Filter.PropertyIsEqualTo.Literal)
