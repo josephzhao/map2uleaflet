@@ -1170,10 +1170,8 @@ window.onload = function() {
 
                     map.drawnItems.addLayer(feature);
                     if(pt !== undefined && pt.lat !== undefined && pt.lng !== undefined )
-                        map.panTo(new L.LatLng(pt.lat(), pt.lng()));
-//                    pt = pt.replace(")", "");
-//                    pt = pt.replace("(", "");
-//                    pt = pt.split(",");
+                  //      map.panTo(new L.LatLng(pt.lat(), pt.lng()));
+                        map.setView(new L.LatLng(pt.lat(), pt.lng()), 14);
 
                 }
                 ;

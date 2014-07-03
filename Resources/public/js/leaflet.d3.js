@@ -122,7 +122,9 @@ L.D3 = L.Class.extend({
                 .enter().append("text")
                 .attr("class", this.options.labelClass)
                 .attr("transform", function(d) {
-                    return "translate(" + _this.path.centroid(d) + ")";
+                    var point=_this.path.centroid(d);
+          
+                    return "translate(" + (point[0] + 10) + "," + point[1] + ")";
                 })
                 .attr("dy", ".35em")
                 .text(function(d) {
