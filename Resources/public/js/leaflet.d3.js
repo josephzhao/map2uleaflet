@@ -399,7 +399,7 @@ L.D3 = L.Class.extend({
                                     }
                                 }
                                 else { // if no condition set
-                                    var marktype = 6 * 6;
+                                    var marksize = 6 * 6;
                                     if (rule.PointSymbolizer && rule.PointSymbolizer.Graphic && rule.PointSymbolizer.Graphic.Size)
                                     {
                                         marksize = rule.PointSymbolizer.Graphic.Size * rule.PointSymbolizer.Graphic.Size;
