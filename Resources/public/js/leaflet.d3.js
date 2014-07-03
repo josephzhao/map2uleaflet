@@ -79,6 +79,7 @@ L.D3 = L.Class.extend({
             return [point.x, point.y];
         };
         this._initContainer();
+
 //        this._overlayPane = d3.select(this._map.getPanes().overlayPane);
 //        
 //        this._overlayPane.selectAll("#" + this.options.id ? this.options.id : 'svg-shapefile').remove();
@@ -86,6 +87,12 @@ L.D3 = L.Class.extend({
         //      this._el = this._overlayPane.append("svg");
 
         this._el = d3.select(this._container).append("svg");
+
+//                    alert($(this._map.getPanes().overlayPane).css("height"));
+//                    alert($(this._map.getPanes().overlayPane).css("width"));
+//                    alert($(this._container).css("height"));
+//                    alert($(this._container).css("width"));
+
         this._g = this._el.append("g").attr("class", this.options.svgClass ? this.options.svgClass + " leaflet-zoom-hide" : "leaflet-zoom-hide");
 //        this._el.attr('id', this.options.id ? this.options.id : 'svg-shapefile');
 //        this._el.attr('name', this.options.name ? this.options.name : 'shapefile');
@@ -129,26 +136,24 @@ L.D3 = L.Class.extend({
         this._g.selectAll("text").remove();
     },
     onLoaded: function() {
+
+        var corners = this._map.getBounds();
+
+        // Extracting boundary points
+        var northEast = corners.getNorthEast();
+        var southWest = corners.getSouthWest();
         this.bounds = d3.geo.bounds(this.data);
+        this.bounds = [[Math.min(southWest.lng,this.bounds[0][0]),Math.min(southWest.lat,this.bounds[0][1])], [Math.max(northEast.lng,this.bounds[1][0]),Math.max(northEast.lat,this.bounds[1][1])]];
+
         this.path = d3.geo.path().projection(this._project).pointRadius(8);
         this._symbols = {
-            star: "cross",
+            star: "diamond",
             circle: "circle",
             square: "square",
+            cross: "cross",
             triangle: "triangle-up",
             diamond: "diamond"
         };
-        this.symbolGenerator = d3.svg.symbol()
-                .type(function(d) {
-                    var symbols = {
-                        "star": "cross",
-                        "circle": "circle",
-                        "square": "square",
-                        "triangle": "triangle-up",
-                        "diamond": "diamond"
-                    };
-                    return symbols[d];
-                });
         var _this = this;
         if (this.options.before) {
             this.options.before.call(this, this.data);
@@ -159,51 +164,7 @@ L.D3 = L.Class.extend({
                 .data(this.options.topojson ? this.data.geometries : this.data.features)
                 .enter()
                 .append("path");
-//        .attr("d", d3.svg.symbol().type('square'))
-//              .attr("transform", function(d) {  return "translate(" + _this.path.centroid(d) + ")"; });
-// 
-        //    .style('fill','red')
-        //           .attr("transform", function(d) { return "translate(" + d.geometry.coordinates[1] + "," + d.geometry.coordinates[0] + ")"; })
-        // .attr("d", d3.svg.symbol())
-        //       .attr("d",d3.svg.symbol().type("triangle-up"))
-//                .attr("d", function(d) {
-//                    if (d.geometry.type === 'Polygon' || d.geometry.type === 'MultiPolygon') {
-//                        if (_this.options.sld) {
-//
-//                        }
-//                    }
-//                    if (d.geometry.type === 'Point') {
-//                        if (_this.options.sld) {
-//                            var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
-//                            var keys = Object.keys(varFeatureTypeStyles);
-//                            for (var key in keys) {
-//                                var varFeatureTypeStyle = varFeatureTypeStyles[key];
-//                                if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle.Rule !== undefined && varFeatureTypeStyle !== undefined) {
-//                                    if (varFeatureTypeStyle.Rule.Filter !== undefined) { // if there are conditions set
-//                                        var rule = varFeatureTypeStyle.Rule;
-//                                        if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
-//                                            if(d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] !== undefined)
-//                                            {
-//                                                if(d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()]===rule.Filter.PropertyIsEqualTo.Literal)
-//                                                    return symbolGenerator(rule.PointSymbolizer.Graphic.Mark.WellKnownName);
-//                                            }
-//                                        }
-//                                    }
-//                                    else { // if no condition set
-//                                        
-//                                    }
-//                                }
-//                            }
-//                            // this.onLoadSLD(this.options.sld);
-//                        }
-//                    }
-//
-//                })
-        //      .attr("class", this.options.pathClass);
 
-//        if (this.options.sld) {
-//            this.onLoadSLD(this.options.sld);
-//        }
 
 //        if (this.options.showLabels)
 //        {
@@ -242,6 +203,16 @@ L.D3 = L.Class.extend({
     },
     _reset: function() {
         var _this = this;
+
+        var corners = this._map.getBounds();
+
+        // Extracting boundary points
+        var northEast = corners.getNorthEast();
+        var southWest = corners.getSouthWest();
+        this.bounds = d3.geo.bounds(this.data);
+        this.bounds = [[Math.min(southWest.lng,this.bounds[0][0]),Math.min(southWest.lat,this.bounds[0][1])], [Math.max(northEast.lng,this.bounds[1][0]),Math.max(northEast.lat,this.bounds[1][1])]];
+
+
         var bottomLeft = this._project(this.bounds[0]),
                 topRight = this._project(this.bounds[1]);
         this._el.attr("width", topRight[0] - bottomLeft[0])
@@ -249,258 +220,19 @@ L.D3 = L.Class.extend({
                 .style("margin-left", bottomLeft[0] + "px")
                 .style("margin-top", topRight[1] + "px");
         this._g.attr("transform", "translate(" + -bottomLeft[0] + "," + -topRight[1] + ")");
-        if (_this._featureType === 'Point') {
-            if (_this.options.sld) {
-                this._feature
-                        .attr("d", d3.svg.symbol().
-                                type(function(d) {
-                                    var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
-                                    var keys = Object.keys(varFeatureTypeStyles);
-                                    for (var key in keys) {
-                                        var varFeatureTypeStyle = varFeatureTypeStyles[key];
-                                        if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle.Rule !== undefined && varFeatureTypeStyle !== undefined) {
-                                            if (varFeatureTypeStyle.Rule.Filter !== undefined) { // if there are conditions set
-                                                var rule = varFeatureTypeStyle.Rule;
-                                                if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
-                                                    if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] !== undefined)
-                                                    {
-                                                        if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] === rule.Filter.PropertyIsEqualTo.Literal)
-                                                        {
 
-                                                            var marktype = 'circle';
-                                                            //  alert(_this._symbols[rule.PointSymbolizer.Graphic.Mark.WellKnownName]);
-                                                            if (_this._symbols[rule.PointSymbolizer.Graphic.Mark.WellKnownName] !== undefined)
-                                                                marktype = _this._symbols[rule.PointSymbolizer.Graphic.Mark.WellKnownName];
-
-                                                            return marktype;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            else { // if no condition set
-
-                                            }
-                                        }
-                                    }
-                                })
-                                .size(function(d) {
-                                    var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
-                                    var keys = Object.keys(varFeatureTypeStyles);
-                                    for (var key in keys) {
-                                        var varFeatureTypeStyle = varFeatureTypeStyles[key];
-                                        if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle.Rule !== undefined && varFeatureTypeStyle !== undefined) {
-                                            if (varFeatureTypeStyle.Rule.Filter !== undefined) { // if there are conditions set
-                                                var rule = varFeatureTypeStyle.Rule;
-                                                if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
-                                                    if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] !== undefined)
-                                                    {
-                                                        if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] === rule.Filter.PropertyIsEqualTo.Literal)
-                                                        {
-                                                            var marksize = 6 * 6;
-
-                                                            if (rule.PointSymbolizer.Graphic.Size)
-                                                                marksize = rule.PointSymbolizer.Graphic.Size * rule.PointSymbolizer.Graphic.Size;
-                                                            return marksize;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            else { // if no condition set
-
-                                            }
-                                        }
-                                    }
-
-                                })
-                                )
-                        .style("fill", function(d) {
-                            var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
-                            var keys = Object.keys(varFeatureTypeStyles);
-                            for (var key in keys) {
-                                var varFeatureTypeStyle = varFeatureTypeStyles[key];
-                                if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle.Rule !== undefined && varFeatureTypeStyle !== undefined) {
-                                    if (varFeatureTypeStyle.Rule.Filter !== undefined) { // if there are conditions set
-                                        var rule = varFeatureTypeStyle.Rule;
-                                        if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
-                                            if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] !== undefined)
-                                            {
-                                                if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] === rule.Filter.PropertyIsEqualTo.Literal)
-                                                {
-                                                    var fill_color = "#ccc";
-
-                                                    if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Fill && rule.PointSymbolizer.Graphic.Mark.Fill.fill)
-                                                        fill_color = rule.PointSymbolizer.Graphic.Mark.Fill.fill;
-                                                    return fill_color;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    else { // if no condition set
-
-                                    }
-                                }
-                            }
-                        })
-                        .style("fill-opacity", function(d) {
-                            var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
-                            var keys = Object.keys(varFeatureTypeStyles);
-                            for (var key in keys) {
-                                var varFeatureTypeStyle = varFeatureTypeStyles[key];
-                                if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle.Rule !== undefined && varFeatureTypeStyle !== undefined) {
-                                    if (varFeatureTypeStyle.Rule.Filter !== undefined) { // if there are conditions set
-                                        var rule = varFeatureTypeStyle.Rule;
-                                        if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
-                                            if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] !== undefined)
-                                            {
-                                                if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] === rule.Filter.PropertyIsEqualTo.Literal)
-                                                {
-                                                    var fill_opacity = "0.8";
-
-                                                    if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Fill && rule.PointSymbolizer.Graphic.Mark.Fill['fill-opacity'])
-                                                        fill_opacity = rule.PointSymbolizer.Graphic.Mark.Fill['fill-opacity'];
-                                                    return fill_opacity;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    else { // if no condition set
-
-                                    }
-                                }
-                            }
-                        })
-                       .style("stroke", function(d) {
-                            var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
-                            var keys = Object.keys(varFeatureTypeStyles);
-                            for (var key in keys) {
-                                var varFeatureTypeStyle = varFeatureTypeStyles[key];
-                                if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle.Rule !== undefined && varFeatureTypeStyle !== undefined) {
-                                    if (varFeatureTypeStyle.Rule.Filter !== undefined) { // if there are conditions set
-                                        var rule = varFeatureTypeStyle.Rule;
-                                        if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
-                                            if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] !== undefined)
-                                            {
-                                                if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] === rule.Filter.PropertyIsEqualTo.Literal)
-                                                {
-                                                    var stroke = "#FFF";
-
-                                                    if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Stroke && rule.PointSymbolizer.Graphic.Mark.Stroke.stroke)
-                                                        stroke = rule.PointSymbolizer.Graphic.Mark.Stroke.stroke;
-                                                    return stroke;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    else { // if no condition set
-
-                                    }
-                                }
-                            }
-                        })
-                       .style("stroke-width", function(d) {
-                            var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
-                            var keys = Object.keys(varFeatureTypeStyles);
-                            for (var key in keys) {
-                                var varFeatureTypeStyle = varFeatureTypeStyles[key];
-                                if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle.Rule !== undefined && varFeatureTypeStyle !== undefined) {
-                                    if (varFeatureTypeStyle.Rule.Filter !== undefined) { // if there are conditions set
-                                        var rule = varFeatureTypeStyle.Rule;
-                                        if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
-                                            if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] !== undefined)
-                                            {
-                                                if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] === rule.Filter.PropertyIsEqualTo.Literal)
-                                                {
-                                                    var stroke_width = 1.0;
-
-                                                    if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Stroke && rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-width'])
-                                                        stroke_width = rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-width'];
-                                                    return stroke_width;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    else { // if no condition set
-
-                                    }
-                                }
-                            }
-                        })
-                       .style("stroke-opacity", function(d) {
-                            var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
-                            var keys = Object.keys(varFeatureTypeStyles);
-                            for (var key in keys) {
-                                var varFeatureTypeStyle = varFeatureTypeStyles[key];
-                                if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle.Rule !== undefined && varFeatureTypeStyle !== undefined) {
-                                    if (varFeatureTypeStyle.Rule.Filter !== undefined) { // if there are conditions set
-                                        var rule = varFeatureTypeStyle.Rule;
-                                        if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
-                                            if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] !== undefined)
-                                            {
-                                                if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] === rule.Filter.PropertyIsEqualTo.Literal)
-                                                {
-                                                    var stroke_opacity = 1.0;
-
-                                                    if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Stroke && rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-opacity'])
-                                                        stroke_opacity = rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-opacity'];
-                                                    return stroke_opacity;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    else { // if no condition set
-
-                                    }
-                                }
-                            }
-                        })
-                         .attr("transform", function(d) {
-                            return "translate(" + _this.path.centroid(d) + ")";
-                        });
-//                            // this.onLoadSLD(this.options.sld);
-//                     
-
-            }
-            
-//             <sld:Mark>
-//                <sld:WellKnownName>triangle</sld:WellKnownName>
-//                <sld:Stroke>
-//                  <sld:CssParameter name="stroke">#000000</sld:CssParameter>
-//                  <sld:CssParameter name="stroke-width">1</sld:CssParameter>
-//                  <sld:CssParameter name="stroke-opacity">1.0</sld:CssParameter>
-//                </sld:Stroke>
-//              </sld:Mark>
-//                            var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
-//                            var keys = Object.keys(varFeatureTypeStyles);
-//                            for (var key in keys) {
-//                                var varFeatureTypeStyle = varFeatureTypeStyles[key];
-//                                if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle.Rule !== undefined && varFeatureTypeStyle !== undefined) {
-//                                    if (varFeatureTypeStyle.Rule.Filter !== undefined) { // if there are conditions set
-//                                        var rule = varFeatureTypeStyle.Rule;
-//                                        if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
-//                                            if(d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] !== undefined)
-//                                            {
-//                                                if(d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()]===rule.Filter.PropertyIsEqualTo.Literal)
-//                                                    return symbolGenerator(rule.PointSymbolizer.Graphic.Mark.WellKnownName);
-//                                            }
-//                                        }
-//                                    }
-//                                    else { // if no condition set
-//                                        
-//                                    }
-//                                }
-//                            }
-//                            // this.onLoadSLD(this.options.sld);
-//                        }
-//                    }
-//
-
-
-
+        if (_this._featureType === 'Point' && this._feature) {
+            this.onLoadPointSLD();
         }
         else {
             this._feature.attr("d", this.path);
+            if (this._feature && this._featureType === 'LineString' || this._featureType === 'MultiLineString' || this._featureType === 'Polyline' || this._featureType === 'MultiPolyline') {
+                this.onLoadPolylineSLD();
+            }
+            if (this._feature && this._featureType === 'Polygon' || this._featureType === 'MultiPolygon') {
+                this.onLoadPolygonSLD();
+            }
         }
-
 
         if (this.options.showLabels && this._feature_labels)
         {
@@ -524,7 +256,7 @@ L.D3 = L.Class.extend({
     bringToFront: function() {
         var pane = this._map._panes.overlayPane;
         if (this._container) {
-            //  pane.appendChild(this._container);
+            // pane.appendChild(this._container);
             this._setAutoZIndex(pane, Math.max);
         }
 
@@ -533,7 +265,7 @@ L.D3 = L.Class.extend({
     bringToBack: function() {
         var pane = this._map._panes.overlayPane;
         if (this._container) {
-            //  pane.insertBefore(this._container, pane.firstChild);
+            // pane.insertBefore(this._container, pane.firstChild);
             this._setAutoZIndex(pane, Math.min);
         }
 
@@ -601,61 +333,231 @@ L.D3 = L.Class.extend({
             }
         }
     },
-    onLoadSLD: function(jsonSLD) {
-//        var FeatureTypeStyle, rules, ogcFilter, jsonFilter;
-//        if (sldXML === null || sldXML === undefined)
-//            return;
-//
-//        FeatureTypeStyle = sldXML.find('sld\\:FeatureTypeStyle');
-//        if (FeatureTypeStyle.length === 0) {
-//            FeatureTypeStyle = sldXML.find('FeatureTypeStyle');
-//        }
-//        rules = FeatureTypeStyle.find('sld\\:Rule');
-//        if (rules.length === 0)
-//            rules = FeatureTypeStyle.find('Rule');
-//        ogcFilter = rules.find("ogc\\:Filter");
-//        if (ogcFilter.length > 0) {
-//            if (rules.length > 1) {
-//                var rule=rules.first();
-//                for (var j = 0; j < rules.length; j++) {
-//                    var filter=rule.find("ogc\\:Filter");
-//                    if(filter.length>0) {
-//                        
-//                    }
-//                    rule=rule.next();
-//                }
-//            }
-//        }
-//        
-//        
-//        
-//        
-//        if (sld === null || sld === undefined)
-//            return;
-//        NamedLayer = sld.NamedLayer;
-//        if (NamedLayer === null || NamedLayer === undefined)
-//            return;
-//        UserStyle = NamedLayer.UserStyle;
-//        if (UserStyle === null || UserStyle === undefined)
-//            return;
-//        FeatureTypeStyle = UserStyle.FeatureTypeStyle;
-//        if (FeatureTypeStyle === null || FeatureTypeStyle === undefined)
-//            return;
-//        Rule = FeatureTypeStyle.Rule;
-//        if (Rule === null || Rule === undefined)
-//            return;
+    onLoadPointSLD: function() {
 
-        if (this._feature && this._featureType !== 'Point' && jsonSLD) {
-            //     this._feature.style("stroke-width", function(d) {
+        var _this = this;
+        if (_this.options.sld) {
+            this._feature.attr("d", d3.svg.symbol().
+                    type(function(d) {
+                        var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
+                        var keys = Object.keys(varFeatureTypeStyles);
+                        for (var key in keys) {
+                            var varFeatureTypeStyle = varFeatureTypeStyles[key];
+                            if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle.Rule !== undefined && varFeatureTypeStyle !== undefined) {
+                                if (varFeatureTypeStyle.Rule.Filter !== undefined) { // if there are conditions set
+                                    var rule = varFeatureTypeStyle.Rule;
+                                    if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
+                                        if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] !== undefined)
+                                        {
+                                            if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] === rule.Filter.PropertyIsEqualTo.Literal)
+                                            {
 
-//            var f0 = this._feature[0];
-//
-//            if (Array.isArray(f0)===true) {
-//                for (var i=0;i<f0.length;i++) {
-//                    f0[i].style("stroke-width", 6);
-//                }
-//            };
-            var varFeatureTypeStyles = jsonSLD.FeatureTypeStyle;
+                                                var marktype = 'circle';
+                                                //  alert(_this._symbols[rule.PointSymbolizer.Graphic.Mark.WellKnownName]);
+                                                if (_this._symbols[rule.PointSymbolizer.Graphic.Mark.WellKnownName] !== undefined)
+                                                    marktype = _this._symbols[rule.PointSymbolizer.Graphic.Mark.WellKnownName];
+
+                                                return marktype;
+                                            }
+                                        }
+                                    }
+                                }
+                                else { // if no condition set
+                                    if (rule.PointSymbolizer && rule.PointSymbolizer.Graphic && rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.WellKnownName)
+                                    {
+                                        var marktype = 'circle';
+                                        if (_this._symbols[rule.PointSymbolizer.Graphic.Mark.WellKnownName] !== undefined)
+                                            marktype = _this._symbols[rule.PointSymbolizer.Graphic.Mark.WellKnownName];
+                                        return marktype;
+                                    }
+                                }
+                            }
+                        }
+                        return 'circle';
+                    })
+                    .size(function(d) {
+                        var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
+                        var keys = Object.keys(varFeatureTypeStyles);
+                        for (var key in keys) {
+                            var varFeatureTypeStyle = varFeatureTypeStyles[key];
+                            if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle.Rule !== undefined && varFeatureTypeStyle !== undefined) {
+                                if (varFeatureTypeStyle.Rule.Filter !== undefined) { // if there are conditions set
+                                    var rule = varFeatureTypeStyle.Rule;
+                                    if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
+                                        if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] !== undefined)
+                                        {
+                                            if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] === rule.Filter.PropertyIsEqualTo.Literal)
+                                            {
+                                                var marksize = 6 * 6;
+
+                                                if (rule.PointSymbolizer.Graphic.Size)
+                                                    marksize = rule.PointSymbolizer.Graphic.Size * rule.PointSymbolizer.Graphic.Size;
+                                                return marksize;
+                                            }
+                                        }
+                                    }
+                                }
+                                else { // if no condition set
+
+                                }
+                            }
+                        }
+
+                    })
+                    )
+                    .style("fill", function(d) {
+                        var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
+                        var keys = Object.keys(varFeatureTypeStyles);
+                        for (var key in keys) {
+                            var varFeatureTypeStyle = varFeatureTypeStyles[key];
+                            if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle.Rule !== undefined && varFeatureTypeStyle !== undefined) {
+                                if (varFeatureTypeStyle.Rule.Filter !== undefined) { // if there are conditions set
+                                    var rule = varFeatureTypeStyle.Rule;
+                                    if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
+                                        if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] !== undefined)
+                                        {
+                                            if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] === rule.Filter.PropertyIsEqualTo.Literal)
+                                            {
+                                                var fill_color = "#ccc";
+
+                                                if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Fill && rule.PointSymbolizer.Graphic.Mark.Fill.fill)
+                                                    fill_color = rule.PointSymbolizer.Graphic.Mark.Fill.fill;
+                                                return fill_color;
+                                            }
+                                        }
+                                    }
+                                }
+                                else { // if no condition set
+
+                                }
+                            }
+                        }
+                        return "#ccc";
+                    })
+                    .style("fill-opacity", function(d) {
+                        var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
+                        var keys = Object.keys(varFeatureTypeStyles);
+                        for (var key in keys) {
+                            var varFeatureTypeStyle = varFeatureTypeStyles[key];
+                            if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle.Rule !== undefined && varFeatureTypeStyle !== undefined) {
+                                if (varFeatureTypeStyle.Rule.Filter !== undefined) { // if there are conditions set
+                                    var rule = varFeatureTypeStyle.Rule;
+                                    if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
+                                        if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] !== undefined)
+                                        {
+                                            if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] === rule.Filter.PropertyIsEqualTo.Literal)
+                                            {
+                                                var fill_opacity = "0.8";
+
+                                                if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Fill && rule.PointSymbolizer.Graphic.Mark.Fill['fill-opacity'])
+                                                    fill_opacity = rule.PointSymbolizer.Graphic.Mark.Fill['fill-opacity'];
+                                                return fill_opacity;
+                                            }
+                                        }
+                                    }
+                                }
+                                else { // if no condition set
+
+                                }
+                            }
+                        }
+                        return 1.0;
+                    })
+                    .style("stroke", function(d) {
+                        var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
+                        var keys = Object.keys(varFeatureTypeStyles);
+                        for (var key in keys) {
+                            var varFeatureTypeStyle = varFeatureTypeStyles[key];
+                            if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle.Rule !== undefined && varFeatureTypeStyle !== undefined) {
+                                if (varFeatureTypeStyle.Rule.Filter !== undefined) { // if there are conditions set
+                                    var rule = varFeatureTypeStyle.Rule;
+                                    if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
+                                        if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] !== undefined)
+                                        {
+                                            if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] === rule.Filter.PropertyIsEqualTo.Literal)
+                                            {
+                                                var stroke = "#FFF";
+
+                                                if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Stroke && rule.PointSymbolizer.Graphic.Mark.Stroke.stroke)
+                                                    stroke = rule.PointSymbolizer.Graphic.Mark.Stroke.stroke;
+                                                return stroke;
+                                            }
+                                        }
+                                    }
+                                }
+                                else { // if no condition set
+
+                                }
+                            }
+                        }
+                        return "#000";
+                    })
+                    .style("stroke-width", function(d) {
+                        var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
+                        var keys = Object.keys(varFeatureTypeStyles);
+                        for (var key in keys) {
+                            var varFeatureTypeStyle = varFeatureTypeStyles[key];
+                            if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle.Rule !== undefined && varFeatureTypeStyle !== undefined) {
+                                if (varFeatureTypeStyle.Rule.Filter !== undefined) { // if there are conditions set
+                                    var rule = varFeatureTypeStyle.Rule;
+                                    if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
+                                        if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] !== undefined)
+                                        {
+                                            if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] === rule.Filter.PropertyIsEqualTo.Literal)
+                                            {
+                                                var stroke_width = 1.0;
+
+                                                if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Stroke && rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-width'])
+                                                    stroke_width = rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-width'];
+                                                return stroke_width;
+                                            }
+                                        }
+                                    }
+                                }
+                                else { // if no condition set
+
+                                }
+                            }
+                        }
+                    })
+                    .style("stroke-opacity", function(d) {
+                        var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
+                        var keys = Object.keys(varFeatureTypeStyles);
+                        for (var key in keys) {
+                            var varFeatureTypeStyle = varFeatureTypeStyles[key];
+                            if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle.Rule !== undefined && varFeatureTypeStyle !== undefined) {
+                                if (varFeatureTypeStyle.Rule.Filter !== undefined) { // if there are conditions set
+                                    var rule = varFeatureTypeStyle.Rule;
+                                    if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
+                                        if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] !== undefined)
+                                        {
+                                            if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] === rule.Filter.PropertyIsEqualTo.Literal)
+                                            {
+                                                var stroke_opacity = 1.0;
+
+                                                if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Stroke && rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-opacity'])
+                                                    stroke_opacity = rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-opacity'];
+                                                return stroke_opacity;
+                                            }
+                                        }
+                                    }
+                                }
+                                else { // if no condition set
+
+                                }
+                            }
+                        }
+                    })
+                    .attr("transform", function(d) {
+                        return "translate(" + _this.path.centroid(d) + ")";
+                    });
+        }
+
+    },
+    onLoadPolygonSLD: function() {
+        var _this = this;
+        if (_this.options.sld) {
+            var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
             var keys = Object.keys(varFeatureTypeStyles);
             for (var key in keys) {
                 //         alert(varFeatureTypeStyles[key]);
@@ -730,6 +632,8 @@ L.D3 = L.Class.extend({
                     }
                     else {
 
+
+
                         if (varFeatureTypeStyle.Rule.PolygonSymbolizer && varFeatureTypeStyle.Rule.PolygonSymbolizer.Fill && varFeatureTypeStyle.Rule.PolygonSymbolizer.Fill.fill)
                         {
                             this._feature.style('fill', varFeatureTypeStyle.Rule.PolygonSymbolizer.Fill.fill);
@@ -761,6 +665,31 @@ L.D3 = L.Class.extend({
                     }
                 }
             }
+        }
+    },
+    onLoadPolylineSLD: function() {
+
+        this._feature.style("fill", 'none')
+                .style("fill--opacity", 0.0)
+                .style("stroke", "#000")
+                .style("stroke-width", 1.0)
+                .style("stroke-opacity", 0.8);
+        var _this = this;
+        if (_this.options.sld) {
+
+        }
+    },
+    onLoadSLD: function(jsonSLD) {
+
+        if (this._feature && this._featureType === 'Point') {
+
+            this.onLoadPointSLD();
+        }
+
+        if (this._feature && (this._featureType === 'Polygon' || this._featureType === 'MultiPolygon')) {
+
+            this.onLoadPolygonSLD();
+
 //            this._feature.attr("d", function(d) {
 //                var f = d3.select(d);
 //                f.style('fill', function(d2) {
@@ -879,6 +808,10 @@ L.D3 = L.Class.extend({
 //
 //                    });
         }
+        if (this._feature && this._featureType === 'LineString' || this._featureType === 'MultiLineString' || this._featureType === 'Polyline' || this._featureType === 'MultiPolyline') {
+            this.onLoadPolylineSLD();
+        }
+
 
 //          <Fill>
 //              <CssParameter name="fill">

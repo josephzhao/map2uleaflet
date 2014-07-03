@@ -239,6 +239,338 @@ L.MAP2U.layers = function(options) {
         }
         return $container[0];
     };
+    control.loadGeoJSONLayer = function(layer) {
+        if (layer.type === 'shapefile_topojson' || layer.type === 'topojson' || layer.type === 'geojson') {
+            $.ajax({
+                url: Routing.generate('leaflet_maplayer'),
+                type: 'GET',
+                beforeSend: function() {
+                    spinner.spin(spinner_target);
+                },
+                complete: function() {
+                    spinner.stop();
+                },
+                error: errorHandler = function() {
+                    spinner.stop();
+                },
+                data: {id: layer.layer_id, type: layer.type},
+                //Ajax events
+                success: completeHandler = function(response) {
+                    var result;
+                    if (typeof response === 'object') {
+                        result = response;
+                    } else {
+                        result = JSON.parse(response);
+                    }
+
+                    if (result.success === true && result.type === 'geojson' && result.filename === 'draw' && result.data !== null) {
+
+                        var data;
+                        if (typeof result.data === 'object') {
+                            data = result.data;
+                        } else {
+                            data = JSON.parse(result.data);
+                        }
+                        map.drawnItems.clearLayers();
+                        $.each(data, function(i) {
+                            var feature;
+                            if (data[i] !== null && data[i].feature !== null) {
+                                var coordinates;
+                                if (typeof data[i].feature === 'object')
+                                    coordinates = data[i].feature.coordinates;
+                                else
+                                    coordinates = JSON.parse(data[i].feature).coordinates;
+                                if ($.isArray(coordinates[0])) {
+                                    for (var j = 0; j < coordinates[0].length; j++) {
+                                        var temp = coordinates[0][j][0];
+                                        coordinates[0][j][0] = coordinates[0][j][1];
+                                        coordinates[0][j][1] = temp;
+                                    }
+                                }
+                                else
+                                {
+                                    var temp = coordinates[0];
+                                    coordinates[0] = coordinates[1];
+                                    coordinates[1] = temp;
+                                }
+                                if (data[i].geom_type === 'polygon')
+                                {
+                                    feature = new L.Polygon(coordinates);
+                                }
+
+                                if (data[i].geom_type === 'polyline')
+                                {
+                                    feature = new L.Polyline(coordinates);
+                                }
+                                if (data[i].geom_type === 'rectangle')
+                                {
+                                    feature = new L.rectangle([coordinates[0][0], coordinates[0][2]]);
+                                }
+                                if (data[i].geom_type === 'circle')
+                                {
+                                    feature = new L.circle(coordinates, data[i].radius);
+                                }
+                                if (data[i].geom_type === 'marker')
+                                {
+                                    feature = L.marker(coordinates);
+                                }
+
+                                //  feature.editing.enable();
+                                if (feature.bindLabel)
+                                    feature.bindLabel(data[i].keyname);
+                                feature.id = data[i].ogc_fid;
+                                feature.name = data[i].keyname;
+                                feature.index = map.drawnItems.getLayers().length;
+                                feature.type = data[i].geom_type;
+                                feature.layer_id = -1;
+                                feature.on('click', function(e) {
+                                    var feature = e.target;
+                                    if (map.drawControl._toolbars.edit._activeMode === null) {
+
+
+                                        var highlight = {
+                                            'color': '#333333',
+                                            'weight': 2,
+                                            'opacity': 1
+                                        };
+                                        if (feature.selected === false || feature.selected === undefined) {
+                                            if (feature.type !== 'marker')
+                                                feature.setStyle(highlight);
+                                            feature.selected = true;
+                                            if (document.getElementById('geometries_selected')) {
+
+
+                                                var selectBoxOption = document.createElement("option"); //create new option 
+                                                selectBoxOption.value = feature.id; //set option value 
+                                                selectBoxOption.text = feature.name; //set option display text 
+                                                document.getElementById('geometries_selected').add(selectBoxOption, null);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (feature.type !== 'marker')
+                                                feature.setStyle({
+                                                    'color': "blue",
+                                                    'weight': 5,
+                                                    'opacity': 0.6
+                                                });
+                                            feature.selected = false;
+                                            $("#geometries_selected option[value='" + feature.id + "']").each(function() {
+                                                $(this).remove();
+                                            });
+                                        }
+
+                                        $.ajax({
+                                            url: Routing.generate('draw_content'),
+                                            method: 'GET',
+                                            data: {
+                                                id: e.target.id
+                                            },
+                                            success: function(response) {
+
+                                                $('div.sidebar_feature_content').html('');
+                                                $('div.sidebar_feature_content').html(response);
+
+
+                                            }
+                                        });
+
+
+
+                                    }
+                                    else if (map.drawControl._toolbars.edit._activeMode && map.drawControl._toolbars.edit._activeMode.handler.type === 'edit') {
+
+                                        var radius = 0;
+                                        if (e.target.type === 'circle')
+                                        {
+                                            radius = e.target._mRadius;
+                                        }
+                                        $.ajax({
+                                            url: Routing.generate('draw_' + e.target.type),
+                                            method: 'GET',
+                                            data: {
+                                                id: e.target.id,
+                                                name: e.target.name,
+                                                radius: radius,
+                                                index: e.target.index
+                                            },
+                                            success: function(response) {
+                                                if ($('body.sonata-bc #ajax-dialog').length === 0) {
+                                                    $('<div class="modal fade" id="ajax-dialog" role="dialog"></div>').appendTo('body');
+                                                } else {
+                                                    $('body.sonata-bc #ajax-dialog').html('');
+                                                }
+
+                                                $(response).appendTo($('body.sonata-bc #ajax-dialog'));
+                                                $('#ajax-dialog').modal({show: true});
+                                                $('#ajax-dialog').draggable();
+                                                //  alert(JSON.stringify(html));
+                                            }
+                                        });
+                                    }
+                                    ;
+                                });
+                                layer.layer = map.drawnItems;
+                                map.drawnItems.addLayer(feature);
+                            }
+                        });
+                        return;
+                    }
+
+                    if (result.success === true && (result.type === 'topojson' || result.type === 'shapefile_topojson')) {
+
+                        var sld;
+                        if (typeof result.sld === 'object') {
+                            sld = result.sld;
+                        }
+                        else
+                        {
+                            sld = JSON.parse(result.sld);
+                        }
+
+                        d3.selectAll("#svg-shapefile").each(function() {
+                            var elt = d3.select(this);
+
+                            if (elt.attr("name").toString().toLowerCase() === result.filename.toString().toLowerCase())
+                                elt.remove();
+
+                        });
+                        var keys = Object.keys(result.data, function(k) {
+                            return k;
+                        });
+                        for (var k = 0; k < keys.length; k++) {
+                            var json_data = JSON.parse(result.data[keys[k]].geom);//JSON.parse(result.data[keys[k]]);
+                            //           var json_data = JSON.parse(result.data);
+                            var key = Object.keys(json_data.objects).map(function(k) {
+                                return  k;
+                            });
+                            var properties_key = Object.keys(json_data.objects[key].geometries[0].properties).map(function(k) {
+                                return  k;
+                            });
+                            var collection = topojson.feature(json_data, json_data.objects[key]);
+
+                            var geojson_shapefile = L.geoJson(collection);
+                            geojson_shapefile.addTo(map);
+//                            
+//                            var geojson_shapefile = new L.D3(collection, {
+//                                id: 'svg-shapefile',
+//                                layer_id: layer.layer_id,
+//                                svgClass: 'svg-shapefile',
+//                                zIndex: (300 - layer.index_id),
+//                                minZoom: layer.minZoom,
+//                                maxZoom: layer.maxZoom,
+//                                sld: sld,
+//                                name: result.filename.toLowerCase(),
+//                                showLabels: (result.layers[keys[k]]['label_field'] !== '' && result.layers[keys[k]]['label_field'] !== null),
+//                                type: result.type,
+//                                tip_field: result.layers[keys[k]]['tip_field'],
+//                                label_field: result.layers[keys[k]]['label_field'],
+//                                featureAttributes: {
+//                                    'layer_id': result.layers[keys[k]]['id']
+//                                }
+//                            });
+//                            geojson_shapefile.addTo(map);
+//                            geojson_shapefile.onLoadSLD(sld);
+//                            layer.layer = geojson_shapefile;
+//                            geojson_shapefile.on('click', function(e) {
+//
+//                                var mouse = d3.mouse(e.element);
+//                                var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function() {
+//                                    return  this.text;
+//                                });
+//                                if (shapefilename !== '' && shapefilename[0] !== undefined && geojson_shapefile.options.name === shapefilename[0].toLowerCase())
+//                                {
+//
+//                                    if ($('#geometries_selected').length > 0)
+//                                    {
+//                                        var bExist = false;
+//                                        $("#geometries_selected > option").each(function() {
+//
+//                                            if (parseInt(this.value) === parseInt(e.data.properties[properties_key[0]])) {
+//                                                bExist = true;
+//                                            }
+//                                        });
+//                                        if (bExist === false)
+//                                        {
+//                                            var fieldkey = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function() {
+//                                                return  this.text;
+//                                            });
+//                                            var p;
+//                                            if (fieldkey === '' || fieldkey[0] === '' || fieldkey[0] === undefined)
+//                                                p = e.data.properties[properties_key[1]];
+//                                            else
+//                                                p = e.data.properties[fieldkey[0]];
+//                                            if (document.getElementById('geometries_selected')) {
+//                                                var selectBoxOption = document.createElement("option"); //create new option 
+//                                                selectBoxOption.value = e.data.properties[properties_key[0]]; //set option value 
+//                                                selectBoxOption.text = p; //set option display text 
+//                                                document.getElementById('geometries_selected').add(selectBoxOption, null);
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                                ;
+//                                //  }
+//                                var html = '';
+//                                for (var key in e.data.properties) {
+//                                    if (e.data.properties.hasOwnProperty(key)) {
+//                                        html = html + key + ":" + e.data.properties[key] + "<br>";
+//
+//                                    }
+//                                }
+//
+//                                $('div.sidebar_feature_content').html('');
+//                                $('div.sidebar_feature_content').html(html);
+
+
+//
+//                            });
+
+//                            geojson_shapefile.on("mouseover", function(e) {
+//                            });
+//                            geojson_shapefile.on('mousemove', function(e) {
+//
+//                                var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function() {
+//                                    return  this.text;
+//                                });
+//
+//                                if (shapefilename === '' || shapefilename[0] === undefined || geojson_shapefile.options.name === shapefilename[0].toLowerCase())
+//                                {
+//                                    var p;
+//
+//                                    var fieldkey = '';
+//                                    var mouse = L.DomEvent.getMousePosition(e.originalEvent, map._container);
+//                                    fieldkey = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function() {
+//                                        return  this.text;
+//                                    });
+//
+//                                    if (e.target.options.tip_field !== '') {
+//                                        p = e.data.properties[e.target.options.tip_field ];
+//                                    }
+//                                    else {
+//                                        if (fieldkey === '' || fieldkey[0] === '' || fieldkey[0] === undefined)
+//                                            p = e.data.properties[properties_key[1]];
+//                                        else
+//                                            p = e.data.properties[fieldkey[0]];
+//                                    }
+//                                    leafletmap_tooltip.classed("hidden", false)
+//                                            .attr("style", "left:" + (mouse.x + 30) + "px;top:" + (mouse.y - 35) + "px")
+//                                            .html(p);
+//                                }
+//                            });
+//                            geojson_shapefile.on('mouseout', function(e) {
+//
+//                                leafletmap_tooltip.classed("hidden", true);
+//
+//                            });
+
+                        }
+                    }
+                }
+            });
+        }
+
+    };
     control.loadTopoJSONLayer = function(layer) {
         if (layer.type === 'shapefile_topojson' || layer.type === 'topojson' || layer.type === 'geojson') {
             $.ajax({
@@ -323,7 +655,7 @@ L.MAP2U.layers = function(options) {
                                 feature.index = map.drawnItems.getLayers().length;
                                 feature.type = data[i].geom_type;
                                 feature.layer_id = -1;
-                                $(feature).addClass('userdraw_class');
+
 
                                 feature.on('click', function(e) {
 
@@ -496,16 +828,7 @@ L.MAP2U.layers = function(options) {
                             sld = JSON.parse(result.sld);
                         }
 
-                        //          alert("id=" + layer.layer_id + "  index_id=" + layer.index_id+ "  minZoom=" + layer.minZoom+ "  maxZoom=" + layer.maxZoom);
-                        //  var sld = $.parseXML(result.sld);
-                        //   var $xmlDoc = $($.parseXML(result.sld));
-// alert(sld.NamedLayer);
-// alert(sld.NamedLayer.Name);
-// alert(sld.NamedLayer.UserStyle);
-// alert(sld.NamedLayer.UserStyle.Name);
-// alert(sld.NamedLayer.UserStyle.FeatureTypeStyle);
-// alert(sld.NamedLayer.UserStyle.FeatureTypeStyle.Rule);
-// alert(sld.NamedLayer.UserStyle.FeatureTypeStyle.Rule.PointSymbolizer);
+
 
                         d3.selectAll("#svg-shapefile").each(function() {
                             var elt = d3.select(this);
@@ -514,16 +837,7 @@ L.MAP2U.layers = function(options) {
                                 elt.remove();
 
                         });
-//
-//                        $.each(map.dataLayers, function(i) {
-//                            if (map.dataLayers[i].type === 'shapefile_topojson') {
-//                                map.dataLayers.splice(i, 1);
-//                                return false;
-//                            }
-//                        });
 
-                        //    $("#leafmap").attr("shapefilename", result.filename);
-                        // alert(result.data.length);
                         var keys = Object.keys(result.data, function(k) {
                             return k;
                         });
@@ -551,14 +865,14 @@ L.MAP2U.layers = function(options) {
                                 tip_field: result.layers[keys[k]]['tip_field'],
                                 label_field: result.layers[keys[k]]['label_field'],
                                 featureAttributes: {
-                                    'layer_id': result.layers[keys[k]]['id']
-
-//                        'class': function(feature) {
-//                            return 'default_fcls';
-//                        }
+                                    'layer_id': result.layers[keys[k]]['id'],
+                                    'class': function(feature) {
+                                        return 'default_fcls';
+                                    }
                                 }
                             });
                             geojson_shapefile.addTo(map);
+
                             geojson_shapefile.onLoadSLD(sld);
                             //    geojson_shapefile.onLoadSLD($xmlDoc);
                             layer.layer = geojson_shapefile;
@@ -610,15 +924,15 @@ L.MAP2U.layers = function(options) {
 
                                     }
                                 }
-
                                 $('div.sidebar_feature_content').html('');
                                 $('div.sidebar_feature_content').html(html);
-
-
-
                             });
 
                             geojson_shapefile.on("mouseover", function(e) {
+                                e.element.fill = $(e.element).css('fill');
+                                d3.select(e.element).style({'fill': 'red', 'fill-opacity': '0.8'});
+                                d3.select(e.element).style('cursor', 'pointer');
+
                             });
                             geojson_shapefile.on('mousemove', function(e) {
 
@@ -654,9 +968,9 @@ L.MAP2U.layers = function(options) {
                                 // }
                             });
                             geojson_shapefile.on('mouseout', function(e) {
-
                                 leafletmap_tooltip.classed("hidden", true);
-
+                                d3.select(e.element).style({'fill': e.element.fill});
+                                d3.select(e.element).style('cursor', 'default');
                             });
 
                         }
@@ -713,11 +1027,13 @@ L.MAP2U.layers = function(options) {
                 if (checked) {
                     if (!layer.layer)
                     {
+//                        control.loadGeoJSONLayer(layer);
                         control.loadTopoJSONLayer(layer);
                     }
                     else
                     {
                         if (layer.type === 'geojson' || layer.name === 'My draw geometries') {
+                            //                           control.loadGeoJSONLayer(layer);
                             control.loadTopoJSONLayer(layer);
                         }
                         map.addLayer(layer.layer);
@@ -800,21 +1116,24 @@ L.MAP2U.layers = function(options) {
                 var mindisplayed = false;
                 var maxdisplayed = false;
                 var displayed = false;
-                if (!isNaN(layer.minZoom) && layer.minZoom !== '')
+                if (isNaN(layer.minZoom) || layer.minZoom === undefined || layer.minZoom === null || layer.minZoom === '')
                 {
+                    mindisplayed = true;
+
+                } else {
                     if (zoom > layer.minZoom)
                         mindisplayed = true;
                 }
-                if (!isNaN(layer.maxZoom) && layer.maxZoom !== '')
+                if (isNaN(layer.maxZoom) || layer.maxZoom === undefined || layer.maxZoom === null || layer.maxZoom === '')
                 {
+                    maxdisplayed = true;
+                } else {
                     if (zoom < layer.maxZoom)
                         maxdisplayed = true;
                 }
                 if (maxdisplayed && mindisplayed)
                     displayed = true;
                 if (layer.layer) {
-
-
                     if (displayed === false) {
                         if (map.hasLayer(layer.layer))
                             map.removeLayer(layer.layer);
