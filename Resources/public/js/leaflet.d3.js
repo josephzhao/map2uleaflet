@@ -470,8 +470,8 @@ L.D3 = L.Class.extend({
                                                 if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Fill && rule.PointSymbolizer.Graphic.Mark.Fill['fill-opacity'])
                                                     fill_opacity = rule.PointSymbolizer.Graphic.Mark.Fill['fill-opacity'];
                                                 else {
-                                                    if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Opacity && rule.PointSymbolizer.Graphic.Mark.Opacity.Literal)
-                                                        fill_opacity = rule.PointSymbolizer.Graphic.Mark.Opacity.Literal.trim();
+                                                    if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Opacity && rule.PointSymbolizer.Graphic.Opacity.Literal)
+                                                        fill_opacity = rule.PointSymbolizer.Graphic.Opacity.Literal.trim();
                                                 }
                                                 return fill_opacity;
                                             }
@@ -483,8 +483,8 @@ L.D3 = L.Class.extend({
                                     if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Fill && rule.PointSymbolizer.Graphic.Mark.Fill['fill-opacity'])
                                         fill_opacity = rule.PointSymbolizer.Graphic.Mark.Fill['fill-opacity'].trim();
                                     else {
-                                        if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Opacity && rule.PointSymbolizer.Graphic.Mark.Opacity.Literal)
-                                            fill_opacity = rule.PointSymbolizer.Graphic.Mark.Opacity.Literal.trim();
+                                        if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Opacity && rule.PointSymbolizer.Graphic.Opacity.Literal)
+                                            fill_opacity = rule.PointSymbolizer.Graphic.Opacity.Literal.trim();
                                     }
                                     return fill_opacity;
                                 }
@@ -582,8 +582,8 @@ L.D3 = L.Class.extend({
                                                 if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Stroke && rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-opacity'])
                                                     stroke_opacity = rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-opacity'];
                                                 else {
-                                                    if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Opacity && rule.PointSymbolizer.Graphic.Mark.Opacity.Literal)
-                                                        stroke_opacity = rule.PointSymbolizer.Graphic.Mark.Opacity.Literal.trim();
+                                                    if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Opacity && rule.PointSymbolizer.Graphic.Opacity.Literal)
+                                                        stroke_opacity = rule.PointSymbolizer.Graphic.Opacity.Literal.trim();
                                                 }
                                                 return stroke_opacity;
                                             }
@@ -596,7 +596,7 @@ L.D3 = L.Class.extend({
                                     if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Stroke && rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-opacity'])
                                         stroke_opacity = rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-opacity'];
                                     else {
-                                        if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Opacity && rule.PointSymbolizer.Graphic.Mark.Opacity.Literal)
+                                        if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Opacity && rule.PointSymbolizer.Graphic.Opacity.Literal)
                                             stroke_opacity = rule.PointSymbolizer.Graphic.Mark.Opacity.Literal.trim();
                                     }
                                     return stroke_opacity;
