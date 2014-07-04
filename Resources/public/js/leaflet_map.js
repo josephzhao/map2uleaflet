@@ -133,9 +133,9 @@ window.onload = function() {
     var googleLayer_terrain = new L.Google('TERRAIN', {attribution: ""});
     var bingkey = 'Ahxau5mtl944aCyAb8tfmrLebWENWZDXEmMIQWRaRQjTho2U0NkHqAUpcT1nTW1v';
     var BingAttribution = '';
-    var bing = new L.BingLayer("AqTGBsziZHIJYYxgivLBf0hVdrAk9mWO5cQcb8Yux8sW5M8c8opEC2lZqKR1ZZXf", {type: 'Road'});
+  //  var bing = new L.BingLayer("AqTGBsziZHIJYYxgivLBf0hVdrAk9mWO5cQcb8Yux8sW5M8c8opEC2lZqKR1ZZXf", {type: 'Road'});
 
-    map.addLayer(bing);
+ //   map.addLayer(bing);
 
     var Thunderforest_Transport = L.tileLayer('http://{s}.tile2.opencyclemap.org/transport/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
@@ -196,7 +196,7 @@ window.onload = function() {
     map.baseLayers = [
         {'layer': mapnik, 'name': 'Open Street Map'},
         {'layer': Thunderforest_Transport, 'name': 'Thunderforest_Transport'},
-        {'layer': bing, 'name': 'Bing'},
+ //       {'layer': bing, 'name': 'Bing'},
         {'layer': googleLayer_roadmap, 'name': 'Google Road Map'},
         {'layer': new L.Google('SATELLITE'), 'name': 'Google Satellite'},
         {'layer': new L.Google('HYBRID'), 'name': 'Google Hybrid'},
