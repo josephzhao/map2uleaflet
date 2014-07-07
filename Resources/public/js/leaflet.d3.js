@@ -322,9 +322,9 @@ L.D3 = L.Class.extend({
             this._container = L.DomUtil.create('div', 'leaflet-layer');
             var container = d3.select(this._container);
             if (container) {
-                //        container.attr('style','height:100%;width:100%');
-                container.attr('id', this.options.id ? this.options.id : 'svg-shapefile');
-                container.attr('name', this.options.name ? this.options.name : 'shapefile');
+                container.attr('id', this.options.id ? this.options.id : 'svg-leaflet-d3');
+                container.attr('filetype', this.options.filetype ? this.options.filetype :'svg-leaflet-d3');
+                container.attr('filename', this.options.filename ? this.options.filename : 'svg-data-filename');
                 container.attr('zIndex', this.options.zIndex ? this.options.zIndex : '');
                 container.attr('minZoom', this.options.minZoom ? this.options.minZoom : '');
                 container.attr('maxZoom', this.options.maxZoom ? this.options.maxZoom : '');

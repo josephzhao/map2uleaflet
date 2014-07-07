@@ -24,67 +24,6 @@ var leftSidebar;
 
 
 
-
-(function() {
-    var loaderTimeout;
-    var mouseposition;
-    OSM.loadSidebarContent = function(path, callback) {
-        clearTimeout(loaderTimeout);
-
-        loaderTimeout = setTimeout(function() {
-            $('#sidebar_loader').show();
-        }, 200);
-
-        // IE<10 doesn't respect Vary: X-Requested-With header, so
-        // prevent caching the XHR response as a full-page URL.
-        if (path.indexOf('?') >= 0) {
-            path += '&xhr=1';
-        } else {
-            path += '?xhr=1';
-        }
-
-        $('#sidebar_content')
-                .empty();
-
-
-
-        $.ajax({
-            url: path,
-            dataType: "html",
-            complete: function(xhr) {
-                clearTimeout(loaderTimeout);
-                $('#flash').empty();
-                $('#sidebar_loader').hide();
-
-
-                var content = $(xhr.responseText);
-
-                if (xhr.getResponseHeader('X-Page-Title')) {
-                    var title = xhr.getResponseHeader('X-Page-Title');
-                    document.title = decodeURIComponent(escape(title));
-                }
-
-                $('head')
-                        .find('link[type="application/atom+xml"]')
-                        .remove();
-
-                $('head')
-                        .append(content.filter('link[type="application/atom+xml"]'));
-
-
-
-                $('#sidebar_content').html(content.not('link[type="application/atom+xml"]'));
-                alert(callback);
-                $('#sidebar_content').show();
-                if (callback) {
-                    callback();
-                }
-            }
-        });
-    };
-})();
-
-
 window.onload = function() {
 
     $(".navbar.navbar-fixed-top").resize(function() {
@@ -133,9 +72,9 @@ window.onload = function() {
     var googleLayer_terrain = new L.Google('TERRAIN', {attribution: ""});
     var bingkey = 'Ahxau5mtl944aCyAb8tfmrLebWENWZDXEmMIQWRaRQjTho2U0NkHqAUpcT1nTW1v';
     var BingAttribution = '';
-  //  var bing = new L.BingLayer("AqTGBsziZHIJYYxgivLBf0hVdrAk9mWO5cQcb8Yux8sW5M8c8opEC2lZqKR1ZZXf", {type: 'Road'});
+    //  var bing = new L.BingLayer("AqTGBsziZHIJYYxgivLBf0hVdrAk9mWO5cQcb8Yux8sW5M8c8opEC2lZqKR1ZZXf", {type: 'Road'});
 
- //   map.addLayer(bing);
+    //   map.addLayer(bing);
 
     var Thunderforest_Transport = L.tileLayer('http://{s}.tile2.opencyclemap.org/transport/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
@@ -179,7 +118,7 @@ window.onload = function() {
     });
     var miniMap = new L.Control.MiniMap(mapnik_minimap, {position: 'bottomright', width: 150, height: 150, zoomLevelOffset: -4, zoomAnimation: false, toggleDisplay: true, autoToggleDisplay: false}).addTo(map);
 
-    // map.addLayer(mapnik);
+    map.addLayer(mapnik);
 
     var subwatersheds = new L.TileLayer.WMS(
             "http://cobas.juturna.ca:8080/geoserver/juturna/wms",
@@ -191,12 +130,12 @@ window.onload = function() {
                 attribution: ""
             });
 
- //   map.addLayer(subwatersheds);
+    //   map.addLayer(subwatersheds);
 
     map.baseLayers = [
         {'layer': mapnik, 'name': 'Open Street Map'},
         {'layer': Thunderforest_Transport, 'name': 'Thunderforest_Transport'},
- //       {'layer': bing, 'name': 'Bing'},
+        //       {'layer': bing, 'name': 'Bing'},
         {'layer': googleLayer_roadmap, 'name': 'Google Road Map'},
         {'layer': new L.Google('SATELLITE'), 'name': 'Google Satellite'},
         {'layer': new L.Google('HYBRID'), 'name': 'Google Hybrid'},
@@ -308,253 +247,7 @@ window.onload = function() {
         position: position,
         sidebar: rightSidebar
     }).addTo(map);
-    var drawnItems = new L.FeatureGroup();
-    $(drawnItems).attr({"id":'user_draw_features'});
-  
-    map.addLayer(drawnItems);
-    map.drawnItems = drawnItems;
-    var drawControl = new L.Control.Draw({
-        position: 'topleft',
-        draw: {
-            rectangle: {
-                shapeOptions: {
-                    color: '#0000FF',
-                    weight: 3
-                }
-            },
-            polyline: {
-                shapeOptions: {
-                    color: '#0000FF',
-                    weight: 3
-                }
-            },
-            polygon: {
-                shapeOptions: {
-                    color: '#0000FF',
-                    weight: 3
-                },
-                allowIntersection: false
-            },
-            circle: {
-                shapeOptions: {
-                    color: '#0000FF',
-                    weight: 3
-                }
-            }
-        },
-        edit: {
-            featureGroup: drawnItems
-        }
-    });
 
-    map.drawControl = drawControl;
-    map.addControl(drawControl);
-
-    map.on('draw:created', function(e) {
-        var type = e.layerType,
-                layer = e.layer;
-        layer.id = 0;
-        layer.type = type;
-        var radius = 0;
-        drawnItems.addLayer(layer);
-        layer.index = drawnItems.getLayers().length - 1;
-
-        if (type === 'circle')
-        {
-            radius = layer._mRadius.toFixed(0);
-        }
-
-        //   alert(JSON.stringify(layer.toGeoJSON()));
-        layer.on('click', function(e) {
-            var feature = e.target;
-            if (map.drawControl._toolbars.edit._activeMode === null) {
-                var highlight = {
-                    'color': '#333333',
-                    'weight': 2,
-                    'opacity': 1
-                };
-                if (feature.selected === false || feature.selected === undefined) {
-                    feature.setStyle(highlight);
-                    feature.selected = true;
-                    if (document.getElementById('geometries_selected')) {
-                        var selectBoxOption = document.createElement("option");//create new option 
-                        selectBoxOption.value = feature.id;//set option value 
-                        selectBoxOption.text = feature.name;//set option display text 
-                        document.getElementById('geometries_selected').add(selectBoxOption, null);
-                    }
-                }
-                else
-                {
-
-                    feature.setStyle({
-                        'color': "blue",
-                        'weight': 5,
-                        'opacity': 0.6
-                    });
-                    feature.selected = false;
-                    $("#geometries_selected option[value='" + feature.id + "']").each(function() {
-                        $(this).remove();
-                    });
-                }
-
-            }
-            else if (map.drawControl._toolbars.edit._activeMode && map.drawControl._toolbars.edit._activeMode.handler.type === 'edit') {
-
-                var radius = 0;
-                if (e.target.type === 'circle')
-                {
-                    radius = e.target._mRadius;
-                }
-                $.ajax({
-                    url: Routing.generate('draw_' + e.target.type),
-                    method: 'GET',
-                    data: {
-                        id: e.target.id,
-                        name: e.target.name,
-                        radius: radius,
-                        index: e.target.index
-                    },
-                    success: function(response) {
-                        if ($('body.sonata-bc #ajax-dialog').length === 0) {
-                            $('<div class="modal fade" id="ajax-dialog" role="dialog"></div>').appendTo('body');
-                        } else {
-                            $('body.sonata-bc #ajax-dialog').html('');
-                        }
-
-                        $(response).appendTo($('body.sonata-bc #ajax-dialog'));
-                        $('#ajax-dialog').modal({show: true});
-                        $('#ajax-dialog').draggable();
-                        //  alert(JSON.stringify(html));
-                    }
-                });
-            }
-            ;
-        });
-
-
-
-        if ($('body.sonata-bc #ajax-dialog').length === 0) {
-            $('<div class="modal fade" id="ajax-dialog" role="dialog"></div>').appendTo('body');
-        } else {
-            $('body.sonata-bc #ajax-dialog').html('');
-        }
-
-
-        $.ajax({
-            url: Routing.generate('draw_' + layer.type),
-            method: 'GET',
-            data: {
-                id: 0,
-                name: layer.name,
-                radius: radius,
-                index: layer.index
-            },
-            success: function(response) {
-                $(response).appendTo($('body.sonata-bc #ajax-dialog'));
-
-                $('#ajax-dialog').modal({show: true});
-                $('#ajax-dialog').draggable();
-                //  alert(JSON.stringify(html));
-            }
-        });
-
-        $('#ajax-dialog').on('hidden.bs.modal', function(e) {
-            // do something...
-            //   alert(drawnItems.getLayers()[drawnItems.getLayers().length - 1].id);
-
-            if (drawnItems.getLayers()[drawnItems.getLayers().length - 1].id === 0)
-            {
-                drawnItems.removeLayer(drawnItems.getLayers()[drawnItems.getLayers().length - 1]);
-            }
-            $('#ajax-dialog').remove();
-        });
-
-
-        $('#ajax-dialog').on('hide.bs.modal', function(e) {
-
-        });
-        if (type === 'marker') {
-            // Do marker specific actions
-        }
-//var item=drawnItems.getLayers();
-//var itemgeojson=item[0].toGeoJSON();
-//itemgeojson.properties.id=layer.id;
-//itemgeojson.properties.name=layer.name;
-//alert(layer._mRadius);
-//
-//alert(JSON.stringify(itemgeojson));
-//alert(JSON.stringify(layer));
-        // Do whatever else you need to. (save to db, add to map etc)
-        // map.addLayer(layer);
-    });
-
-
-    map.on('draw:edited', function(e) {
-        var layers = e.layers;
-
-        layers.eachLayer(function(layer) {
-            if (confirm("Modify my draw geometry id:" + layer.id + ",name:" + layer.name + "?"))
-            {
-
-                var itemgeojson = layer.toGeoJSON();
-                var radius = 0;
-                if (layer._mRadius !== undefined)
-                    radius = layer._mRadius;
-                $.ajax({
-                    url: Routing.generate('draw_save'),
-                    method: 'POST',
-                    data: {
-                        id: layer.id,
-                        name: layer.name,
-                        feature: itemgeojson,
-                        type: layer.type,
-                        radius: radius
-                    },
-                    success: function(response) {
-                        var results = JSON.parse(response);
-                        if (results.success === false)
-                            alert(results.message);
-                        else {
-                            //    alert("Geometry has been successfully updated!");
-                        }
-                    }
-                });
-            }
-        });
-    });
-
-    map.on('draw:deleted', function(e) {
-        var layers = e.layers;
-        layers.eachLayer(function(layer) {
-            if (confirm("Delete my draw item id:" + layer.id + ",name:" + layer.name + "?"))
-            {
-
-                $.ajax({
-                    url: Routing.generate('draw_delete'),
-                    method: 'POST',
-                    data: {
-                        id: layer.id
-                    },
-                    success: function(response) {
-                        var result = JSON.parse(response);
-                        if (result.success === true) {
-
-                            $("#geometries_select option[value='" + layer.id + "']").each(function() {
-                                $(this).remove();
-                            });
-                            $("#geometries_selected option[value='" + layer.id + "']").each(function() {
-                                $(this).remove();
-                            });
-                        }
-                        else
-                            alert(result.message);
-                        //  alert(JSON.stringify(html));
-                    }
-                });
-            }
-        });
-
-    });
 
     setTimeout(function() {
         leftSidebar.toggle();
@@ -1085,17 +778,37 @@ window.onload = function() {
                 for (var k = 0; k < keys.length; k++)
                 {
                     var layer = result.layers[keys[k]];
-                    // layer_id => UploadShapefileLayer.id
+                    // layer_id => UploadfileLayer.id
                     // index_id => display sequence id on screen
-                    
-                    map.dataLayers[map.dataLayers.length] = {'defaultShowOnMap':layer.defaultShowOnMap, 'layer': null,'minZoom':layer.minZoom,'maxZoom':layer.maxZoom,'index_id':k, 'layer_id': layer.id, title: layer.layerTitle, 'name': layer.layerName, type: 'shapefile_topojson'};
+
+                    map.dataLayers[map.dataLayers.length] = {'defaultShowOnMap': layer.defaultShowOnMap, 'layer': null, 'minZoom': layer.minZoom, 'maxZoom': layer.maxZoom, 'index_id': k, 'layer_id': layer.id, title: layer.layerTitle, 'name': layer.layerName, type: 'shapefile_topojson'};
                 }
-                map.dataLayers[map.dataLayers.length] = {'layer': null, 'index_id':-1, 'layer_id': -1, title: "My draw geometries", 'name': 'My draw geometries', type: 'geojson'};
+                map.dataLayers[map.dataLayers.length] = {'layer': null, 'index_id': -1, 'layer_id': -1, title: "My draw geometries", 'name': 'My draw geometries', type: 'geojson'};
                 layersControl.refreshOverlays();
             }
         }
     });
-
+    initMapDraw(map);
+//
+//
+//var markers = new L.MarkerClusterGroup();
+//
+//			for (var i = 0; i < addressPoints.length; i++) {
+//				var a = addressPoints[i];
+//				var title = a[2];
+//				var marker = new L.Marker(new L.LatLng(a[0], a[1]), { title: title });
+//				marker.bindPopup(title);
+//				markers.addLayer(marker);
+//			}
+//			for (var i = 0; i < addressPoints2.length; i++) {
+//				var a = addressPoints[i];
+//				var title = a[2];
+//				var marker = new L.Marker(new L.LatLng(a[0], a[1]), { title: title });
+//				marker.bindPopup(title);
+//				markers.addLayer(marker);
+//			}
+//
+//			map.addLayer(markers);
 
     $(".search_form").on("submit", function(e) {
         e.preventDefault();
@@ -1169,8 +882,8 @@ window.onload = function() {
                     });
 
                     map.drawnItems.addLayer(feature);
-                    if(pt !== undefined && pt.lat !== undefined && pt.lng !== undefined )
-                  //      map.panTo(new L.LatLng(pt.lat(), pt.lng()));
+                    if (pt !== undefined && pt.lat !== undefined && pt.lng !== undefined)
+                        //      map.panTo(new L.LatLng(pt.lat(), pt.lng()));
                         map.setView(new L.LatLng(pt.lat(), pt.lng()), 14);
 
                 }
@@ -1222,6 +935,7 @@ window.onload = function() {
 
     });
     $('.leaflet-control .control-button').tooltip({placement: 'left', container: 'body'});
+
 };
 
 

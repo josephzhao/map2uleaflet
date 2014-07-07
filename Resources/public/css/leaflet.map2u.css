@@ -94,27 +94,17 @@ svg {
     position: relative;
 }
 
-.svg-shapefile path {
-    fill: #000;
-    fill-opacity: .3;
-    stroke: #fff;
-    stroke-width: 1.2px;
-}
 
-.svg-shapefile path:hover {
-    fill: brown;
-    fill-opacity: .7;
-}
 .place,
 .place-label {
     fill: #444;
 }
 
-.svg-shapefile text {
+/*.svg-leaflet-d3 text {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 10px;
     pointer-events: none;
-}
+}*/
 
 .sonata-bc .welcome{display:none}
 .sonata-bc .overlay-sidebar #sidebar{position:absolute;z-index:500;height:auto;border-bottom-right-radius:5px;overflow:hidden}

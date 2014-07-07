@@ -830,10 +830,10 @@ L.MAP2U.layers = function(options) {
 
 
 
-                        d3.selectAll("#svg-shapefile").each(function() {
+                        d3.selectAll("#svg-leaflet-d3").each(function() {
                             var elt = d3.select(this);
 
-                            if (elt.attr("name").toString().toLowerCase() === result.filename.toString().toLowerCase())
+                            if (elt.attr("filename").toString().toLowerCase() === result.filename.toString().toLowerCase())
                                 elt.remove();
 
                         });
@@ -852,14 +852,15 @@ L.MAP2U.layers = function(options) {
                             });
                             var collection = topojson.feature(json_data, json_data.objects[key]);
                             var geojson_shapefile = new L.D3(collection, {
-                                id: 'svg-shapefile',
+                                id: 'svg-d3-'+result.filename.toLowerCase(),
                                 layer_id: layer.layer_id,
-                                svgClass: 'svg-shapefile',
+                                svgClass: 'svg-leaflet-d3',
                                 zIndex: (300 - layer.index_id),
                                 minZoom: layer.minZoom,
                                 maxZoom: layer.maxZoom,
                                 sld: sld,
-                                name: result.filename.toLowerCase(),
+                                filename: result.filename.toLowerCase(),
+                                filetype: result.filetype.toLowerCase(),
                                 showLabels: (result.layers[keys[k]]['label_field'] !== '' && result.layers[keys[k]]['label_field'] !== null),
                                 type: result.type,
                                 tip_field: result.layers[keys[k]]['tip_field'],
