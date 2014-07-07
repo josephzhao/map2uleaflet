@@ -128,13 +128,13 @@ class DefaultController extends Controller {
                     } else {
                         $message = 'Topojson file ' . $layer->getUseruploadshapefile()->getTopojsonfileName() . ' not exist!';
                         $success = false;
-                        $sql = "select st_asgeojson(st_transform(the_geom,4326)) from useruploadshapefile_geoms_" . $layer->getId();
+                        $sql = "select st_asgeojson(st_transform(the_geom,4326)) from useruploadfile_geoms_" . $layer->getId();
 
                         $geoms[$layer->getId()]['type'] = "geojson";
                         $geoms[$layer->getId()]['geom'] = $conn->fetchAll($sql);
                     }
                 } else {
-                    $sql = "select st_asgeojson(the_geom) from useruploadshapefile_geoms_" . $layer->getId();
+                    $sql = "select st_asgeojson(the_geom) from useruploadfile_geoms_" . $layer->getId();
 
                     $geoms[$layer->getId()]['type'] = "geojson";
                     $geoms[$layer->getId()]['geom'] = $conn->fetchAll($sql);
@@ -344,157 +344,5 @@ class DefaultController extends Controller {
         return '';
     }
 
-    private function processRule($rule) {
-        $ruleJson = array();
-        $filters = $rule->getElementsByTagName('Filter');
-        $polygons = $rule->getElementsByTagName('PolygonSymbolizer');
-        $pointSymbJsons = $rule->getElementsByTagName('PolygonSymbolizer');
-
-        foreach ($filters as $filter) {
-            $ruleJson[$filter->nodeName] = $this->processFilter($filter);
-        }
-        foreach ($polygons as $polygon) {
-            $ruleJson[$polygon->nodeName] = $this->processPolygonSymbolizer($polygon);
-        }
-        foreach ($pointSymbJsons as $pointSymbJson) {
-            $ruleJson[$pointSymbJson->nodeName] = $this->processPointSymbolizer($pointSymbJson);
-        }
-
-        return $ruleJson;
-    }
-
-    private function processPolygonSymbolizer($polygon) {
-        $polygonJson = array();
-        $fills = $polygon->getElementsByTagName('Fill');
-        foreach ($fills as $fill) {
-            $fillArray = array();
-
-            if ($fill->hasChildNodes()) {
-                foreach ($fill->childNodes as $child) {
-                    if ($child->nodeType === 1)
-                        $fillArray[$child->getAttribute('name')] = $child->nodeValue;
-                }
-            }
-            $polygonJson[$fill->nodeName] = $fillArray;
-        }
-        $strokes = $polygon->getElementsByTagName('Stroke');
-        foreach ($strokes as $stroke) {
-            $strokeArray = array();
-            if ($stroke->hasChildNodes()) {
-
-                foreach ($stroke->childNodes as $child) {
-                    if ($child->nodeType === 1)
-                        $strokeArray[$child->getAttribute('name')] = $child->nodeValue;
-                }
-            }
-            if ($stroke->nodeType === 1)
-                $polygonJson[$stroke->nodeName] = $strokeArray;
-        }
-
-        return $polygonJson;
-    }
-
-    private function processPointSymbolizer($pointSymb) {
-        $pointSymbJson = array();
-        $graphics = $pointSymb->getElementsByTagName('Graphic');
-        foreach ($graphics as $graphic) {
-            $graphicArray = $this->processGraphic($graphic);
-            $pointSymbJson[$graphic->nodeName] = $graphicArray;
-        }
-
-        $marks = $graphics->getElementsByTagName('Mark');
-        foreach ($marks as $mark) {
-            $markArray = $this->processMark($mark);
-            if ($mark->hasChildNodes()) {
-                foreach ($mark->childNodes as $child) {
-                    if ($child->nodeType === 1)
-                        $markArray[$child->getAttribute('name')] = $child->nodeValue;
-                }
-            }
-            $pointSymbJson[$graphic->nodeName] = $markArray;
-        }
-
-        $fills = $pointSymb->getElementsByTagName('Fill');
-        foreach ($fills as $fill) {
-            $fillArray = array();
-
-            if ($fill->hasChildNodes()) {
-                foreach ($fill->childNodes as $child) {
-                    if ($child->nodeType === 1)
-                        $fillArray[$child->getAttribute('name')] = $child->nodeValue;
-                }
-            }
-            $pointSymbJson[$fill->nodeName] = $fillArray;
-        }
-        $strokes = $pointSymb->getElementsByTagName('Stroke');
-        foreach ($strokes as $stroke) {
-            $strokeArray = array();
-            if ($stroke->hasChildNodes()) {
-
-                foreach ($stroke->childNodes as $child) {
-                    if ($child->nodeType === 1)
-                        $strokeArray[$child->getAttribute('name')] = $child->nodeValue;
-                }
-            }
-            if ($stroke->nodeType === 1)
-                $polygonJson[$stroke->nodeName] = $strokeArray;
-        }
-
-        return $polygonJson;
-    }
-
-    private function processGraphic($graphic) {
-        $graphicArray = array();
-        if ($graphic->hasChildNodes()) {
-            foreach ($graphic->childNodes as $child) {
-                if ($child->nodeType === 1) {
-                    $graphicArray[$child->getAttribute('name')] = $child->nodeValue;
-                }
-            }
-        }
-    }
-
-    private function processMark($mark) {
-        
-    }
-
-    private function processFilter($filter) {
-        $filterJson = array();
-        if ($filter->hasChildNodes()) {
-            foreach ($filter->childNodes as $child) {
-                if ($child->hasChildNodes()) {
-
-                    $filterJson[$child->nodeName] = $this->processFilterChildNodes($child);
-                } else {
-
-                    if ($child->nodeType === 1)
-                        $filterJson[$child->nodeName] = $child->nodeValue;
-                }
-            }
-        }
-        else {
-            if ($filter->nodeType === 1) {
-                $filterJson[$filter->nodeName] = $filter->nodeValue;
-            }
-        }
-
-        return $filterJson;
-    }
-
-    private function processFilterChildNodes($filterChildNodes) {
-        $filterChildNodesJson = array();
-        if ($filterChildNodes->hasChildNodes()) {
-            foreach ($filterChildNodes->childNodes as $child) {
-                if ($child->nodeType === 1 && $child->nodeName && $child->nodeValue)
-                    $filterChildNodesJson[$child->nodeName] = $child->nodeValue;
-            }
-        }
-        else {
-            if ($filterChildNodes->nodeType === 1 && $filterChildNodes->nodeName && $filterChildNodes->nodeValue)
-                $filterChildNodesJson[$filterChildNodes->nodeName] = $filterChildNodes->nodeValue;
-        }
-
-        return $filterChildNodesJson;
-    }
-
+   
 }

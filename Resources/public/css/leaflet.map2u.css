@@ -94,7 +94,14 @@ svg {
     position: relative;
 }
 
-
+div.uploadfile_link {
+    width: 100%;
+    text-align: right;
+}
+div.uploadfile_link a {
+    margin: 0 5px 0 5px;
+    
+}
 .place,
 .place-label {
     fill: #444;
