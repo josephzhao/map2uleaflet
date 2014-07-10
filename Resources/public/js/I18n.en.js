@@ -75,8 +75,23 @@ I18n.translations = {'en': {
             'shapefile-upload': {
                         'title':'Upload Shapefile'
             },
+            'textfile-upload': {
+                        'title':'Upload Text File'
+            },
+            'mapinfofile-upload': {
+                        'title':'Upload Mapinfo File'
+            },
+            'kmlfile-upload': {
+                        'title':'Upload KML File'
+            },
             'shapefile-list': {
                         'title':'Shapefile List'
+            },
+            'uploadfile': {
+                        'title':'Upload File'
+            },
+            'uploadfile-list': {
+                        'title':'Upload File List'
             },
             'share': {
                 'title': 'Share',
@@ -99,6 +114,10 @@ I18n.translations = {'en': {
                 'shapefile_upload_tooltip': 'Upload Shapefile',
                 'shapefile_list_disabled_tooltip': 'Shapefile List Disabled',
                 'shapefile_list_tooltip': 'Shapefile List',
+                'uploadfile_disabled_tooltip': 'Upload Spatial File Disabled',
+                'uploadfile_tooltip': 'Upload Spatial File',
+                'uploadfile_list_disabled_tooltip': 'Upload File List Disabled',
+                'uploadfile_list_tooltip': 'Upload File List',
                 'createnote_disabled_tooltip': 'Create Note Disabled',
                 'createnote_tooltip': 'Create Note'
             }

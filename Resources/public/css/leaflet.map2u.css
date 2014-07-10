@@ -27,10 +27,10 @@ and open the template in the editor.
 .icon.link{background-position:-180px 0}
 .icon.close{background-position:-200px 0}
 .icon.close:hover{background-position:-200px -20px}
-.icon.shapefile-upload{background-position:0px -20px}
-.control-button.disabled .icon.shapefile-upload{background-position:0px -40px}
-.icon.shapefile-list{background-position:-20px -20px}
-.control-button.disabled .icon.shapefile-list{background-position:-20px -40px}
+.icon.uploadfile{background-position:0px -20px}
+.control-button.disabled .icon.uploadfile{background-position:0px -40px}
+.icon.uploadfile-list{background-position:-20px -20px}
+.control-button.disabled .icon.uploadfile-list{background-position:-20px -40px}
 
 .icon.check{background-position:-220px 0}
 .icon.note{background-position:-240px 0}
@@ -65,8 +65,8 @@ and open the template in the editor.
 .leaflet-control .zoomout,.control-key .control-button{margin-bottom:0;border-radius:0}
 .control-locate .control-button,.control-share .control-button{border-radius:0 0 0 4px}
 
-.control-shapefile-upload .control-button{margin-bottom:0;border-radius:0}
-.control-shapefile-list .control-button{margin-bottom:0;border-radius:0}
+.control-uploadfile .control-button{margin-bottom:0;border-radius:0}
+.control-uploadfile-list .control-button{margin-bottom:0;border-radius:0}
 
 
 .sonata-bc #leaflet_content{overflow:hidden;position:absolute;top:125px;bottom:0;width:100%}
@@ -77,15 +77,15 @@ and open the template in the editor.
 .sonata-bc #sidebar h3,.sonata-bc #sidebar h4{margin-top:20px;margin-bottom:10px;font-size:13px}
 .sonata-bc #sidebar .icon.close{float:right;cursor:pointer}
 
-// show shapefile list block
-ul#shapefilelist-ul > li {
+// show uploadfile list block
+ul#uploadfilelist-ul > li {
     margin-left: -25px;
     list-style: decimal;
     list-style-type: decimal;
     list-style-image: none;
     list-style-position: outside;
 }
-ul#shapefilelist-ul > li img:hover {
+ul#uploadfilelist-ul > li img:hover {
     cursor: pointer;
 }      
 
@@ -98,8 +98,8 @@ div.uploadfile_link {
     width: 100%;
     text-align: right;
 }
-div.uploadfile_link a {
-    margin: 0 5px 0 5px;
+div.uploadfile_link a.uploadfile {
+    margin: 0 2px 0 8px;
     
 }
 .place,

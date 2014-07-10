@@ -1,26 +1,26 @@
-L.MAP2U.shapefile_list = function(options) {
+L.MAP2U.uploadfile_list = function(options) {
     var control = L.control(options);
 
     control.onAdd = function(map) {
         var $container = $('<div>')
-                .attr('class', 'control-shapefile-upload');
+                .attr('class', 'control-uploadfile');
 
         var link = $('<a>')
                 .attr('class', 'control-button')
                 .attr('href', '#')
-                .html('<span class="icon shapefile-list"></span>')
+                .html('<span class="icon uploadfile-list"></span>')
                 .on('click', toggle)
                 .appendTo($container);
 
         var $ui = $('<div>')
-                .attr('class', 'shapefile-list-ui');
+                .attr('class', 'uploadfile-list-ui');
 
         $('<div>')
                 .attr('class', 'sidebar_heading')
                 .appendTo($ui)
                 .append(
                         $('<h4>')
-                        .text(I18n.t('javascripts.shapefile-list.title')));
+                        .text(I18n.t('javascripts.uploadfile-list.title')));
         var barContent = $('<div>')
                 .attr('class', 'sidebar_content')
                 .appendTo($ui)
@@ -38,7 +38,7 @@ L.MAP2U.shapefile_list = function(options) {
         });
         
         $.ajax({
-            url: Routing.generate('default_shapefilelistform'),
+            url: Routing.generate('default_uploadfilelistform'),
             method: 'GET',
            
             success: function(response) {
@@ -74,12 +74,11 @@ L.MAP2U.shapefile_list = function(options) {
             link
                     .toggleClass('disabled', control.disabled)
                     .attr('data-original-title', I18n.t(control.disabled ?
-                            'javascripts.site.shapefile_list_disabled_tooltip' :
-                            'javascripts.site.shapefile_list_tooltip'));
+                            'javascripts.site.uploadfile_list_disabled_tooltip' :
+                            'javascripts.site.uploadfile_list_tooltip'));
         }
 
         return $container[0];
     };
-
     return control;
 };

@@ -37,13 +37,13 @@ L.MAP2U.legend = function (options) {
 //        .appendTo(list);
 //
 
-            if (layer.layer !== undefined && layer.layer.options !== undefined)
+            if (layer.layer !== null && layer.layer !== undefined && layer.layer.options !== undefined)
             {
-                list.append('<li>' + layer.name);
-                list.append('<div>');
-                list.append("<img src='http://cobas.juturna.ca:8080/geoserver/wms?TRANSPARENT=true&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&EXCEPTIONS=application%2Fvnd.ogc.se_xml&FORMAT=image%2Fpng&LAYER=" + layer.layer.options.layers + "'>");
-                list.append('</div>');
-                list.append('</li>');
+          //      list.append('<li>' + layer.name);
+          //      list.append('<div>');
+          //      list.append("<img src='http://cobas.juturna.ca:8080/geoserver/wms?TRANSPARENT=true&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&EXCEPTIONS=application%2Fvnd.ogc.se_xml&FORMAT=image%2Fpng&LAYER=" + layer.layer.options.layers + "'>");
+          //      list.append('</div>');
+          //      list.append('</li>');
             }
 
 

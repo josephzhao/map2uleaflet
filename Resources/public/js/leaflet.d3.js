@@ -43,6 +43,7 @@ L.D3 = L.Class.extend({
             _this._loaded = true;
             _this.fire("dataLoaded");
         }
+
         this._clickHandler = function(data, idx) {
             _this.fire('click', {
                 element: this,
@@ -122,8 +123,8 @@ L.D3 = L.Class.extend({
                 .enter().append("text")
                 .attr("class", this.options.labelClass)
                 .attr("transform", function(d) {
-                    var point=_this.path.centroid(d);
-          
+                    var point = _this.path.centroid(d);
+
                     return "translate(" + (point[0] + 8) + "," + point[1] + ")";
                 })
                 .attr("dy", ".35em")
@@ -156,7 +157,7 @@ L.D3 = L.Class.extend({
             triangle: "triangle-up",
             diamond: "diamond"
         };
-        var _this = this;
+
         if (this.options.before) {
             this.options.before.call(this, this.data);
         }
@@ -227,20 +228,22 @@ L.D3 = L.Class.extend({
             this.onLoadPointSLD();
         }
         else {
-            this._feature.attr("d", this.path);
-            if (this._feature && this._featureType === 'LineString' || this._featureType === 'MultiLineString' || this._featureType === 'Polyline' || this._featureType === 'MultiPolyline') {
-                this.onLoadPolylineSLD();
-            }
-            if (this._feature && this._featureType === 'Polygon' || this._featureType === 'MultiPolygon') {
-                this.onLoadPolygonSLD();
+            if (this._feature) {
+                this._feature.attr("d", this.path);
+                if (this._feature && (this._featureType === 'LineString' || this._featureType === 'MultiLineString' || this._featureType === 'Polyline' || this._featureType === 'MultiPolyline')) {
+                    this.onLoadPolylineSLD();
+                }
+                if (this._feature && (this._featureType === 'Polygon' || this._featureType === 'MultiPolygon')) {
+                    this.onLoadPolygonSLD();
+                }
             }
         }
 
         if (this.options.showLabels && this._feature_labels)
         {
             this._feature_labels.attr("transform", function(d) {
-                var point=_this.path.centroid(d);
-                return "translate(" +(point[0]+8) +"," +point[1] + ")";
+                var point = _this.path.centroid(d);
+                return "translate(" + (point[0] + 8) + "," + point[1] + ")";
             });
         }
 
@@ -323,7 +326,7 @@ L.D3 = L.Class.extend({
             var container = d3.select(this._container);
             if (container) {
                 container.attr('id', this.options.id ? this.options.id : 'svg-leaflet-d3');
-                container.attr('filetype', this.options.filetype ? this.options.filetype :'svg-leaflet-d3');
+                container.attr('filetype', this.options.filetype ? this.options.filetype : 'svg-leaflet-d3');
                 container.attr('filename', this.options.filename ? this.options.filename : 'svg-data-filename');
                 container.attr('zIndex', this.options.zIndex ? this.options.zIndex : '');
                 container.attr('minZoom', this.options.minZoom ? this.options.minZoom : '');
@@ -343,6 +346,8 @@ L.D3 = L.Class.extend({
             this._feature.attr("d", d3.svg.symbol().
                     type(function(d) {
                         var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
+                        if (varFeatureTypeStyles === undefined || varFeatureTypeStyles === null)
+                            return;
                         var keys = Object.keys(varFeatureTypeStyles);
                         for (var key in keys) {
                             var varFeatureTypeStyle = varFeatureTypeStyles[key];
@@ -617,16 +622,12 @@ L.D3 = L.Class.extend({
     },
     onLoadPolygonSLD: function() {
         var _this = this;
+
         if (_this.options.sld) {
             var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
+
             var keys = Object.keys(varFeatureTypeStyles);
             for (var key in keys) {
-                //         alert(varFeatureTypeStyles[key]);
-                //       }
-                //      for(var varFeatureTypeStyle in varFeatureTypeStyles)
-                //       {
-                //       
-                //       for (var i = 0; i < varFeatureTypeStyle.length; i++) {
                 var varFeatureTypeStyle = varFeatureTypeStyles[key];
                 if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle.Rule !== undefined && varFeatureTypeStyle !== undefined) {
                     if (varFeatureTypeStyle.Rule.Filter !== undefined) {
@@ -656,12 +657,18 @@ L.D3 = L.Class.extend({
                                         if (geometryType === 'Polygon' || geometryType === 'MultiPolygon') {
                                             if (varFeatureTypeStyle.Rule.PolygonSymbolizer && rule.PolygonSymbolizer.Fill && rule.PolygonSymbolizer.Fill.fill)
                                                 p.style('fill', rule.PolygonSymbolizer.Fill.fill);
+                                            else
+                                                p.style('fill', "#CCC");
                                             if (rule.PolygonSymbolizer && rule.PolygonSymbolizer.Fill && rule.PolygonSymbolizer.Fill['fill-opacity'])
                                                 p.style('fill-opacity', rule.PolygonSymbolizer.Fill['fill-opacity']);
+                                            else
+                                                p.style('fill-opacity', "0.6");
                                             if (rule.PolygonSymbolizer && rule.PolygonSymbolizer.Stroke && rule.PolygonSymbolizer.Stroke.stroke)
                                                 p.style('stroke', rule.PolygonSymbolizer.Stroke.stroke);
                                             if (rule.PolygonSymbolizer && rule.PolygonSymbolizer.Stroke && rule.PolygonSymbolizer.Stroke['stroke-opacity'])
                                                 p.style('stroke-opacity', rule.PolygonSymbolizer.Stroke['stroke-opacity']);
+                                            if (rule.PolygonSymbolizer && rule.PolygonSymbolizer.Stroke && rule.PolygonSymbolizer.Stroke['stroke-width'])
+                                                p.style('stroke-width', rule.PolygonSymbolizer.Stroke['stroke-width']);
                                             if (rule.PolygonSymbolizer && rule.PolygonSymbolizer.Stroke && rule.PolygonSymbolizer.Stroke['stroke-linecap'])
                                             {
                                                 p.style('stroke-linecap', rule.PolygonSymbolizer.Stroke['stroke-linecap']);
@@ -675,18 +682,22 @@ L.D3 = L.Class.extend({
                                                 p.style('stroke-dashoffset', rule.PolygonSymbolizer.Stroke['stroke-dashoffset']);
                                             }
                                         }
-                                        if (geometryType === 'Point') {
-                                            if (rule.PointSymbolizer && rule.PointSymbolizer.Graphic && rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Fill && rule.PointSymbolizer.Graphic.Mark.Fill.fill)
-                                            {
-                                                p.style('fill', rule.PointSymbolizer.Graphic.Mark.Fill.fill);
-                                            }
-                                            if (rule.PointSymbolizer && rule.PointSymbolizer.Graphic && rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Fill && rule.PointSymbolizer.Graphic.Mark.Fill['fill-opacity'])
-                                            {
-                                                p.style('fill-opacity', rule.PointSymbolizer.Graphic.Mark.Fill['fill-opacity']);
-                                            }
-
-                                        }
+//                                        if (geometryType === 'Point') {
+//                                            if (rule.PointSymbolizer && rule.PointSymbolizer.Graphic && rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Fill && rule.PointSymbolizer.Graphic.Mark.Fill.fill)
+//                                            {
+//                                                p.style('fill', rule.PointSymbolizer.Graphic.Mark.Fill.fill);
+//                                            }
+//                                            if (rule.PointSymbolizer && rule.PointSymbolizer.Graphic && rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Fill && rule.PointSymbolizer.Graphic.Mark.Fill['fill-opacity'])
+//                                            {
+//                                                p.style('fill-opacity', rule.PointSymbolizer.Graphic.Mark.Fill['fill-opacity']);
+//                                            }
+//
+//                                        }
                                     }
+                                }
+                                else {
+                                    this._feature.style('fill', "#CCC");
+                                    this._feature.style('fill-opacity', 0.6);
                                 }
                             }
                         }
@@ -699,13 +710,25 @@ L.D3 = L.Class.extend({
                         {
                             this._feature.style('fill', varFeatureTypeStyle.Rule.PolygonSymbolizer.Fill.fill);
                         }
+                        else
+                            this._feature.style('fill', "#CCC");
                         if (varFeatureTypeStyle.Rule.PolygonSymbolizer && varFeatureTypeStyle.Rule.PolygonSymbolizer.Fill && varFeatureTypeStyle.Rule.PolygonSymbolizer.Fill['fill-opacity'])
                         {
                             this._feature.style('fill-opacity', varFeatureTypeStyle.Rule.PolygonSymbolizer.Fill['fill-opacity']);
                         }
+                        else
+                            this._feature.style('fill-opacity', 0.6);
+                        
                         if (varFeatureTypeStyle.Rule.PolygonSymbolizer && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-opacity'])
                         {
                             this._feature.style('stroke-opacity', varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-opacity']);
+                        }
+                        if (varFeatureTypeStyle.Rule.PolygonSymbolizer && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-width'])
+                        {
+                            this._feature.style('stroke-width', varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-width']);
+                        }
+                        else {
+
                         }
                         if (varFeatureTypeStyle.Rule.PolygonSymbolizer && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke.stroke)
                         {
@@ -726,12 +749,28 @@ L.D3 = L.Class.extend({
                     }
                 }
             }
+
+
+//            this._feature.style('stroke-linecap', varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-linecap']);
+//            this._feature.style('stroke-linejoin', varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-linejoin']);
+//            this._feature.style('stroke-dashoffset', varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-dashoffset']);
+
+
+
+        }
+        else {
+
+            this._feature.style('fill', "#CCC");
+            this._feature.style('fill-opacity', "0.6");
+            this._feature.style('stroke-opacity', "1.0");
+            this._feature.style('stroke-width', "2");
+            this._feature.style('stroke', "#0ff");
         }
     },
     onLoadPolylineSLD: function() {
 
         this._feature.style("fill", 'none')
-                .style("fill--opacity", 0.0)
+                .style("fill-opacity", 0.0)
                 .style("stroke", "#000")
                 .style("stroke-width", 1.0)
                 .style("stroke-opacity", 0.8);
@@ -740,7 +779,7 @@ L.D3 = L.Class.extend({
 
         }
     },
-    onLoadSLD: function(jsonSLD) {
+    onLoadSLD: function(json_sld) {
 
         if (this._feature && this._featureType === 'Point') {
 
