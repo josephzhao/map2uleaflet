@@ -213,8 +213,8 @@ class DefaultController extends Controller {
                     if ($layer->isTopojsonOnly() === true) {
 
                         $geoms[$layer->getId()]['type'] = "topojsonfile";
-                        if (file_exists($shapefilesPath . '/uploads/' . $layer->getUserId() . '/topojson/user' . $layer->getUseruploadfile()->getType() . '-' . $layer->getUseruploadfile()->getId() . '.json')) {
-                            $theGeom = file_get_contents($shapefilesPath . '/uploads/' . $layer->getUserId() . '/topojson/user' . $layer->getUseruploadfile()->getType() . '-' . $layer->getUseruploadfile()->getId() . '.json');
+                        if (file_exists($shapefilesPath . '/uploads/' . $layer->getUserId() . '/topojson/usershapefile-'  . $layer->getUseruploadfile()->getId() . '.json')) {
+                            $theGeom = file_get_contents($shapefilesPath . '/uploads/' . $layer->getUserId() . '/topojson/usershapefile-'  . $layer->getUseruploadfile()->getId() . '.json');
                             $geoms[$layer->getId()]['geom'] = $theGeom;
                         } else {
                             $message = 'Topojson file ' . $layer->getUseruploadfile()->getTopojsonfileName() . ' not exist!';
@@ -272,7 +272,7 @@ class DefaultController extends Controller {
         //   $user = $this->getUser();
         $id = $request->get("id");
         $type = $request->get("type");
-   
+
 
         // shapefiles path for uploaded shapefiles
         $shapefilesPath = $this->get('kernel')->getRootDir() . '/../Data';
@@ -312,27 +312,26 @@ class DefaultController extends Controller {
                     $filename = $layer->getFileName();
                     $filetype = $layer->getType();
 
-                  
 
-                        $geoms[$layer->getId()]['type'] = "topojsonfile";
-                        if (file_exists($shapefilesPath . '/uploads/' . $layer->getUserId() . '/topojson/user' . $layer->getType() . '-' . $layer->getId() . '.json')) {
-                            $theGeom = file_get_contents($shapefilesPath . '/uploads/' . $layer->getUserId() . '/topojson/user' . $layer->getType() . '-' . $layer->getId() . '.json');
-                            $geoms[$layer->getId()]['geom'] = $theGeom;
-                        } else {
-                            $message = 'Topojson file ' . $layer->getTopojsonfileName() . ' not exist!';
-                            $success = false;
-                            $sql = "select st_asgeojson(st_transform(the_geom,4326)) as geometry from useruploadfile_geoms_" . $layer->getId();
-                            $type = "geojson";
-                            $geoms[$layer->getId()]['type'] = "geojson";
-                            $geoms[$layer->getId()]['geom'] = $conn->fetchAll($sql);
-                        }
-                  
+
+                    $geoms[$layer->getId()]['type'] = "topojsonfile";
+                    if (file_exists($shapefilesPath . '/uploads/' . $layer->getUserId() . '/topojson/usershapefile-' . $layer->getId() . '.json')) {
+                        $theGeom = file_get_contents($shapefilesPath . '/uploads/' . $layer->getUserId() . '/topojson/usershapefile-' . $layer->getId() . '.json');
+                        $geoms[$layer->getId()]['geom'] = $theGeom;
+                    } else {
+                        $message = 'Topojson file ' . $layer->getTopojsonfileName() . ' not exist!';
+                        $success = false;
+                        $sql = "select st_asgeojson(st_transform(the_geom,4326)) as geometry from useruploadfile_geoms_" . $layer->getId();
+                        $type = "geojson";
+                        $geoms[$layer->getId()]['type'] = "geojson";
+                        $geoms[$layer->getId()]['geom'] = $conn->fetchAll($sql);
+                    }
                 }
-                $json=null;
-                if($layers[0]->getSldfileName())
+                $json = null;
+                if ($layers[0]->getSldfileName())
                     $json = $this->getSldContent($layers[0]->getSldfileName());
                 return new Response(\json_encode(array('success' => $success, 'type' => $type, 'filetype' => $filetype, 'filename' => $filename, 'message' => $message, 'layers' => $layersData, 'sld' => $json, 'data' => $geoms)));
-            } 
+            }
         }
         if ($type === 'geojson') {
             if (intval($id) === -1) {
