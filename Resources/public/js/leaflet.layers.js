@@ -1306,11 +1306,11 @@ L.MAP2U.layers = function(options) {
                                         return  this.text;
                                     });
 
-                                    if (e.target.options.tip_field !== '') {
+                                    if (e.target.options.tip_field !== '' && e.target.options.tip_field !== null) {
                                         p = e.data.properties[e.target.options.tip_field ];
                                     }
                                     else {
-                                        if (fieldkey === '' || fieldkey[0] === '' || fieldkey[0] === undefined)
+                                        if (fieldkey === null || fieldkey === '' || fieldkey[0] === '' || fieldkey[0] === undefined)
                                             p = e.data.properties[properties_key[1]];
                                         else
                                             p = e.data.properties[fieldkey[0]];
