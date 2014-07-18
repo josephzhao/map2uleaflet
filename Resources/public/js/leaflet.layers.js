@@ -359,11 +359,13 @@ L.MAP2U.layers = function(options) {
 //            options.spinner.spin(options.spinner_target);
 //        }
         //       spinner.spin(spinner_target);
+
         $.ajax({
             url: getlayerdata_url,
             type: 'GET',
             beforeSend: function() {
-               // spinner.spin(spinner_target);
+                if (window.console === undefined || window.console.debug === undefined)
+                    spinner.spin(spinner_target);
             },
             complete: function() {
                 spinner.stop();
@@ -398,7 +400,7 @@ L.MAP2U.layers = function(options) {
                         }
                     });
                     if (fileExist === false) {
-                        _this._map.dataLayers[_this._map.dataLayers.length] = {'defaultShowOnMap': true, 'source': 'uploadfile', 'layer': null, 'minZoom': null, 'maxZoom': null, 'index_id': _this._map.dataLayers.length + 1, 'layer_id': result.uploadfile.id, 'title': result.uploadfile.filename, 'filename': result.uploadfile.filename, 'name': result.uploadfile.filename, type: 'topojson'};
+                        _this._map.dataLayers[_this._map.dataLayers.length] = {'defaultShowOnMap': true, 'layerType': 'uploadfile', 'layer': null, 'minZoom': null, 'maxZoom': null, 'index_id': _this._map.dataLayers.length + 1, 'layer_id': result.uploadfile.id, 'title': result.uploadfile.filename, 'filename': result.uploadfile.filename, 'name': result.uploadfile.filename, type: 'topojson'};
                         maplayer = _this._map.dataLayers[_this._map.dataLayers.length - 1];
 
 
@@ -559,7 +561,8 @@ L.MAP2U.layers = function(options) {
                 url: Routing.generate('leaflet_maplayer'),
                 type: 'GET',
                 beforeSend: function() {
-                    spinner.spin(spinner_target);
+                    if (window.console === undefined || window.console.debug === undefined)
+                        spinner.spin(spinner_target);
                 },
                 complete: function() {
                     spinner.stop();
@@ -739,13 +742,14 @@ L.MAP2U.layers = function(options) {
                         }
                         else
                         {
-                            sld = JSON.parse(result.sld);
+                            if (result.sld !== undefined && result.sld.trim().length > 100)
+                                sld = JSON.parse(result.sld);
                         }
 
                         d3.selectAll("#svg-leaflet-d3").each(function() {
                             var elt = d3.select(this);
 
-                            if (elt.attr("filename").toString().toLowerCase() === result.filename.toString().toLowerCase())
+                            if (elt.attr("filename").toString().toLowerCase() === result.filename.toString().toLowerCase() && elt.attr("layerType").toString().toLowerCase() === layer.layerType)
                                 elt.remove();
 
                         });
@@ -887,18 +891,29 @@ L.MAP2U.layers = function(options) {
     };
     control.loadTopoJSONLayer = function(layer) {
         var _this = this;
-        if (layer.type === 'shapefile_topojson' || layer.type === 'topojson' || layer.type === 'geojson') {
+        if (layer.type === 'topojsonfile' || layer.type === 'shapefile_topojson' || layer.type === 'topojson' || layer.type === 'geojson') {
             var url;
-            if (layer.source !== undefined && layer.source === 'uploadfile')
+            if (layer.layerType !== undefined && layer.layerType === 'uploadfile')
                 url = Routing.generate('leaflet_uploadfile');
             else
-                url = Routing.generate('leaflet_maplayer');
-
+            {
+                if (layer.layerType === 'uploadfilelayer')
+                {
+                    url = Routing.generate('leaflet_maplayer');
+                }
+                else if (layer.layerType === 'leafletcluster')
+                {
+                    url = Routing.generate('leaflet_clusterlayer');
+                }
+                else
+                    return;
+            }
             $.ajax({
                 url: url,
                 type: 'GET',
                 beforeSend: function() {
-                    spinner.spin(spinner_target);
+                    if (window.console === undefined || window.console.debug === undefined)
+                        spinner.spin(spinner_target);
                 },
                 complete: function() {
                     spinner.stop();
@@ -1138,7 +1153,7 @@ L.MAP2U.layers = function(options) {
                         return;
                     }
 
-                    if (result.success === true && (result.type === 'topojson' || result.type === 'shapefile_topojson')) {
+                    if (result.success === true && (result.type === 'topojsonfile' || result.type === 'topojson' || result.type === 'shapefile_topojson')) {
 
                         var sld;
                         if (typeof result.sld === 'object') {
@@ -1146,7 +1161,8 @@ L.MAP2U.layers = function(options) {
                         }
                         else
                         {
-                            sld = JSON.parse(result.sld);
+                            if (result.sld !== undefined && result.sld.trim().length > 100)
+                                sld = JSON.parse(result.sld);
                         }
 
 
@@ -1154,7 +1170,7 @@ L.MAP2U.layers = function(options) {
                         d3.selectAll("#svg-leaflet-d3").each(function() {
                             var elt = d3.select(this);
 
-                            if (elt.attr("filename").toString().toLowerCase() === result.filename.toString().toLowerCase())
+                            if (elt.attr("filename").toString().toLowerCase() === result.filename.toString().toLowerCase() && elt.attr("layerType").toString().toLowerCase() === layer.layerType)
                                 elt.remove();
 
                         });
@@ -1190,6 +1206,7 @@ L.MAP2U.layers = function(options) {
                                 zIndex: (300 - layer.index_id),
                                 minZoom: layer.minZoom,
                                 maxZoom: layer.maxZoom,
+                                layerType: layer.layerType,
                                 sld: sld,
                                 filename: result.filename.toLowerCase(),
                                 filetype: result.filetype.toLowerCase(),

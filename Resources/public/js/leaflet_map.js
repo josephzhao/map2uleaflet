@@ -306,9 +306,9 @@ window.onload = function() {
                     // layer_id => UploadfileLayer.id
                     // index_id => display sequence id on screen
 
-                    map.dataLayers[map.dataLayers.length] = {'defaultShowOnMap': layer.defaultShowOnMap, 'layer': null, 'minZoom': layer.minZoom, 'maxZoom': layer.maxZoom, 'index_id': k, 'layer_id': layer.id, title: layer.layerTitle, 'name': layer.layerName, type: 'shapefile_topojson'};
+                    map.dataLayers[map.dataLayers.length] = {'layerType':layer.layerType ,'defaultShowOnMap': layer.defaultShowOnMap, 'layer': null, 'minZoom': layer.minZoom, 'maxZoom': layer.maxZoom, 'index_id': k, 'layer_id': layer.id, title: layer.layerTitle, 'name': layer.layerName, type: 'shapefile_topojson'};
                 }
-                map.dataLayers[map.dataLayers.length] = {'layer': null, 'index_id': -1, 'layer_id': -1, title: "My draw geometries", 'name': 'My draw geometries', type: 'geojson'};
+                map.dataLayers[map.dataLayers.length] = {'layerType':'userdraw','layer': null, 'index_id': -1, 'layer_id': -1, title: "My draw geometries", 'name': 'My draw geometries', type: 'geojson'};
                 layersControl.refreshOverlays();
 
 

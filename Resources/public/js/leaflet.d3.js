@@ -6,6 +6,7 @@ L.D3 = L.Class.extend({
         topojson: false,
         showLabels: false,
         name: 'shapefile',
+        layerType: 'uploadfilelayer',
         pathClass: "path",
         keyname: 'ogc_id',
         labelClass: "feature-label"
@@ -331,6 +332,7 @@ L.D3 = L.Class.extend({
                 container.attr('zIndex', this.options.zIndex ? this.options.zIndex : '');
                 container.attr('minZoom', this.options.minZoom ? this.options.minZoom : '');
                 container.attr('maxZoom', this.options.maxZoom ? this.options.maxZoom : '');
+                container.attr('layerType', this.options.layerType ? this.options.layerType : 'uploadfilelayer');
             }
             this._updateZIndex();
             overlayPane.appendChild(this._container);
