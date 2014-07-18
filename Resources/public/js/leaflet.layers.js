@@ -1296,7 +1296,7 @@ L.MAP2U.layers = function(options) {
                                     return  this.text;
                                 });
 
-                                if (shapefilename === '' || shapefilename[0] === undefined || geojson_shapefile.options.name === shapefilename[0].toLowerCase())
+                                if (shapefilename === '' || shapefilename[0] === undefined || geojson_shapefile.options.filename === shapefilename[0].toLowerCase())
                                 {
                                     var p;
 
