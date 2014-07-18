@@ -1233,7 +1233,7 @@ L.MAP2U.layers = function(options) {
                                 var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function() {
                                     return  this.text;
                                 });
-                                if (shapefilename !== '' && shapefilename[0] !== undefined && geojson_shapefile.options.filename === shapefilename[0].toLowerCase())
+                                if (shapefilename !== null && shapefilename !== '' && shapefilename[0] !== undefined && geojson_shapefile.options.filename === shapefilename[0].toLowerCase())
                                 {
 
                                     if ($('#geometries_selected').length > 0)
