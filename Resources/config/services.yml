@@ -19,4 +19,12 @@ services:
                     - @doctrine.orm.entity_manager
                 tags:
                     - {name: "sonata.block"}
-                        
+    map2uleafletbundle.block.maptoolbar:
+                class: Map2u\LeafletBundle\Block\LeafletMapToolbarBlockService
+                arguments:
+                    - "map2uleafletbundle.block.maptoolbar"
+                    - "@templating"
+                    - @doctrine.orm.entity_manager
+                tags:
+                    - {name: "sonata.block"}
+                               

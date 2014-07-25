@@ -155,8 +155,27 @@ window.onload = function() {
 
     var index;
     var layers = [];
-
-
+//
+//
+//var testlayer = new L.TileLayer.WMS(
+//            "http://www.sig.mep.go.cr:8080/geoserver/mep/wms",
+//            {
+//                layers: 'CINDEA',
+//                format: 'image/png',
+//                transparent: true,
+//                attribution: ""
+//            });
+//       testlayer.addTo(map);
+//
+//var testlayer2 = new L.TileLayer.WMS(
+//            "http://www.sig.mep.go.cr:8080/geoserver/mep/wms",
+//            {
+//                layers: 'Escuelas_Nocturnas',
+//                format: 'image/png',
+//                transparent: true,
+//                attribution: ""
+//            });
+//       testlayer2.addTo(map);
 
 //       
 //    
@@ -172,7 +191,7 @@ window.onload = function() {
                     .addListener(container, 'click', L.DomEvent.stopPropagation)
                     .addListener(container, 'click', L.DomEvent.preventDefault)
                     .addListener(container, 'click', function() {
-                        ShowLeftSideBar();
+                        ShowLeftSideBar(leftSidebar);
                     });
             var controlUI = L.DomUtil.create('div', 'leftsidebar-close-control hidden', container);
             controlUI.title = 'Show Left Side Bar';
@@ -181,6 +200,55 @@ window.onload = function() {
     });
 
     map.addControl(new leftsidebarControl());
+//var history = new L.HistoryControl().addTo(map);
+//    var history = new L.HistoryControl({position: 'topleft'});
+//     history.addTo(map);
+//    map.addControl(history);
+    var MapToolbarControl = L.Control.extend({
+        options: {
+            position: 'topright'
+
+        },
+        onAdd: function(map) {
+            // create the control container with a particular class name
+            var container = L.DomUtil.create('div', 'maptoolbar-control');
+//            L.DomEvent
+//                    .addListener(container, 'click', L.DomEvent.stopPropagation)
+//                    .addListener(container, 'click', L.DomEvent.preventDefault)
+//                    .addListener(container, 'click', function() {
+//                        MapExtentReset(map);
+//                    });
+            var controlUI = L.DomUtil.create('div', 'maptoolbar-control-reset', container);
+            L.DomEvent
+                    .addListener(controlUI, 'click', L.DomEvent.stopPropagation)
+                    .addListener(controlUI, 'click', L.DomEvent.preventDefault)
+                    .addListener(controlUI, 'click', function() {
+                        MapExtentReset(map);
+                    });
+            controlUI.title = 'Reset Map Extent';
+            var Prev_Extent = L.DomUtil.create('div', 'maptoolbar-control-prev', container);
+            L.DomEvent
+                    .addListener(Prev_Extent, 'click', L.DomEvent.stopPropagation)
+                    .addListener(Prev_Extent, 'click', L.DomEvent.preventDefault)
+                    .addListener(Prev_Extent, 'click', function() {
+                        PrevMapExtent(map);
+                        //      history.goBack();
+                    });
+            Prev_Extent.title = 'Prev Extent';
+            var Next_Extent = L.DomUtil.create('div', 'maptoolbar-control-next', container);
+            L.DomEvent
+                    .addListener(Next_Extent, 'click', L.DomEvent.stopPropagation)
+                    .addListener(Next_Extent, 'click', L.DomEvent.preventDefault)
+                    .addListener(Next_Extent, 'click', function() {
+                        NextMapExtent(map);
+                        //      history.goForward();
+                    });
+            Next_Extent.title = 'Prev Extent';
+            return container;
+        }
+    });
+
+    map.addControl(new MapToolbarControl());
 
 
 //    var popup = L.popup();
@@ -232,8 +300,16 @@ window.onload = function() {
         sidebar: rightSidebar
     });
     layersControl.addTo(map);
-    this.layersControl=layersControl;
-    
+    this.layersControl = layersControl;
+
+//    var mapToolbarControl = L.MAP2U.maptoolbar({
+//        position: position,
+//        map: map
+//    });
+//    mapToolbarControl.addTo(map);
+//    this.mapToolbarControl = mapToolbarControl;
+
+
     L.MAP2U.uploadfile({position: position,
         sidebar: rightSidebar,
         'short': true
@@ -306,15 +382,16 @@ window.onload = function() {
                     // layer_id => UploadfileLayer.id
                     // index_id => display sequence id on screen
 
-                    map.dataLayers[map.dataLayers.length] = {'layerType':layer.layerType ,'defaultShowOnMap': layer.defaultShowOnMap, 'layer': null, 'minZoom': layer.minZoom, 'maxZoom': layer.maxZoom, 'index_id': k, 'layer_id': layer.id, title: layer.layerTitle, 'name': layer.layerName, type: 'shapefile_topojson'};
+                    map.dataLayers[map.dataLayers.length] = {'map': map, 'layerType': layer.layerType, 'defaultShowOnMap': layer.defaultShowOnMap, 'layer': null, 'minZoom': layer.minZoom, 'maxZoom': layer.maxZoom, 'index_id': k, 'layer_id': layer.id, title: layer.layerTitle, 'name': layer.layerName, 'hostName': layer.hostName, type: 'shapefile_topojson'};
                 }
-                map.dataLayers[map.dataLayers.length] = {'layerType':'userdraw','layer': null, 'index_id': -1, 'layer_id': -1, title: "My draw geometries", 'name': 'My draw geometries', type: 'geojson'};
+                map.dataLayers[map.dataLayers.length] = {'map': map, 'layerType': 'userdraw', 'layer': null, 'index_id': -1, 'layer_id': -1, title: "My draw geometries", 'name': 'My draw geometries', type: 'geojson'};
                 layersControl.refreshOverlays();
 
 
             }
         }
     });
+
 
 
     $(window).resize();
@@ -459,6 +536,16 @@ window.onload = function() {
 
     });
     $('.leaflet-control .control-button').tooltip({placement: 'left', container: 'body'});
+//    L.MarkerClusterGroup.prototype.bringToFront = function() {
+//        var pane = this._map._panes.overlayPane;
+//
+//        if (this._container) {
+//            pane.appendChild(this._container);
+//            this._setAutoZIndex(pane, Math.max);
+//        }
+//
+//        return this;
+//    };
 
 };
 
@@ -473,7 +560,7 @@ function saveuserdraw() {
 }
 
 
-function ShowLeftSideBar() {
+function ShowLeftSideBar(leftSidebar) {
     if ($(".leaflet-sidebar.left").css('left') === 0 || $(".leaflet-sidebar.left").css('left') === '0px') {
 
         $(".sonata-bc .leftsidebar-close-control").show();
@@ -488,3 +575,15 @@ function ShowLeftSideBar() {
         }, 500);
     }
 }
+
+function MapExtentReset(map) {
+    map.setView([43.73737, -79.95987], 10);
+}
+function NextMapExtent(history) {
+    history.setView([9.37421, -83.59669], 12);
+    // history.goForward();
+}
+function PrevMapExtent(history) {
+    // history.goBack();
+}
+

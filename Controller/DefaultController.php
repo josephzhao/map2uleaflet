@@ -61,8 +61,19 @@ class DefaultController extends Controller {
                     ->getResult();
         }
 
+        if ($this->getUser()) {
+
+            $wmslayers = $em->createQuery('SELECT u FROM Map2uCoreBundle:GeoServerLayer u WHERE  (u.public=true and u.published=true)  or u.userId=' . $this->getUser()->getId() . '  order by u.seq')
+                    ->getResult();
+        } else {
+
+            $wmslayers = $em->createQuery('SELECT u FROM Map2uCoreBundle:GeoServerLayer u WHERE  u.public=true and u.published=true  order by u.seq')
+                    ->getResult();
+        }
+
+        $layersData = array();
         if ($layers) {
-            $layersData = array();
+
             $message = '';
             $success = true;
             foreach ($layers as $layer) {
@@ -92,6 +103,23 @@ class DefaultController extends Controller {
                     $layerData['layerShowInSwitcher'] = $layer->isLayerShowInSwitcher();
                     $layerData['defaultShowOnMap'] = $layer->isDefaultShowOnMap();
                     $layerData['fileName'] = $layer->getUseruploadfile()->getFileName();
+                    array_push($layersData, $layerData);
+                }
+            }
+            if ($wmslayers) {
+                foreach ($wmslayers as $layer) {
+                    $layerData = array();
+                    $layerData['id'] = $layer->getId();
+                    $layerData['layerTitle'] = $layer->getLayerTitle();
+                    $layerData['layerName'] = $layer->getLayerName();
+                    $layerData['layerType'] = $layer->getLayerType();
+                    $layerData['seq'] = $layer->getSeq();
+                    $layerData['minZoom'] = $layer->getMinZoom();
+                    $layerData['maxZoom'] = $layer->getMaxZoom();
+                    $layerData['layerShowInSwitcher'] = $layer->isLayerShowInSwitcher();
+                    $layerData['defaultShowOnMap'] = $layer->isDefaultShowOnMap();
+                    $layerData['fileName'] = "wms-" . $layer->getLayerName();
+                    $layerData['hostName'] = $layer->getHostName();
                     array_push($layersData, $layerData);
                 }
             }
@@ -385,7 +413,7 @@ class DefaultController extends Controller {
         //  }
         return new Response(\json_encode(array('success' => true, 'message' => 'User draw name  not exist')));
     }
-    
+
     /**
      * get upload file extend.
      * params:

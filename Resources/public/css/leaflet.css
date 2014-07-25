@@ -253,6 +253,7 @@
 
 /* zoom control */
 
+.leaflet-control-zoom-full,
 .leaflet-control-zoom-in,
 .leaflet-control-zoom-out {
 	font: bold 18px 'Lucida Console', Monaco, monospace;
@@ -262,6 +263,9 @@
 	font-size: 20px;
 	}
 
+.leaflet-touch .leaflet-control-zoom-full {
+	font-size: 22px;
+	}
 .leaflet-touch .leaflet-control-zoom-in {
 	font-size: 22px;
 	}

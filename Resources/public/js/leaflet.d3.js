@@ -424,7 +424,7 @@ L.D3 = L.Class.extend({
                                 }
                             }
                         }
-                        return 6 * 6;
+                        return 8 * 8;
                     })
                     )
                     .style("fill", function(d) {
@@ -516,7 +516,7 @@ L.D3 = L.Class.extend({
                                         {
                                             if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] === rule.Filter.PropertyIsEqualTo.Literal)
                                             {
-                                                var stroke = "#FFF";
+                                                var stroke = "#000";
 
                                                 if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Stroke && rule.PointSymbolizer.Graphic.Mark.Stroke.stroke)
                                                     stroke = rule.PointSymbolizer.Graphic.Mark.Stroke.stroke.trim();
@@ -526,7 +526,7 @@ L.D3 = L.Class.extend({
                                     }
                                 }
                                 else { // if no condition set
-                                    var stroke = "#FFF";
+                                    var stroke = "#000";
 
                                     if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Stroke && rule.PointSymbolizer.Graphic.Mark.Stroke.stroke)
                                         stroke = rule.PointSymbolizer.Graphic.Mark.Stroke.stroke.trim();
@@ -535,7 +535,7 @@ L.D3 = L.Class.extend({
                                 }
                             }
                         }
-                        return "#FFF";
+                        return "#000";
                     })
                     .style("stroke-width", function(d) {
                         var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
@@ -619,6 +619,20 @@ L.D3 = L.Class.extend({
                     .attr("transform", function(d) {
                         return "translate(" + _this.path.centroid(d) + ")";
                     });
+        }
+        else
+        {
+            this._feature.attr("d", d3.svg.symbol()
+                    .type('circle')
+                    .size('64'))
+                    .style("fill-opacity", '0.0')
+                    .style("stroke", '#000')
+                    .style("stroke-width", '1.0')
+                    .style("stroke-opacity", '1.0')
+                    .attr("transform", function(d) {
+                        return "translate(" + _this.path.centroid(d) + ")";
+                    });
+
         }
 
     },
@@ -720,7 +734,7 @@ L.D3 = L.Class.extend({
                         }
                         else
                             this._feature.style('fill-opacity', 0.6);
-                        
+
                         if (varFeatureTypeStyle.Rule.PolygonSymbolizer && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-opacity'])
                         {
                             this._feature.style('stroke-opacity', varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-opacity']);

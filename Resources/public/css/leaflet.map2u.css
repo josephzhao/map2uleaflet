@@ -60,7 +60,33 @@ and open the template in the editor.
 .leaflet-control .control-button.disabled{background-color:#333;background-color:rgba(0,0,0,0.5);cursor:default}
 .leaflet-control .control-button .icon{margin:10px}
 
-
+ .maptoolbar-control{
+   
+    width:82px;
+    height: 32px;
+    border-radius:3px;
+/*    margin-top:40px;
+    margin-right: 60px;*/
+    top:2px;
+    padding-left:2px;
+    right:42px;
+    border: 1px solid green;
+}
+.maptoolbar-control .maptoolbar-control-reset,.maptoolbar-control .maptoolbar-control-prev,.maptoolbar-control .maptoolbar-control-next{
+    margin-bottom:0px;
+    border-radius:3px;
+    width:24px;
+    
+    margin-left: 1px;
+    margin-top: 3px;
+    height: 24px;
+    
+    display: inline-block;
+    border: 1px solid green;
+}
+.leaflet-control .zoomin {
+    margin-top: -30px;
+}
 .leaflet-control .zoomin,.control-layers .control-button{margin-bottom:0px;border-radius:4px 0 0 0}
 .leaflet-control .zoomout,.control-key .control-button{margin-bottom:0;border-radius:0}
 .control-locate .control-button,.control-share .control-button{border-radius:0 0 0 4px}
@@ -100,7 +126,7 @@ div.uploadfile_link {
 }
 div.uploadfile_link a.uploadfile {
     margin: 0 2px 0 8px;
-    
+
 }
 .place,
 .place-label {
