@@ -420,6 +420,7 @@ window.onload = function() {
 //
 //			map.addLayer(markers);
 
+    layersControl.createHeatMapLayer();
     $(".search_form").on("submit", function(e) {
         e.preventDefault();
 //    $("header").addClass("closed");
@@ -579,11 +580,12 @@ function ShowLeftSideBar(leftSidebar) {
 function MapExtentReset(map) {
     map.setView([43.73737, -79.95987], 10);
 }
-function NextMapExtent(history) {
-    history.setView([9.37421, -83.59669], 12);
+function NextMapExtent(map) {
+    map.setView([9.37421, -83.59669], 12);
     // history.goForward();
 }
-function PrevMapExtent(history) {
+function PrevMapExtent(map) {
+    map.setView([33.5363, -117.044],8);
     // history.goBack();
 }
 

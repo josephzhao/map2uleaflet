@@ -118,7 +118,7 @@ class DefaultController extends Controller {
                     $layerData['seq'] = $layer->getSeq();
                     $layerData['minZoom'] = $layer->getMinZoom();
                     $layerData['maxZoom'] = $layer->getMaxZoom();
-                    $layerData['clusterLayer'] = $layer->getClusterMap();
+                    $layerData['clusterLayer'] = $layer->isClusterMap();
                     $layerData['layerShowInSwitcher'] = $layer->isLayerShowInSwitcher();
                     $layerData['defaultShowOnMap'] = $layer->isDefaultShowOnMap();
                     $layerData['fileName'] = "wms-" . $layer->getLayerName();
