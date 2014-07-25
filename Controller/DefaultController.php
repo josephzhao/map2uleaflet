@@ -85,6 +85,7 @@ class DefaultController extends Controller {
                 $layerData['seq'] = $layer->getSeq();
                 $layerData['minZoom'] = $layer->getMinZoom();
                 $layerData['maxZoom'] = $layer->getMaxZoom();
+                $layerData['clusterLayer'] = false;
                 $layerData['layerShowInSwitcher'] = $layer->isLayerShowInSwitcher();
                 $layerData['defaultShowOnMap'] = $layer->isDefaultShowOnMap();
                 $layerData['fileName'] = $layer->getUseruploadfile()->getFileName();
@@ -100,6 +101,7 @@ class DefaultController extends Controller {
                     $layerData['seq'] = $layer->getSeq();
                     $layerData['minZoom'] = $layer->getMinZoom();
                     $layerData['maxZoom'] = $layer->getMaxZoom();
+                    $layerData['clusterLayer'] = true;
                     $layerData['layerShowInSwitcher'] = $layer->isLayerShowInSwitcher();
                     $layerData['defaultShowOnMap'] = $layer->isDefaultShowOnMap();
                     $layerData['fileName'] = $layer->getUseruploadfile()->getFileName();
@@ -116,6 +118,7 @@ class DefaultController extends Controller {
                     $layerData['seq'] = $layer->getSeq();
                     $layerData['minZoom'] = $layer->getMinZoom();
                     $layerData['maxZoom'] = $layer->getMaxZoom();
+                    $layerData['clusterLayer'] = $layer->getClusterMap();
                     $layerData['layerShowInSwitcher'] = $layer->isLayerShowInSwitcher();
                     $layerData['defaultShowOnMap'] = $layer->isDefaultShowOnMap();
                     $layerData['fileName'] = "wms-" . $layer->getLayerName();
