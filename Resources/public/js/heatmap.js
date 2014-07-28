@@ -32,7 +32,7 @@
         this.set = function(key, value){
             _[key] = value;
         };
-    };
+    }
 
     store.prototype = {
         // function for adding datapoints to the store
@@ -76,7 +76,7 @@
             // if a legend is set, update it
             heatmap.get("legend") && heatmap.get("legend").update(obj.max);
             
-            if(internal !== null && internal){
+            if(internal != null && internal){
                 for(var one in d){
                     // jump over undefined indexes
                     if(one === undefined)
@@ -247,7 +247,7 @@
  
             for(var i = 0; i < length; i++){
                 ctx.moveTo(((1/(length-1)*i*256) >> 0)+.5, 0);
-                ctx.lineTo(((1/(length-1)*i*256) >> 0)+.5, (i===0)?15:5);
+                ctx.lineTo(((1/(length-1)*i*256) >> 0)+.5, (i==0)?15:5);
             }
             ctx.moveTo(255.5, 0);
             ctx.lineTo(255.5, 15);
@@ -276,10 +276,10 @@
                 labelText = max*gradient[i].stop >> 0;
                 offset = (ctx.measureText(labelText).width/2) >> 0;
 
-                if(i === 0){
+                if(i == 0){
                     offset = 0;
                 }
-                if(i === gradient.length-1){
+                if(i == gradient.length-1){
                     offset *= 2;
                 }
                 labelsHtml += '<li style="position:absolute;left:'+(((((1/(gradient.length-1)*i*256) || 0)) >> 0)-offset+.5)+'px">'+labelText+'</li>';
@@ -338,7 +338,7 @@
 
                 me.set("radius", config["radius"] || 40);
                 me.set("element", (config.element instanceof Object)?config.element:document.getElementById(config.element));
-                me.set("visible", (config.visible !== null)?config.visible:true);
+                me.set("visible", (config.visible != null)?config.visible:true);
                 me.set("max", config.max || false);
                 me.set("gradient", config.gradient || { 0.45: "rgb(0,0,255)", 0.55: "rgb(0,255,255)", 0.65: "rgb(0,255,0)", 0.95: "yellow", 1.0: "rgb(255,0,0)"});    // default is the common blue to red gradient
                 me.set("opacity", parseInt(255/(100/config.opacity), 10) || 180);
@@ -468,7 +468,7 @@
                     left, top, bottom, right, 
                     image, imageData, length, alpha, offset, finalAlpha;
                 
-                if(x !== null && y !== null){
+                if(x != null && y != null){
                     if(x+x2>width){
                         x=width-x2;
                     }
@@ -641,7 +641,7 @@
                         x = ev.offsetX;
                         y = ev.offsetY;
                     }
-                    if(typeof(x)==='undefined')
+                    if(typeof(x)=='undefined')
                         return;
 
                     return [x,y];

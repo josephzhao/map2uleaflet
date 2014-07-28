@@ -585,7 +585,7 @@ function NextMapExtent(map) {
     // history.goForward();
 }
 function PrevMapExtent(map) {
-    map.setView([33.5363, -117.044],8);
+    map.setView([33.5363, -117.044],6);
     // history.goBack();
 }
 
