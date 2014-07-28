@@ -201,9 +201,11 @@ window.onload = function() {
 
     map.addControl(new leftsidebarControl());
 //var history = new L.HistoryControl().addTo(map);
-//    var history = new L.HistoryControl({position: 'topleft'});
-//     history.addTo(map);
-//    map.addControl(history);
+    var history = new L.HistoryControl({position: 'topleft',useExternalControls: true});
+     map.addControl(history);
+    // history.onAdd(map);
+     
+   
     var MapToolbarControl = L.Control.extend({
         options: {
             position: 'topright'
@@ -227,23 +229,25 @@ window.onload = function() {
                     });
             controlUI.title = 'Reset Map Extent';
             var Prev_Extent = L.DomUtil.create('div', 'maptoolbar-control-prev', container);
+            
+           
             L.DomEvent
                     .addListener(Prev_Extent, 'click', L.DomEvent.stopPropagation)
                     .addListener(Prev_Extent, 'click', L.DomEvent.preventDefault)
                     .addListener(Prev_Extent, 'click', function() {
-                        PrevMapExtent(map);
-                        //      history.goBack();
+                       // PrevMapExtent(map);
+                              history.goBack();
                     });
-            Prev_Extent.title = 'Prev Extent';
+            Prev_Extent.title = 'Prev Map Extent';
             var Next_Extent = L.DomUtil.create('div', 'maptoolbar-control-next', container);
             L.DomEvent
                     .addListener(Next_Extent, 'click', L.DomEvent.stopPropagation)
                     .addListener(Next_Extent, 'click', L.DomEvent.preventDefault)
                     .addListener(Next_Extent, 'click', function() {
-                        NextMapExtent(map);
-                        //      history.goForward();
+                     //   NextMapExtent(map);
+                              history.goForward();
                     });
-            Next_Extent.title = 'Prev Extent';
+            Next_Extent.title = 'Next Map Extent';
             return container;
         }
     });

@@ -60,13 +60,13 @@ and open the template in the editor.
 .leaflet-control .control-button.disabled{background-color:#333;background-color:rgba(0,0,0,0.5);cursor:default}
 .leaflet-control .control-button .icon{margin:10px}
 
- .maptoolbar-control{
-   
+.maptoolbar-control{
+
     width:82px;
     height: 32px;
     border-radius:3px;
-/*    margin-top:40px;
-    margin-right: 60px;*/
+    /*    margin-top:40px;
+        margin-right: 60px;*/
     top:2px;
     padding-left:2px;
     right:42px;
@@ -76,14 +76,30 @@ and open the template in the editor.
     margin-bottom:0px;
     border-radius:3px;
     width:24px;
-    
+    background-color: white;
     margin-left: 1px;
     margin-top: 3px;
     height: 24px;
-    
+
     display: inline-block;
     border: 1px solid green;
 }
+.maptoolbar-control .maptoolbar-control-reset {
+     background-position: 3px 3px;
+    background-image: url(../images/home.png);
+    background-repeat: no-repeat;
+}
+.maptoolbar-control .maptoolbar-control-prev {
+     background-position: 1px 2px;
+    background-image: url(../images/glyphicons_210_left_arrow.png);
+    background-repeat: no-repeat;
+}
+.maptoolbar-control .maptoolbar-control-next {
+    background-position: 1px 2px;
+    background-image: url(../images/glyphicons_211_right_arrow.png);
+    background-repeat: no-repeat;
+}
+
 .leaflet-control .zoomin {
     margin-top: -30px;
 }
