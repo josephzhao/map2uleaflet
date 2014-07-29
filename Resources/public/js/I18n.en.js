@@ -73,25 +73,25 @@ I18n.translations = {'en': {
                 'tooltip': 'Show Map Legend'
             },
             'shapefile-upload': {
-                        'title':'Upload Shapefile'
+                'title': 'Upload Shapefile'
             },
             'textfile-upload': {
-                        'title':'Upload Text File'
+                'title': 'Upload Text File'
             },
             'mapinfofile-upload': {
-                        'title':'Upload Mapinfo File'
+                'title': 'Upload Mapinfo File'
             },
             'kmlfile-upload': {
-                        'title':'Upload KML File'
+                'title': 'Upload KML File'
             },
             'shapefile-list': {
-                        'title':'Shapefile List'
+                'title': 'Shapefile List'
             },
             'uploadfile': {
-                        'title':'Upload File'
+                'title': 'Upload File'
             },
             'uploadfile-list': {
-                        'title':'Upload File List'
+                'title': 'Upload File List'
             },
             'share': {
                 'title': 'Share',
@@ -122,5 +122,124 @@ I18n.translations = {'en': {
                 'createnote_tooltip': 'Create Note'
             }
         }
+    },
+    'es': {
+        'javascripts': {
+            'map': {
+                'zoom': {
+                    'in': 'Zoom in',
+                    'out': 'Zoom out'
+                },
+                'layers': {
+                    'header': 'Map Layers',
+                    'title': 'Layers',
+//                    'Bing Roads'},
+//        {'layer':
+//                    BingAerial, 'name': 'Bing Aerial'},
+//        {'layer': BingAerialWithLabels, 'name': 'Bing Aerial With Labels'}
+//        
+                    'overlays': 'OverLays',
+                    'baselayers': 'BaseLayers',
+                    'notes': 'Notes',
+                    'Subwatersheds': 'Subwatersheds',
+                    'Watersheds': 'Watersheds',
+                    'cvcsubwatersheds': 'Subwatersheds',
+                    'cvcwatersheds': 'Watersheds',
+                    'parks': 'Parks',
+                    'conservation_areas': 'Conservation Areas',
+                    'data': 'Data',
+                    "Credit River Parks": "Credit River Parks",
+                    'golf_courses': 'Golf Courses',
+                    'peel_community_centres': 'Community Centres',
+                    "Conservation": "Conservation",
+                    "credit_river": "Credit River",
+                    "credit_river_head_waters": "Credit River Head Waters",
+                    "credit_valley_conservation": "Credit Valley Conservation",
+                    "creditriverheadwaters": "Credit River Head Waters",
+                    "creditvalleyprovincialpark": "Credit Valley Provincial Park",
+                    "creditvalleytrails": "Credit Valley Trails",
+                    "peel_golf_courses": "Peel Golf Courses",
+                    "peel_parks": "Peel Parks",
+                    "peel_playground_pools": "Peel Playground Pools",
+                    "peel_region_trails": "Peel Region Trails",
+                    "trail3_clip": "Trail Head",
+                    "trails": "Trails",
+                    "water_ways": "Water Ways"
+                },
+                'locate': {
+                    'title': 'Show my location'
+                }
+                ,
+                'share': {
+                    'title': 'Share Map Information'
+                },
+                'key': {
+                    'title': 'Show Map Legend'
+                }
+                ,
+                'legend': {
+                    'title': 'Show Map Legend'
+                }
+                ,
+                'note': {
+                    'title': 'Create Note'
+                }
+            },
+            'key': {
+                'title': 'Legend',
+                'tooltip_disabled': 'Map Legend Disabled',
+                'tooltip': 'Show Map Legend'
+            },
+            'shapefile-upload': {
+                'title': 'Upload Shapefile'
+            },
+            'textfile-upload': {
+                'title': 'Upload Text File'
+            },
+            'mapinfofile-upload': {
+                'title': 'Upload Mapinfo File'
+            },
+            'kmlfile-upload': {
+                'title': 'Upload KML File'
+            },
+            'shapefile-list': {
+                'title': 'Shapefile List'
+            },
+            'uploadfile': {
+                'title': 'Upload File'
+            },
+            'uploadfile-list': {
+                'title': 'Upload File List'
+            },
+            'share': {
+                'title': 'Share',
+                'link': 'Link or HTML',
+                'include_marker': 'include marker',
+                'long_link': 'Link',
+                'short_link': 'Short Link',
+                'embed': 'HTML',
+                'image': 'Image',
+                'format': 'Format',
+                'scale': 'Scale',
+                'image_size': 'Image Size',
+                'paste_html': 'Paste HTML',
+                'custom_dimensions': 'Custom Dimensions',
+                'download': 'Download'
+
+            },
+            'site': {
+                'shapefile_upload_disabled_tooltip': 'Upload Shapefile Disabled',
+                'shapefile_upload_tooltip': 'Upload Shapefile',
+                'shapefile_list_disabled_tooltip': 'Shapefile List Disabled',
+                'shapefile_list_tooltip': 'Shapefile List',
+                'uploadfile_disabled_tooltip': 'Upload Spatial File Disabled',
+                'uploadfile_tooltip': 'Upload Spatial File',
+                'uploadfile_list_disabled_tooltip': 'Upload File List Disabled',
+                'uploadfile_list_tooltip': 'Upload File List',
+                'createnote_disabled_tooltip': 'Create Note Disabled',
+                'createnote_tooltip': 'Create Note'
+            }
+        }
+
     }
 };
