@@ -227,7 +227,7 @@ window.onload = function() {
                     .addListener(controlUI, 'click', function() {
                         MapExtentReset(map);
                     });
-            controlUI.title = 'Reset Map Extent';
+            controlUI.title = I18n.t('Reset Map Extent');
             var Prev_Extent = L.DomUtil.create('div', 'maptoolbar-control-prev', container);
             
            
@@ -238,7 +238,7 @@ window.onload = function() {
                        // PrevMapExtent(map);
                               history.goBack();
                     });
-            Prev_Extent.title = 'Prev Map Extent';
+            Prev_Extent.title = I18n.t('Prev Map Extent');
             var Next_Extent = L.DomUtil.create('div', 'maptoolbar-control-next', container);
             L.DomEvent
                     .addListener(Next_Extent, 'click', L.DomEvent.stopPropagation)
@@ -247,7 +247,7 @@ window.onload = function() {
                      //   NextMapExtent(map);
                               history.goForward();
                     });
-            Next_Extent.title = 'Next Map Extent';
+            Next_Extent.title = I18n.t('Next Map Extent');
             return container;
         }
     });
