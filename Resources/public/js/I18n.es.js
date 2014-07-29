@@ -5,7 +5,7 @@
  */
 
 var I18n = I18n || {};
-I18n.translations = {'en': {
+I18n.translations = {'es': {
         'javascripts': {
             'map': {
                 'zoom': {
@@ -117,35 +117,35 @@ I18n.translations = {'en': {
                 'createnote_tooltip': 'Create Note'
             }
         },
-        'Cancel drawing': 'Cancel drawing',
-        "Cancel": "Cancel",
-        "Delete last point drawn": "Delete last point drawn",
-        "Delete last point": "Delete last point",
-        "Draw a polyline": "Draw a polyline",
-        "Draw a polygon": "Draw a polygon",
-        "Draw a rectangle": "Draw a rectangle",
-        "Draw a circle": "Draw a circle",
-        "Draw a marker": "Draw a marker",
-        "Click and drag to draw circle.": "Click and drag to draw circle.",
-        "Click map to place marker.": "Click map to place marker.",
-        "Click to start drawing shape.": "Click to start drawing shape.",
-        "Click to continue drawing shape.": "Click to continue drawing shape.",
-        "Click first point to close this shape.": "Click first point to close this shape.",
-        "<strong>Error:</strong> shape edges cannot cross!": "<strong>Error:</strong> shape edges cannot cross!",
-        "Click to start drawing line.": "Click to start drawing line.",
-        "Click to continue drawing line.": "Click to continue drawing line.",
-        "Click last point to finish line.": "Click last point to finish line.",
-        "Click and drag to draw rectangle.": "Click and drag to draw rectangle.",
-        "Release mouse to finish drawing.": "Release mouse to finish drawing.",
-        "Save changes": "Save changes",
-        "Save": "Save",
-        "Cancel editing, discards all changes.": "Cancel editing, discards all changes.",
-        "Edit layers": "Edit layers",
-        "No layers to edit": "No layers to edit",
-        "Delete layers": "Delete layers",
-        "No layers to delete": "No layers to delete.",
-        "Drag handles, or marker to edit feature.": "Drag handles, or marker to edit feature.",
-        "Click cancel to undo changes": "Click cancel to undo changes.",
-        "Click on a feature to remove": "Click on a feature to remove"
+        'Cancel drawing': 'Cancelar dibujo',
+        "Cancel": "Cancelar",
+        "Delete last point drawn": "Borrar el último punto dibujado",
+        "Delete last point": "Borrar el último punto",
+        "Draw a polyline": "Dibuje una polilínea",
+        "Draw a polygon": "Dibuja un polígono",
+        "Draw a rectangle": "Dibuje un rectángulo",
+        "Draw a circle": "Dibuja un círculo",
+        "Draw a marker": "Dibuje un marcador",
+        "Click and drag to draw circle": "Haga clic y arrastre para dibujar el círculo.",
+        "Click map to place marker": "Haga clic en el mapa para colocar marcadores.",
+        "Click to start drawing shape": "Haga clic para empezar a dibujar la forma.",
+        "Click to continue drawing shape": "Haga clic para seguir dibujando la forma.",
+        "Click first point to close this shape": "Haga clic en el primer punto para cerrar esta forma.",
+        "<strong>Error:</strong> shape edges cannot cross!": "<strong>Error:</strong> dan forma a los bordes no pueden cruzar!",
+        "Click to start drawing line": "Haga clic para empezar a dibujar la línea.",
+        "Click to continue drawing line": "Haga clic para continuar la línea de dibujo.",
+        "Click last point to finish line": "Haga clic último punto para terminar la línea.",
+        "Click and drag to draw rectangle": "Haga clic y arrastre para dibujar rectángulo.",
+        "Release mouse to finish drawing": "Suelte el ratón para terminar el dibujo.",
+        "Save changes": "Guardar cambios",
+        "Save": "Guardar",
+        "Cancel editing, discards all changes": "Cancelar la edición, descarta todos los cambios",
+        "Edit layers": "Editar capas.",
+        "No layers to edit": "No hay capas para editar.",
+        "Delete layers": "Eliminar capas",
+        "No layers to delete": "No hay capas para eliminar.",
+        "Drag handles, or marker to edit feature": "Control de arrastre, o marcador para editar característica.",
+        "Click cancel to undo changes": "Haga clic en Cancelar para deshacer los cambios.",
+        "Click on a feature to remove": "Haga clic en una función para eliminar."
     }
 };
