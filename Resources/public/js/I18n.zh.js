@@ -9,14 +9,14 @@ I18n.translations = {'zh': {
         'javascripts': {
             'map': {
                 'zoom': {
-                    'in': 'Zoom in',
-                    'out': 'Zoom out'
+                    'in': '放大',
+                    'out': '缩小'
                 },
                 'layers': {
-                    'header': 'Map Layers',
-                    'title': 'Layers',
-                    'overlays': 'OverLays',
-                    'baselayers': 'BaseLayers',
+                    'header': '图层',
+                    'title': '图层',
+                    'overlays': '专题图层',
+                    'baselayers': '背景图层',
                     'notes': 'Notes',
                     'Subwatersheds': 'Subwatersheds',
                     'Watersheds': 'Watersheds',
@@ -44,18 +44,18 @@ I18n.translations = {'zh': {
                     "water_ways": "Water Ways"
                 },
                 'locate': {
-                    'title': 'Show my location'
+                    'title': '显示我当前位置'
                 }
                 ,
                 'share': {
-                    'title': 'Share Map Information'
+                    'title': '共享地图信息'
                 },
                 'key': {
                     'title': 'Show Map Legend'
                 }
                 ,
                 'legend': {
-                    'title': 'Show Map Legend'
+                    'title': '显示图例'
                 }
                 ,
                 'note': {
@@ -68,25 +68,25 @@ I18n.translations = {'zh': {
                 'tooltip': 'Show Map Legend'
             },
             'shapefile-upload': {
-                'title': 'Upload Shapefile'
+                'title': '上载Shapefile文件'
             },
             'textfile-upload': {
-                'title': 'Upload Text File'
+                'title': '上载文本文件'
             },
             'mapinfofile-upload': {
-                'title': 'Upload Mapinfo File'
+                'title': '上载Mapinfo文件'
             },
             'kmlfile-upload': {
-                'title': 'Upload KML File'
+                'title': '上载KML文件'
             },
             'shapefile-list': {
-                'title': 'Shapefile List'
+                'title': 'Shapefile文件列表'
             },
             'uploadfile': {
-                'title': 'Upload File'
+                'title': '上载文件'
             },
             'uploadfile-list': {
-                'title': 'Upload File List'
+                'title': '上载文件列表'
             },
             'share': {
                 'title': 'Share',
@@ -109,10 +109,10 @@ I18n.translations = {'zh': {
                 'shapefile_upload_tooltip': 'Upload Shapefile',
                 'shapefile_list_disabled_tooltip': 'Shapefile List Disabled',
                 'shapefile_list_tooltip': 'Shapefile List',
-                'uploadfile_disabled_tooltip': 'Upload Spatial File Disabled',
-                'uploadfile_tooltip': 'Upload Spatial File',
-                'uploadfile_list_disabled_tooltip': 'Upload File List Disabled',
-                'uploadfile_list_tooltip': 'Upload File List',
+                'uploadfile_disabled_tooltip': '上载空间信息文件禁用',
+                'uploadfile_tooltip': '上载空间信息文件',
+                'uploadfile_list_disabled_tooltip': '空间信息文件列表禁用',
+                'uploadfile_list_tooltip': '空间信息文件列表',
                 'createnote_disabled_tooltip': 'Create Note Disabled',
                 'createnote_tooltip': 'Create Note'
             }
