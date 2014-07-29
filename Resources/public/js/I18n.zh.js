@@ -117,6 +117,9 @@ I18n.translations = {'zh': {
                 'createnote_tooltip': 'Create Note'
             }
         },
+        'Reset Map Extent': '恢复到缺省的图幅范围',
+        'Prev Map Extent': '前一次的图幅范围',
+        'Next Map Extent': '前一次的图幅范围',
         'Cancel drawing': '取消当前的画图形操作.',
         "Cancel": "取消.",
         "Delete last point drawn": "删除最后所画的点.",

@@ -117,6 +117,9 @@ I18n.translations = {'en': {
                 'createnote_tooltip': 'Create Note'
             }
         },
+        'Reset Map Extent': 'Reset Map Extent',
+        'Prev Map Extent': 'Prev Map Extent',
+        'Next Map Extent': 'Next Map Extent',
         'Cancel drawing': 'Cancel drawing',
         "Cancel": "Cancel",
         "Delete last point drawn": "Delete last point drawn",
