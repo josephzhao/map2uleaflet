@@ -205,6 +205,7 @@ div.uploadfile_link a.uploadfile {
 #browse_status input{display:block;margin-left:auto;margin-right:auto}
 #sidebar #sidebar_loader,#sidebar .loader,#sidebar .load_more{text-align:center;margin:20px auto;width:40px;display:block}
 header .search_form{display:none}.search_form{position:relative;padding:10px;background-color:#eeeeee}
+
 .search_form .query_wrapper{position:relative;overflow:hidden;border-radius:2px 0 0 2px}
 .search_form input[type=text]{width:100%;height:20px;border-right:none;transition:300ms linear;-webkit-transition:300ms linear;-moz-transition:300ms linear}
 .search_form input:focus{outline:none;box-shadow:0px 0px 7px #9ED485}
@@ -276,3 +277,16 @@ input[type="button"]:last-child,input[type="submit"]:last-child,input[type="rese
 .buttons input:only-child,.buttons .button:only-child,.buttons *[value="Hide"]+input:last-child,.buttons *[value="Hide"]+.button:last-child{border-radius:2px;border-right-width:0}
 .buttons *[value="Hide"]+input:nth-child(3),.buttons *[value="Hide"]+.button:nth-child(3){border-radius:0 2px 2px 0;border-right-width:0}
 .buttons *[value="Hide"]+input:nth-child(2):not(:last-child),.buttons *[value="Hide"]+.button:nth-child(2):not(:last-child){border-radius:2px 0 0 2px;border-right-width:1px}
+
+.navbar_search_form {
+    position: relative;
+    padding: 2px;
+    width:250px;
+  /*  background-color: #EEE;*/
+}
+.navbar_search_form .query_wrapper{position:relative;overflow:hidden;border-radius:2px 0 0 2px}
+.navbar_search_form input[type=text]{width:100%;height:24px;border-right:none;transition:300ms linear;-webkit-transition:300ms linear;-moz-transition:300ms linear}
+.navbar_search_form input:focus{outline:none;box-shadow:0px 0px 7px #9ED485}
+.navbar_search_form input[type=submit]{float:right;cursor:pointer;border:0;line-height:20px;padding:2px 5px;font-size:12px;min-height:20px;
+  min-width: 0;  width:auto;margin:0 0 0px 0;color:white;background:#7092ff;text-align:center;border-radius:0 2px 2px 0;-moz-border-radius:0 2px 2px 0}
+.navbar_search_form .describe_location{position:absolute;top:6px;right:6px;font-size:10px;color:#7092ff}
