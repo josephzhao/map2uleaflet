@@ -725,7 +725,7 @@ L.D3 = L.Class.extend({
 //                                }
                             }
                         }
-                        if (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween) {
+                        else if (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween) {
                             if (ps.length > 0) {
                                 var p = d3.select(ps[0]);
                                 var properties = p[0][0].__data__.properties;
