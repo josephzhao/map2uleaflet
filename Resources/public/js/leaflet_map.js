@@ -424,7 +424,7 @@ window.onload = function() {
 //
 //			map.addLayer(markers);
 
-    layersControl.createHeatMapLayer();
+ //   layersControl.createHeatMapLayer();
     $(".search_form").on("submit", function(e) {
         e.preventDefault();
 //    $("header").addClass("closed");
