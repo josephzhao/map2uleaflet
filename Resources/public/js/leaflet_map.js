@@ -26,7 +26,7 @@ window.onload = function() {
     var leafletmap_tooltip;
     var layersControl;
     var leftSidebar;
-
+    var historyControl;
     $(".navbar.navbar-fixed-top").resize(function() {
         // alert("qqq=" + $(".navbar.navbar-fixed-top").height());
         $("body.sonata-bc").css('top', $(".navbar.navbar-fixed-top").height());
@@ -44,13 +44,13 @@ window.onload = function() {
 
         $('#leafmap').height($(window).height() - 126);
         $('#map-ui').height($(window).height() - 126);
-        $('.leaflet-sidebar #sidebar-left').height($(window).height() - 186);
+        $('.leaflet-sidebar #sidebar-left').height($(window).height() - 140);
     });
     map = new L.MAP2U.Map('leafmap', {
         'zoomControl': false
     }).setView([43.73737, -79.95987], 10);
 
-
+    this.map=map;
 //canvas = d3.select(map.getPanes().overlayPane).append("canvas")
 //    .attr("width", $('#leafmap').width())
 //    .attr("height", $('#leafmap').height());
@@ -201,58 +201,60 @@ window.onload = function() {
 
     map.addControl(new leftsidebarControl());
 //var history = new L.HistoryControl().addTo(map);
-    var history = new L.HistoryControl({position: 'topleft',useExternalControls: true});
-     map.addControl(history);
-    // history.onAdd(map);
+     historyControl = new L.HistoryControl({position: 'topleft',useExternalControls: true});
+     map.addControl(historyControl);
+     
+     this.historyControl=historyControl;
+     historyControl.addTo(map);;
      
    
-    var MapToolbarControl = L.Control.extend({
-        options: {
-            position: 'topright'
-
-        },
-        onAdd: function(map) {
-            // create the control container with a particular class name
-            var container = L.DomUtil.create('div', 'maptoolbar-control');
+//    var MapToolbarControl = L.Control.extend({
+//        options: {
+//            position: 'topright'
+//
+//        },
+//        onAdd: function(map) {
+//            // create the control container with a particular class name
+//            var container = L.DomUtil.create('div', 'maptoolbar-control');
+////            L.DomEvent
+////                    .addListener(container, 'click', L.DomEvent.stopPropagation)
+////                    .addListener(container, 'click', L.DomEvent.preventDefault)
+////                    .addListener(container, 'click', function() {
+////                        MapExtentReset(map);
+////                    });
+//            var controlUI = L.DomUtil.create('div', 'maptoolbar-control-reset', container);
 //            L.DomEvent
-//                    .addListener(container, 'click', L.DomEvent.stopPropagation)
-//                    .addListener(container, 'click', L.DomEvent.preventDefault)
-//                    .addListener(container, 'click', function() {
+//                    .addListener(controlUI, 'click', L.DomEvent.stopPropagation)
+//                    .addListener(controlUI, 'click', L.DomEvent.preventDefault)
+//                    .addListener(controlUI, 'click', function() {
 //                        MapExtentReset(map);
 //                    });
-            var controlUI = L.DomUtil.create('div', 'maptoolbar-control-reset', container);
-            L.DomEvent
-                    .addListener(controlUI, 'click', L.DomEvent.stopPropagation)
-                    .addListener(controlUI, 'click', L.DomEvent.preventDefault)
-                    .addListener(controlUI, 'click', function() {
-                        MapExtentReset(map);
-                    });
-            controlUI.title = I18n.t('Reset Map Extent');
-            var Prev_Extent = L.DomUtil.create('div', 'maptoolbar-control-prev', container);
-            
-           
-            L.DomEvent
-                    .addListener(Prev_Extent, 'click', L.DomEvent.stopPropagation)
-                    .addListener(Prev_Extent, 'click', L.DomEvent.preventDefault)
-                    .addListener(Prev_Extent, 'click', function() {
-                       // PrevMapExtent(map);
-                              history.goBack();
-                    });
-            Prev_Extent.title = I18n.t('Prev Map Extent');
-            var Next_Extent = L.DomUtil.create('div', 'maptoolbar-control-next', container);
-            L.DomEvent
-                    .addListener(Next_Extent, 'click', L.DomEvent.stopPropagation)
-                    .addListener(Next_Extent, 'click', L.DomEvent.preventDefault)
-                    .addListener(Next_Extent, 'click', function() {
-                     //   NextMapExtent(map);
-                              history.goForward();
-                    });
-            Next_Extent.title = I18n.t('Next Map Extent');
-            return container;
-        }
-    });
-
-    map.addControl(new MapToolbarControl());
+//            controlUI.title = I18n.t('Reset Map Extent');
+//            var Prev_Extent = L.DomUtil.create('div', 'maptoolbar-control-prev', container);
+//            
+//           
+//            L.DomEvent
+//                    .addListener(Prev_Extent, 'click', L.DomEvent.stopPropagation)
+//                    .addListener(Prev_Extent, 'click', L.DomEvent.preventDefault)
+//                    .addListener(Prev_Extent, 'click', function() {
+//                       // PrevMapExtent(map);
+//                              historyControl.goBack();
+//                    });
+//            Prev_Extent.title = I18n.t('Prev Map Extent');
+//            var Next_Extent = L.DomUtil.create('div', 'maptoolbar-control-next', container);
+//            L.DomEvent
+//                    .addListener(Next_Extent, 'click', L.DomEvent.stopPropagation)
+//                    .addListener(Next_Extent, 'click', L.DomEvent.preventDefault)
+//                    .addListener(Next_Extent, 'click', function() {
+//                     //   NextMapExtent(map);
+//                              historyControl.goForward();
+//                    });
+//            Next_Extent.title = I18n.t('Next Map Extent');
+//            return container;
+//        }
+//    });
+//
+//    map.addControl(new MapToolbarControl());
 
 
 //    var popup = L.popup();
@@ -286,7 +288,7 @@ window.onload = function() {
         position: 'left'
     });
     map.addControl(leftSidebar);
-
+this.leftSidebar=leftSidebar;
     var rightSidebar = L.control.sidebar('sidebar-right', {
         position: 'right'
     });
@@ -403,6 +405,7 @@ window.onload = function() {
 
 
     initMapDraw(map);
+    maptoolbar_init(this);
 //
 //
 //var markers = new L.MarkerClusterGroup();

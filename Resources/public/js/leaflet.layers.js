@@ -1879,6 +1879,203 @@ L.MAP2U.layers = function(options) {
         });
     };
     control.loadClusterLayer = function(layer) {
+        var _this = this;
+        var url = Routing.generate('leaflet_clusterlayer');
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            beforeSend: function() {
+//                    if (window.console === undefined || window.console.debug === undefined)
+//                        spinner.spin(spinner_target);
+            },
+            complete: function() {
+//                    spinner.stop();
+            },
+            error: errorHandler = function() {
+//                    spinner.stop();
+            },
+            data: {id: layer.layer_id, type: layer.type},
+            //Ajax events
+            success: completeHandler = function(response) {
+                var result;
+                if (typeof response === 'object') {
+                    result = response;
+                } else {
+                    result = JSON.parse(response);
+                }
+                var keys = Object.keys(result.data, function(k) {
+                    return k;
+                });
+                for (var k = 0; k < keys.length; k++) {
+                    var json_data = JSON.parse(result.data[keys[k]].geom);//JSON.parse(result.data[keys[k]]);
+                    //           var json_data = JSON.parse(result.data);
+                    var key = Object.keys(json_data.objects).map(function(k) {
+                        return  k;
+                    });
+                    var properties_key = Object.keys(json_data.objects[key].geometries[0].properties).map(function(k) {
+                        return  k;
+                    });
+                    var collection = topojson.feature(json_data, json_data.objects[key]);
+//                 
+
+//                var rmax = 30;
+//                var highlightStyle = {
+//                    color: '#2262CC',
+//                    weight: 3,
+//                    opacity: 0.6,
+//                    fillOpacity: 0.65,
+//                    fillColor: '#2262CC'
+//                };
+                    var geoJsonLayer = L.geoJson(collection, {
+                        id: "9",
+                        style: {
+                            fillColor: "#A3C990",
+                            color: "#000",
+                            weight: 1,
+                            opacity: 1,
+                            fillOpacity: 0.4
+                        },
+                        pointToLayer: function(feature, latlng) {
+                            return new L.CircleMarker(latlng, {
+                                radius: 5,
+                                fillColor: "#A3C990",
+                                color: "#000",
+                                weight: 1,
+                                opacity: 1,
+                                fillOpacity: 0.4
+                            });
+                        },
+                        onEachFeature: function(feature, layer) {
+                            (function(layer, properties) {
+                                layer.on('mouseover', function(e) {
+                                    var layer = e.target;
+
+                                    layer.setStyle({
+                                        weight: 2,
+                                        color: 'red',
+                                        dashArray: '',
+                                        cursor: 'pointer',
+                                        fillOpacity: 0.7
+                                    });
+                                    //    $(this).fill = $(this).css('fill');
+                                    //    $(this).fill_opacity = $(this).css('fill-opacity');
+                                    // d3.select(e.target).style({'fill': 'red'});
+//                                                $(e.target).css('fill', 'red');
+//                                                $(e.target).css('fill-opacity', '0.8');
+                                    $(this).css('cursor', 'pointer');
+                                });
+                                layer.on('mouseout', function(e) {
+
+
+                                    geoJsonLayer.resetStyle(e.target);
+
+                                    options.map_tooltip.classed("hidden", true);
+                                    //      $(this).css('fill', $(this).fill);
+                                    //      $(this).css('fill-opacity', $(this).fill_opacity);
+                                    $(this).css('cursor', 'default');
+                                });
+
+
+                                layer.on('mousemove', function(e) {                         //    if (parseInt(e.target.options.layer_id) === parseInt($("select#activelayer_id.layers-ui").val())) {
+
+                                    var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function() {
+                                        return  this.text;
+                                    });
+
+                                    if (shapefilename === '' || shapefilename[0] === undefined)
+                                    {
+                                        var p;
+
+                                        var fieldkey = '';
+                                        var mouse = L.DomEvent.getMousePosition(e.originalEvent, _this._map._container);
+                                        fieldkey = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function() {
+                                            return  this.text;
+                                        });
+
+                                        if (e.target.options.tip_field !== undefined && e.target.options.tip_field !== '' && e.target.options.tip_field !== null) {
+                                            p = properties[e.target.options.tip_field ];
+                                        }
+                                        else {
+
+                                            if (fieldkey === undefined || fieldkey === null || fieldkey === '' || (typeof fieldkey === 'object' && (fieldkey[0] === null || fieldkey[0] === '' || fieldkey[0] === undefined)))
+                                                p = properties[properties_key[1]];
+                                            else
+                                                p = properties[fieldkey[0]];
+                                        }
+                                        options.map_tooltip.classed("hidden", false)
+                                                .attr("style", "left:" + (mouse.x + 30) + "px;top:" + (mouse.y - 35) + "px")
+                                                .html(p);
+                                    }
+
+                                });
+
+
+                                layer.on('click', function(e) {
+                                    var html = '';
+                                    for (var key in properties) {
+                                        if (properties.hasOwnProperty(key)) {
+                                            //alert(e.data.properties[key].substring(0, 5));
+                                            if (properties[key] !== 'null' && properties[key] !== null && properties[key] !== undefined && properties[key].length > 10 && (key === 'website' || properties[key].substring(0, 5) === 'http:'))
+                                                html = html + key + ":<a href='" + properties[key] + "' target='_blank'>" + properties[key] + "</a><br>";
+                                            else
+                                                html = html + key + ":" + properties[key] + "<br>";
+
+                                        }
+                                    }
+                                    $('div.sidebar_feature_content').html('');
+                                    $('div.sidebar_feature_content').html(html);
+                                });
+                            })(layer, feature.properties);
+                            //layer.bindPopup(feature.properties.Name);
+                        }
+                    });
+
+
+                    var markerclusters = new L.MarkerClusterGroup({
+                        maxClusterRadius: 80,
+//                                    iconCreateFunction: function(cluster) {
+//                                        var markers = cluster.getAllChildMarkers();
+//                                        var n = 0;
+//                                        for (var i = 0; i < markers.length; i++) {
+//                                            n += markers[i].number;
+//                                        }
+//                                        return L.divIcon({html: n, className: 'mycluster', iconSize: L.point(40, 40)});
+//                                    },
+                        //Disable all of the defaults:
+                        spiderfyOnMaxZoom: true, showCoverageOnHover: true, zoomToBoundsOnClick: true
+                    });
+
+
+
+                    markerclusters.addLayer(geoJsonLayer, true);
+                    //   _this._map.addLayer(markerclusters);
+                    //   geoJsonLayer.addTo(_this._map);
+                    markerclusters.addTo(_this._map);
+                    layer.layer = markerclusters;
+                }
+            }
+        });
+
+//var markers = new L.MarkerClusterGroup();
+//
+//			for (var i = 0; i < addressPoints.length; i++) {
+//				var a = addressPoints[i];
+//				var title = a[2];
+//				var marker = new L.Marker(new L.LatLng(a[0], a[1]), { title: title });
+//				marker.bindPopup(title);
+//				markers.addLayer(marker);
+//			}
+//			for (var i = 0; i < addressPoints2.length; i++) {
+//				var a = addressPoints[i];
+//				var title = a[2];
+//				var marker = new L.Marker(new L.LatLng(a[0], a[1]), { title: title });
+//				marker.bindPopup(title);
+//				markers.addLayer(marker);
+//			}
+//
+//			map.addLayer(markers);
+
 
     };
     control.defineClusterIcon = function(cluster) {

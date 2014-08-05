@@ -259,7 +259,8 @@ class DefaultController extends Controller {
                     $layersData[$layer->getId()]['layerName'] = $layer->getLayerName();
                     $layersData[$layer->getId()]['tip_field'] = $layer->getUseruploadfile()->getTipField();
                     $layersData[$layer->getId()]['label_field'] = $layer->getUseruploadfile()->getLabelField();
-
+//                    $layersData[$layer->getId()]['layerType'] = $layer->getLayerType();
+//                    $layersData[$layer->getId()]['clusterLayer'] = $layer->isClusterMap();
                     $layersData[$layer->getId()]['layerShowInSwitcher'] = $layer->isLayerShowInSwitcher();
                     $layersData[$layer->getId()]['fileName'] = $layer->getUseruploadfile()->getFileName();
                     $layersData[$layer->getId()]['fileType'] = $layer->getUseruploadfile()->getType();
@@ -361,6 +362,11 @@ class DefaultController extends Controller {
                     $layersData[$layer->getId()]['layerName'] = $layer->getLayerName();
                     $layersData[$layer->getId()]['tip_field'] = $layer->getUseruploadfile()->getTipField();
                     $layersData[$layer->getId()]['label_field'] = $layer->getUseruploadfile()->getLabelField();
+                    $layersData[$layer->getId()]['layerType'] = 'leafletcluster';
+                    $layersData[$layer->getId()]['seq'] = $layer->getSeq();
+                    $layersData[$layer->getId()]['minZoom'] = $layer->getMinZoom();
+                    $layersData[$layer->getId()]['maxZoom'] = $layer->getMaxZoom();
+                    $layersData[$layer->getId()]['clusterLayer'] = true;
 
                     $layersData[$layer->getId()]['layerShowInSwitcher'] = $layer->isLayerShowInSwitcher();
                     $layersData[$layer->getId()]['fileName'] = $layer->getUseruploadfile()->getFileName();
