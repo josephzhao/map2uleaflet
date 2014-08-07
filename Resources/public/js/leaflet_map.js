@@ -44,7 +44,7 @@ window.onload = function() {
 
         $('#leafmap').height($(window).height() - 126);
         $('#map-ui').height($(window).height() - 126);
-        $('.leaflet-sidebar #sidebar-left').height($(window).height() - 140);
+        $('.leaflet-sidebar #sidebar-left').height($(window).height() - 126);
     });
     map = new L.MAP2U.Map('leafmap', {
         'zoomControl': false
@@ -388,7 +388,7 @@ this.leftSidebar=leftSidebar;
                     // layer_id => UploadfileLayer.id
                     // index_id => display sequence id on screen
 
-                    map.dataLayers[map.dataLayers.length] = {'map': map, 'layerType': layer.layerType, 'clusterLayer': layer.clusterLayer,'defaultShowOnMap': layer.defaultShowOnMap, 'layer': null, 'minZoom': layer.minZoom, 'maxZoom': layer.maxZoom, 'index_id': k, 'layer_id': layer.id, title: layer.layerTitle, 'name': layer.layerName, 'hostName': layer.hostName, type: 'shapefile_topojson'};
+                    map.dataLayers[map.dataLayers.length] = {'map': map, 'layerType': layer.layerType, 'clusterLayer': layer.clusterLayer,'defaultShowOnMap': layer.defaultShowOnMap, 'layer': null, 'minZoom': layer.minZoom, 'maxZoom': layer.maxZoom, 'index_id': k, 'layer_id': layer.id, title: layer.layerTitle, 'name': layer.layerName, 'hostName': layer.hostName};
                 }
                 map.dataLayers[map.dataLayers.length] = {'map': map, 'layerType': 'userdraw', 'layer': null, 'index_id': -1, 'layer_id': -1, title: "My draw geometries", 'name': 'My draw geometries', type: 'geojson'};
                 layersControl.refreshOverlays();

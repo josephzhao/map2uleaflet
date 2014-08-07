@@ -225,11 +225,35 @@ class DefaultController extends Controller {
         $em = $this->getDoctrine()->getManager();
         //   $user = $this->getUser();
         $id = $request->get("id");
-        $type = $request->get("type");
+        $layertype = $request->get("layerType");
         $source = $request->get("source");
+        $data = null;
+        // datafiles path for uploaded shapefiles and created topojson files
+        $datafilesPath = $this->get('kernel')->getRootDir() . '/../Data';
 
-        // shapefiles path for uploaded shapefiles
-        $shapefilesPath = $this->get('kernel')->getRootDir() . '/../Data';
+        switch ($layertype) {
+            case 'leafletcluster':
+                $data = $this->getClusterLayerData($id, $datafilesPath);
+                break;
+            case 'leafletheatmap':
+                $data = $this->getHeatmapLayerData($id, $datafilesPath);
+                break;
+            case 'uploadfile':
+                $data = $this->getUploadfileLayerData($id, $datafilesPath);
+                break;
+            case 'uploadfilelayer':
+                $data = $this->getUploadfilelayerLayerData($id, $datafilesPath);
+                break;
+            case 'wfs':
+                $data = $this->getWFSLayerData($id, $datafilesPath, $source);
+                break;
+            case 'userdraw':
+                $data = $this->getUserdrawLayerData($datafilesPath);
+
+                break;
+        }
+
+        return $data;
 
         //  var_dump($id);
 //    if (!$user) {
@@ -269,9 +293,9 @@ class DefaultController extends Controller {
 
                     if ($layer->isTopojsonOnly() === true) {
 
-                        $geoms[$layer->getId()]['type'] = "topojsonfile";
-                        if (file_exists($shapefilesPath . '/uploads/' . $layer->getUserId() . '/topojson/usershapefile-' . $layer->getUseruploadfile()->getId() . '.json')) {
-                            $theGeom = file_get_contents($shapefilesPath . '/uploads/' . $layer->getUserId() . '/topojson/usershapefile-' . $layer->getUseruploadfile()->getId() . '.json');
+                        $geoms[$layer->getId()]['type'] = "topojson";
+                        if (file_exists($datafilesPath . '/uploads/' . $layer->getUserId() . '/topojson/usershapefile-' . $layer->getUseruploadfile()->getId() . '.json')) {
+                            $theGeom = file_get_contents($datafilesPath . '/uploads/' . $layer->getUserId() . '/topojson/usershapefile-' . $layer->getUseruploadfile()->getId() . '.json');
                             $geoms[$layer->getId()]['geom'] = $theGeom;
                         } else {
                             $message = 'Topojson file ' . $layer->getUseruploadfile()->getTopojsonfileName() . ' not exist!';
@@ -376,7 +400,7 @@ class DefaultController extends Controller {
 
                     if ($layer->isTopojsonOnly() === true) {
 
-                        $geoms[$layer->getId()]['type'] = "topojsonfile";
+                        $geoms[$layer->getId()]['type'] = "topojson";
                         if (file_exists($shapefilesPath . '/uploads/' . $layer->getUserId() . '/topojson/usershapefile-' . $layer->getUseruploadfile()->getId() . '.json')) {
                             $theGeom = file_get_contents($shapefilesPath . '/uploads/' . $layer->getUserId() . '/topojson/usershapefile-' . $layer->getUseruploadfile()->getId() . '.json');
                             $geoms[$layer->getId()]['geom'] = $theGeom;
@@ -478,7 +502,7 @@ class DefaultController extends Controller {
 
 
 
-                    $geoms[$layer->getId()]['type'] = "topojsonfile";
+                    $geoms[$layer->getId()]['type'] = "topojson";
                     if (file_exists($shapefilesPath . '/uploads/' . $layer->getUserId() . '/topojson/usershapefile-' . $layer->getId() . '.json')) {
                         $theGeom = file_get_contents($shapefilesPath . '/uploads/' . $layer->getUserId() . '/topojson/usershapefile-' . $layer->getId() . '.json');
                         $geoms[$layer->getId()]['geom'] = $theGeom;
@@ -505,6 +529,113 @@ class DefaultController extends Controller {
         }
         //  }
         return new Response(\json_encode(array('success' => true, 'message' => 'User draw name  not exist')));
+    }
+
+    private function getUploadfilelayerLayerData($id, $datafilesPath) {
+        $em = $this->getDoctrine()->getManager();
+        $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UploadfileLayer p where p.id=' . $id)
+                ->getResult();
+        if (!$layers) {
+            return new Response(\json_encode(array('success' => true, 'message' => "cluster layer id:$id not exist")));
+        }
+        $message = '';
+        $success = true;
+        $layer = $layers[0];
+        $layerData = $this->setLayerInfo($layer);
+        $layerData['layerType'] = 'uploadfilelayer';
+        $layerData['clusterLayer'] = false;
+
+        $geom = $this->getGeomJsonData($layer->getUserId(), $layer->isTopojsonOnly(), $layer->getUseruploadfile(), $datafilesPath);
+        $sld_json = $this->getSldContent($layer->getDefaultSldName());
+        return new Response(\json_encode(array('success' => $success, 'datatype' => $geom['datatype'], 'message' => $message, 'layer' => $layerData, 'sld' => $sld_json, 'geomdata' => $geom)));
+    }
+
+    private function getClusterLayerData($id, $datafilesPath) {
+        $em = $this->getDoctrine()->getManager();
+        $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:LeafletClusterLayer p where p.id=' . $id)
+                ->getResult();
+        if (!$layers) {
+            return new Response(\json_encode(array('success' => true, 'message' => "cluster layer id:$id not exist")));
+        }
+        $message = '';
+        $success = true;
+        $layer = $layers[0];
+        $layerData = $this->setLayerInfo($layer);
+        $layerData['layerType'] = 'leafletcluster';
+        $layerData['clusterLayer'] = true;
+        $geom = $this->getGeomJsonData($layer->getUserId(), $layer->isTopojsonOnly(), $layer->getUseruploadfile(), $datafilesPath);
+        $sld_json = $this->getSldContent($layer->getDefaultSldName());
+        return new Response(\json_encode(array('success' => $success, 'datatype' => $geom['datatype'], 'message' => $message, 'layer' => $layerData, 'sld' => $sld_json, 'geomdata' => $geom)));
+    }
+
+    private function getUserdrawLayerData($datafilesPath) {
+
+        $geom['geom'] = $this->getUserDrawGeometries();
+        $geom['datatype'] = 'geojson';
+        $layerData = array();
+        $layerData['id'] = -1;
+        $layerData['layerTitle'] = "Userdraw";
+        $layerData['layerName'] = "Userdraw";
+        $layerData['tip_field'] = '';
+        $layerData['label_field'] = '';
+        $layerData['layerType'] = 'userdraw';
+        $layerData['clusterLayer'] = false;
+        $layerData['layerShowInSwitcher'] = true;
+        $layerData['fileName'] = 'userdraw';
+        $layerData['fileType'] = 'userdraw';
+        return new Response(\json_encode(array('success' => true, 'datatype' => $geom['datatype'], 'message' => 'User draw geometries', 'layer' => $layerData, 'sld' => null, 'geomdata' => $geom)));
+    }
+
+    private function getGeomJsonData($userid, $topojson_type, $uploadfile, $datafilesPath) {
+        $conn = $this->get('database_connection');
+        $geom = array();
+
+        $geom['datatype'] = "geojson";
+        $sql = "SELECT row_to_json(fc) as geom FROM ( SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features FROM (SELECT 'Feature' As type, ST_AsGeoJSON(lg.the_geom)::json As geometry
+    , row_to_json(lp) As properties
+   FROM useruploadfile_geoms_" . $uploadfile->getId() . " As lg 
+         INNER JOIN (SELECT ogc_fid FROM useruploadfile_geoms_" . $uploadfile->getId() . ") As lp 
+       ON lg.ogc_fid = lp.ogc_fid  ) As f )  As fc";
+        if ($topojson_type === true) {
+            if (file_exists($datafilesPath . '/uploads/' . $userid . '/topojson/usershapefile-' . $uploadfile->getId() . '.json')) {
+                $theGeom = file_get_contents($datafilesPath . '/uploads/' . $userid . '/topojson/usershapefile-' . $uploadfile->getId() . '.json');
+                $geom['geom'] = $theGeom;
+                $geom['datatype'] = "topojson";
+                return $geom;
+            } else {
+                // $sql = "select st_asgeojson(st_transform(the_geom,4326)) as geometry from useruploadfile_geoms_" . $uploadfile->getId();
+                $result = $conn->fetchAll($sql);
+                $geom['geom'] = $result[0]['geom'];
+            }
+        } else {
+            // $sql = "select st_asgeojson(the_geom) as geometry from useruploadfile_geoms_" . $uploadfile->getId();
+            $result = $conn->fetchAll($sql);
+            $geom['geom'] = $result[0]['geom'];
+        }
+        return $geom;
+    }
+
+    private function setLayerInfo($layer) {
+        $layerData = array();
+        $layerData['id'] = $layer->getId();
+        $layerData['layerTitle'] = $layer->getLayerTitle();
+        $layerData['layerName'] = $layer->getLayerName();
+        $layerData['tip_field'] = $layer->getUseruploadfile()->getTipField();
+        $layerData['label_field'] = $layer->getUseruploadfile()->getLabelField();
+
+        $layerData['seq'] = $layer->getSeq();
+        $layerData['minZoom'] = $layer->getMinZoom();
+        $layerData['maxZoom'] = $layer->getMaxZoom();
+
+        $layerData['layerShowInSwitcher'] = $layer->isLayerShowInSwitcher();
+        $layerData['fileName'] = $layer->getUseruploadfile()->getFileName();
+        $layerData['fileType'] = $layer->getUseruploadfile()->getType();
+
+        return $layerData;
+    }
+
+    private function getWFSLayerData($id, $datafilesPath, $source) {
+        
     }
 
     /* Params none

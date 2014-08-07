@@ -39,18 +39,20 @@ and open the template in the editor.
     display: block;
 }
 #noscript{z-index:20000000;position:absolute;top:15px;left:15px}
-.tooltip{position:absolute;display:none;color:#333;text-align:left;font-size:12px;max-width:250px}
+.tooltip.left{margin-left:-10px;text-align:right}
+.tooltip.left .tooltip-arrow{top:50%;right:-5px;margin-top:-5px;border-left-color:black;border-width:5px 0 5px 5px}
+/*.tooltip{position:absolute; display:none;color:white;text-align:left;font-size:14px;max-width:290px}
 .tooltip.in{opacity:0.8;z-index:1030;height:auto;display:block}
 .tooltip.top{margin-top:-10px;text-align:center}
 .tooltip.right{margin-left:10px}
 .tooltip.bottom{margin-top:10px;text-align:center}
 .tooltip.left{margin-left:-10px;text-align:right}
-.tooltip-inner{display:inline-block;padding:10px;font-weight:normal;background-color:white}
-.tooltip-arrow{position:absolute;width:0;height:0;border-color:transparent;border-style:solid}
+.tooltip-inner{display:inline-block;padding:10px;font-weight:normal;color:#000;background-color:white}
+.tooltip-arrow{position:absolute;width:0;height:0;border-color:transparent;border-style:solid;}
 .tooltip.top .tooltip-arrow{bottom:-5px;left:50%;margin-left:-5px;border-top-color:white;border-width:5px 5px 0}
 .tooltip.right .tooltip-arrow{top:50%;left:-5px;margin-top:-5px;border-right-color:white;border-width:5px 5px 5px 0}
 .tooltip.left .tooltip-arrow{top:50%;right:-5px;margin-top:-5px;border-left-color:white;border-width:5px 0 5px 5px}
-.tooltip.bottom .tooltip-arrow{top:-5px;left:50%;margin-left:-5px;border-bottom-color:white;border-width:0 5px 5px}
+.tooltip.bottom .tooltip-arrow{top:-5px;left:50%;margin-left:-5px;border-bottom-color:white;border-width:0 5px 5px}*/
 
 .leaflet-control .control-button{display:block;height:40px;width:40px;background-color:#333;
                                  background-color:rgba(0,0,0,0.6);border-radius:4px 0 0 4px;margin-bottom:10px;outline:none
@@ -59,7 +61,9 @@ and open the template in the editor.
 .leaflet-control .control-button.active{background-color:#9ed485}
 .leaflet-control .control-button.disabled{background-color:#333;background-color:rgba(0,0,0,0.5);cursor:default}
 .leaflet-control .control-button .icon{margin:10px}
-
+.leaflet-draw.leaflet-control {
+    margin-top: 10px;
+}
 .maptoolbar-control{
 
     width:82px;
@@ -99,10 +103,10 @@ and open the template in the editor.
     background-image: url(../images/glyphicons_211_right_arrow.png);
     background-repeat: no-repeat;
 }
-
-.leaflet-control .zoomin {
-    margin-top: -30px;
+.leaflet-sidebar.left, .zoom.leaflet-control {
+    margin-top: 0px !important;
 }
+
 .leaflet-control .zoomin,.control-layers .control-button{margin-bottom:0px;border-radius:4px 0 0 0}
 .leaflet-control .zoomout,.control-key .control-button{margin-bottom:0;border-radius:0}
 .control-locate .control-button,.control-share .control-button{border-radius:0 0 0 4px}
