@@ -269,16 +269,19 @@ window.onload = function() {
 //    map.on('click', onMapClick);
 
     var position = $('html').attr('dir') === 'rtl' ? 'topleft' : 'topright';
-    L.MAP2U.zoom({position: position}).addTo(map);
+  //  L.MAP2U.zoom({position: position}).addTo(map);
 
-    L.control.locate({
+   var lc= L.control.locate({
         position: position,
         strings: {
             title: I18n.t('javascripts.map.locate.title'),
             popup: I18n.t('javascripts.map.locate.popup')
         }
     }).addTo(map);
+    
     L.control.scale().addTo(map);
+    this.lc=lc;
+    
     mouseposition = L.control.mousePosition({'emptyString': '', 'position': 'bottomleft'}).addTo(map);
 
     leafletmap_tooltip = d3.select("#leafmap").append("div").attr("class", "leafmap_title_tooltip hidden");
@@ -406,38 +409,13 @@ this.leftSidebar=leftSidebar;
 
     initMapDraw(map);
     maptoolbar_init(this);
-//
-//
-//var markers = new L.MarkerClusterGroup();
-//
-//			for (var i = 0; i < addressPoints.length; i++) {
-//				var a = addressPoints[i];
-//				var title = a[2];
-//				var marker = new L.Marker(new L.LatLng(a[0], a[1]), { title: title });
-//				marker.bindPopup(title);
-//				markers.addLayer(marker);
-//			}
-//			for (var i = 0; i < addressPoints2.length; i++) {
-//				var a = addressPoints[i];
-//				var title = a[2];
-//				var marker = new L.Marker(new L.LatLng(a[0], a[1]), { title: title });
-//				marker.bindPopup(title);
-//				markers.addLayer(marker);
-//			}
-//
-//			map.addLayer(markers);
 
- //   layersControl.createHeatMapLayer();
+    layersControl.createHeatMapLayer();
     $(".search_form").on("submit", function(e) {
         e.preventDefault();
 //    $("header").addClass("closed");
         var query = $(this).find("input[name=query]").val();
         if (query !== undefined && query.trim() !== '') {
-
-
-
-
-
 
             var geocoder = new google.maps.Geocoder();
             geocoder.geocode({'address': query}, function(results, status) {
@@ -583,16 +561,3 @@ function ShowLeftSideBar(leftSidebar) {
         }, 500);
     }
 }
-
-function MapExtentReset(map) {
-    map.setView([43.73737, -79.95987], 10);
-}
-function NextMapExtent(map) {
-    map.setView([9.37421, -83.59669], 12);
-    // history.goForward();
-}
-function PrevMapExtent(map) {
-    map.setView([33.5363, -117.044],6);
-    // history.goBack();
-}
-
