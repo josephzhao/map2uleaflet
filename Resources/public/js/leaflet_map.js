@@ -5,19 +5,6 @@
  */
 
 
-var mapapp;
-
-
-
-
-var spinner;
-var spinner_target;
-
-var canvas;
-
-var context;
-
-var path;
 
 
 
@@ -27,6 +14,14 @@ window.onload = function() {
     var layersControl;
     var leftSidebar;
     var historyControl;
+var   printProvider,
+	      printControl;
+
+//    var mapapp;
+//    var canvas;
+//    var context;
+//    var path;
+
     $(".navbar.navbar-fixed-top").resize(function() {
         // alert("qqq=" + $(".navbar.navbar-fixed-top").height());
         $("body.sonata-bc").css('top', $(".navbar.navbar-fixed-top").height());
@@ -37,12 +32,12 @@ window.onload = function() {
 
 
 
-    spinner_target = document.getElementById('leafmap');
-    spinner = new Spinner();
 
     $(window).resize(function() { /* do something */
 
         $('#leafmap').height($(window).height() - 126);
+//        $('#leafmap').css('height',$('#leafmap').height());
+//        $('#leafmap').css('width',$('#leafmap').width());
         $('#map-ui').height($(window).height() - 126);
         $('.leaflet-sidebar #sidebar-left').height($(window).height() - 126);
     });
@@ -50,7 +45,9 @@ window.onload = function() {
         'zoomControl': false
     }).setView([43.73737, -79.95987], 10);
 
-    this.map=map;
+    this.map = map;
+
+
 //canvas = d3.select(map.getPanes().overlayPane).append("canvas")
 //    .attr("width", $('#leafmap').width())
 //    .attr("height", $('#leafmap').height());
@@ -179,6 +176,27 @@ window.onload = function() {
 
 //       
 //    
+   
+    // Create the print provider, subscribing to print events
+	  printProvider = L.print.provider({
+          capabilities: printConfig,
+          method: 'POST',
+		  dpi: 254,
+		  outputFormat: 'pdf',
+		  customParams: {
+			  mapTitle: 'Print Test',
+			  comment: 'Testing Leaflet printing'
+		  }
+	  });
+
+	  // Create a print control with the configured provider and add to the map
+	  printControl = L.control.print({
+		  provider: printProvider
+	  });
+
+	  map.addControl(printControl);
+          
+          
     var leftsidebarControl = L.Control.extend({
         options: {
             position: 'topleft'
@@ -193,7 +211,7 @@ window.onload = function() {
                     .addListener(container, 'click', function() {
                         ShowLeftSideBar(leftSidebar);
                     });
-            var controlUI = L.DomUtil.create('div', 'leftsidebar-close-control hidden', container);
+            var controlUI = L.DomUtil.create('div', 'leftsidebar-close-control hidden noprint', container);
             controlUI.title = 'Show Left Side Bar';
             return container;
         }
@@ -201,13 +219,14 @@ window.onload = function() {
 
     map.addControl(new leftsidebarControl());
 //var history = new L.HistoryControl().addTo(map);
-     historyControl = new L.HistoryControl({position: 'topleft',useExternalControls: true});
-     map.addControl(historyControl);
-     
-     this.historyControl=historyControl;
-     historyControl.addTo(map);;
-     
-   
+    historyControl = new L.HistoryControl({position: 'topleft', useExternalControls: true});
+    map.addControl(historyControl);
+
+    this.historyControl = historyControl;
+    historyControl.addTo(map);
+    $(".leaflet-control-minimap").addClass("noprint");
+
+
 //    var MapToolbarControl = L.Control.extend({
 //        options: {
 //            position: 'topright'
@@ -269,19 +288,19 @@ window.onload = function() {
 //    map.on('click', onMapClick);
 
     var position = $('html').attr('dir') === 'rtl' ? 'topleft' : 'topright';
-  //  L.MAP2U.zoom({position: position}).addTo(map);
+    //  L.MAP2U.zoom({position: position}).addTo(map);
 
-   var lc= L.control.locate({
+    var lc = L.control.locate({
         position: position,
         strings: {
             title: I18n.t('javascripts.map.locate.title'),
             popup: I18n.t('javascripts.map.locate.popup')
         }
     }).addTo(map);
-    
+
     L.control.scale().addTo(map);
-    this.lc=lc;
-    
+    this.lc = lc;
+
     mouseposition = L.control.mousePosition({'emptyString': '', 'position': 'bottomleft'}).addTo(map);
 
     leafletmap_tooltip = d3.select("#leafmap").append("div").attr("class", "leafmap_title_tooltip hidden");
@@ -291,7 +310,7 @@ window.onload = function() {
         position: 'left'
     });
     map.addControl(leftSidebar);
-this.leftSidebar=leftSidebar;
+    this.leftSidebar = leftSidebar;
     var rightSidebar = L.control.sidebar('sidebar-right', {
         position: 'right'
     });
@@ -302,8 +321,6 @@ this.leftSidebar=leftSidebar;
     layersControl = L.MAP2U.layers({
         position: position,
         map: map,
-        spinner: spinner,
-        spinner_target: spinner_target,
         map_tooltip: leafletmap_tooltip,
         layers: map.baseLayers,
         sidebar: rightSidebar
@@ -361,10 +378,20 @@ this.leftSidebar=leftSidebar;
         }
     });
 
+ 
 
     $.ajax({
         url: Routing.generate('leaflet_userlayers'),
         method: 'GET',
+        beforeSend: function() {
+            map.spin(true);
+        },
+        complete: function() {
+            map.spin(false);
+        },
+        error: function() {
+            map.spin(false);
+        },
         success: function(response) {
             var result;
             if (typeof response !== 'object')
@@ -391,7 +418,7 @@ this.leftSidebar=leftSidebar;
                     // layer_id => UploadfileLayer.id
                     // index_id => display sequence id on screen
 
-                    map.dataLayers[map.dataLayers.length] = {'map': map, 'layerType': layer.layerType, 'clusterLayer': layer.clusterLayer,'defaultShowOnMap': layer.defaultShowOnMap, 'layer': null, 'minZoom': layer.minZoom, 'maxZoom': layer.maxZoom, 'index_id': k, 'layer_id': layer.id, title: layer.layerTitle, 'name': layer.layerName, 'hostName': layer.hostName};
+                    map.dataLayers[map.dataLayers.length] = {'map': map, 'layerType': layer.layerType, 'clusterLayer': layer.clusterLayer, 'defaultShowOnMap': layer.defaultShowOnMap, 'layer': null, 'minZoom': layer.minZoom, 'maxZoom': layer.maxZoom, 'index_id': k, 'layer_id': layer.id, title: layer.layerTitle, 'name': layer.layerName, 'hostName': layer.hostName};
                 }
                 map.dataLayers[map.dataLayers.length] = {'map': map, 'layerType': 'userdraw', 'layer': null, 'index_id': -1, 'layer_id': -1, title: "My draw geometries", 'name': 'My draw geometries', type: 'geojson'};
                 layersControl.refreshOverlays();
@@ -410,7 +437,7 @@ this.leftSidebar=leftSidebar;
     initMapDraw(map);
     maptoolbar_init(this);
 
-    layersControl.createHeatMapLayer();
+ //   layersControl.createHeatMapLayer();
     $(".search_form").on("submit", function(e) {
         e.preventDefault();
 //    $("header").addClass("closed");

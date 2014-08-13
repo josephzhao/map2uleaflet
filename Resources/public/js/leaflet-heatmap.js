@@ -9,7 +9,7 @@
 var HeatmapOverlay = L.Class.extend({
     initialize: function(config) {
         this.cfg = config;
-        this._el = L.DomUtil.create('div', 'leaflet-zoom-hide');
+        this._el = L.DomUtil.create('div', 'leaflet-zoom-hide heatmap');
         this._data = [];
         this._max = 1;
         this._min = 0;

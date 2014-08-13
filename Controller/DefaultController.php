@@ -248,6 +248,7 @@ class DefaultController extends Controller {
                 $data = $this->getWFSLayerData($id, $datafilesPath, $source);
                 break;
             case 'userdraw':
+               
                 $data = $this->getUserdrawLayerData($datafilesPath);
 
                 break;
