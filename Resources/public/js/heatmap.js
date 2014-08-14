@@ -659,6 +659,12 @@
             getDataURL: function() {
                 return this._renderer.getDataURL();
             },
+            updateRadius: function(newradius) {
+
+                 var data = this._store._radi;
+                 var length = data.length;
+                 alert(length);
+             },
             getValueAt: function(point) {
 
                 if (this._store.getValueAt) {
