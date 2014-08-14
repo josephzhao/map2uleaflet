@@ -377,6 +377,7 @@ L.MAP2U.layers = function(options) {
             url: Routing.generate('leaflet_maplayer'),
             type: 'GET',
             beforeSend: function() {
+                _this._map.spin(false);
                 _this._map.spin(true);
             },
             complete: function() {
@@ -405,6 +406,7 @@ L.MAP2U.layers = function(options) {
                         control.RenderGeojsonLayer(result, layer);
                         break;
                 }
+                _this._map.spin(false);
             },
             // Form data
             data: {id: layer.layer_id, layerType: layer.layerType},
@@ -427,6 +429,7 @@ L.MAP2U.layers = function(options) {
             url: getlayerdata_url,
             type: 'GET',
             beforeSend: function() {
+                _this._map.spin(false);
                 _this._map.spin(true);
             },
             complete: function() {
@@ -609,6 +612,7 @@ L.MAP2U.layers = function(options) {
                 url: Routing.generate('default_geoserver_wfs'),
                 type: 'POST',
                 beforeSend: function() {
+                    _this._map.spin(false);
                     _this._map.spin(true);
                 },
                 complete: function() {
@@ -795,6 +799,7 @@ L.MAP2U.layers = function(options) {
                             url: Routing.generate('draw_content'),
                             method: 'GET',
                             beforeSend: function() {
+                                _this._map.spin(false);
                                 _this._map.spin(true);
                             },
                             complete: function() {
@@ -807,9 +812,10 @@ L.MAP2U.layers = function(options) {
                                 id: e.target.id
                             },
                             success: function(response) {
-
+                               
                                 $('#sidebar-left #sidebar_content').html('');
                                 $('#sidebar-left #sidebar_content').html(response);
+                                 _this._map.spin(false);
                             }
                         });
                     }
@@ -824,6 +830,7 @@ L.MAP2U.layers = function(options) {
                             url: Routing.generate('draw_' + e.target.type),
                             method: 'GET',
                             beforeSend: function() {
+                                _this._map.spin(false);
                                 _this._map.spin(true);
                             },
                             complete: function() {
@@ -1334,6 +1341,7 @@ L.MAP2U.layers = function(options) {
                 url: url,
                 type: 'GET',
                 beforeSend: function() {
+                    _this._map.spin(false);
                     _this._map.spin(true);
                 },
                 complete: function() {
