@@ -63,6 +63,7 @@ function initMapDraw(map) {
 
         //   alert(JSON.stringify(layer.toGeoJSON()));
         layer.on('click', function(e) {
+      alert(this.id);
             var feature = e.target;
             if (map.drawControl._toolbars.edit._activeMode === null) {
                 var highlight = {
@@ -93,6 +94,18 @@ function initMapDraw(map) {
                         $(this).remove();
                     });
                 }
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
 
             }
             else if (map.drawControl._toolbars.edit._activeMode && map.drawControl._toolbars.edit._activeMode.handler.type === 'edit') {

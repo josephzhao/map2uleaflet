@@ -758,7 +758,7 @@ L.MAP2U.layers = function(options) {
                 feature.type = data[i].geom_type;
                 feature.layer_id = -1;
                 feature.on('click', function(e) {
-
+alert(this.id);
                     var selectedfeature = e.target;
                     if (_this._map.drawControl._toolbars.edit._activeMode === null) {
 
@@ -816,6 +816,8 @@ L.MAP2U.layers = function(options) {
                                 $('#sidebar-left #sidebar_content').html('');
                                 $('#sidebar-left #sidebar_content').html(response);
                                  _this._map.spin(false);
+    //                            $('#usergeometriesCarousel').carousel({pause: "hover",wrap: true});
+  
                             }
                         });
                     }

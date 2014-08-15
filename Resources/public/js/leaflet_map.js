@@ -179,7 +179,7 @@ var   printProvider,
    
     // Create the print provider, subscribing to print events
 	  printProvider = L.print.provider({
-          capabilities: printConfig,
+      //    capabilities: printConfig,
           method: 'POST',
 		  dpi: 254,
 		  outputFormat: 'pdf',
