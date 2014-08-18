@@ -389,6 +389,8 @@ L.MAP2U.layers = function(options) {
             //Ajax events
             success: completeHandler = function(response) {
                 result = response;
+                if(response==='' || response===undefined || response === null)
+                    return;
                 if (typeof result !== 'object')
                     result = JSON.parse(result);
                 if (result.success !== true) {
