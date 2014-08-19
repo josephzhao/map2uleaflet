@@ -760,7 +760,7 @@ L.MAP2U.layers = function(options) {
                 feature.type = data[i].geom_type;
                 feature.layer_id = -1;
                 feature.on('click', function(e) {
-alert(this.id);
+
                     var selectedfeature = e.target;
                     if (_this._map.drawControl._toolbars.edit._activeMode === null) {
 
