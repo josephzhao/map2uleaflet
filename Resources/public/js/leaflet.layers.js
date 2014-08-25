@@ -362,7 +362,7 @@ L.MAP2U.layers = function(options) {
     control.loadLayer = function(layer) {
 
         var result;
-        var _this=this;
+        var _this = this;
         if (layer.layerType === 'wms') {
             control.renderWMSLayer(layer);
             return;
@@ -377,7 +377,7 @@ L.MAP2U.layers = function(options) {
             url: Routing.generate('leaflet_maplayer'),
             type: 'GET',
             beforeSend: function() {
-                _this._map.spin(false);
+                
                 _this._map.spin(true);
             },
             complete: function() {
@@ -389,7 +389,7 @@ L.MAP2U.layers = function(options) {
             //Ajax events
             success: completeHandler = function(response) {
                 result = response;
-                if(response==='' || response===undefined || response === null)
+                if (response === '' || response === undefined || response === null)
                     return;
                 if (typeof result !== 'object')
                     result = JSON.parse(result);
@@ -408,7 +408,7 @@ L.MAP2U.layers = function(options) {
                         control.RenderGeojsonLayer(result, layer);
                         break;
                 }
-                _this._map.spin(false);
+               
             },
             // Form data
             data: {id: layer.layer_id, layerType: layer.layerType},
@@ -431,7 +431,7 @@ L.MAP2U.layers = function(options) {
             url: getlayerdata_url,
             type: 'GET',
             beforeSend: function() {
-                _this._map.spin(false);
+               
                 _this._map.spin(true);
             },
             complete: function() {
@@ -614,7 +614,7 @@ L.MAP2U.layers = function(options) {
                 url: Routing.generate('default_geoserver_wfs'),
                 type: 'POST',
                 beforeSend: function() {
-                    _this._map.spin(false);
+                  
                     _this._map.spin(true);
                 },
                 complete: function() {
@@ -703,9 +703,9 @@ L.MAP2U.layers = function(options) {
     };
     control.renderUserdrawLayer = function(data, layer) {
         var _this = this;
-        if(data===null || data===undefined)
+        if (data === null || data === undefined)
             return;
-        
+
         _this._map.drawnItems.clearLayers();
         layer.layer = undefined;
         $.each(data, function(i) {
@@ -801,7 +801,7 @@ L.MAP2U.layers = function(options) {
                             url: Routing.generate('draw_content'),
                             method: 'GET',
                             beforeSend: function() {
-                                _this._map.spin(false);
+                              
                                 _this._map.spin(true);
                             },
                             complete: function() {
@@ -814,12 +814,12 @@ L.MAP2U.layers = function(options) {
                                 id: e.target.id
                             },
                             success: function(response) {
-                               
+
                                 $('#sidebar-left #sidebar_content').html('');
                                 $('#sidebar-left #sidebar_content').html(response);
-                                 _this._map.spin(false);
-    //                            $('#usergeometriesCarousel').carousel({pause: "hover",wrap: true});
-  
+                               
+                                //                            $('#usergeometriesCarousel').carousel({pause: "hover",wrap: true});
+
                             }
                         });
                     }
@@ -834,7 +834,7 @@ L.MAP2U.layers = function(options) {
                             url: Routing.generate('draw_' + e.target.type),
                             method: 'GET',
                             beforeSend: function() {
-                                _this._map.spin(false);
+                              
                                 _this._map.spin(true);
                             },
                             complete: function() {
@@ -1345,7 +1345,7 @@ L.MAP2U.layers = function(options) {
                 url: url,
                 type: 'GET',
                 beforeSend: function() {
-                    _this._map.spin(false);
+                  
                     _this._map.spin(true);
                 },
                 complete: function() {
@@ -1838,8 +1838,8 @@ L.MAP2U.layers = function(options) {
                     legendCtx.fillStyle = gradient;
                     legendCtx.fillRect(0, 0, 100, 10);
                     $('#heatmapLegend #gradient').attr('src', legendCanvas.toDataURL());
-                 
-                   
+
+
                 }
             },
             // which field name in your data represents the latitude - default "lat"
@@ -1974,6 +1974,8 @@ L.MAP2U.layers = function(options) {
     };
     control.renderClusterLayer = function(layer, collection) {
         var _this = this;
+        
+    //    _this._map.spin(true);
 
 //                 
         var properties_key = Object.keys(collection.features[0].properties).map(function(k) {
@@ -2100,7 +2102,7 @@ L.MAP2U.layers = function(options) {
         markerclusters.addTo(_this._map);
         layer.layer = markerclusters;
 
-
+      //  _this._map.spin(false);
 
 //var markers = new L.MarkerClusterGroup();
 //

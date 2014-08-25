@@ -14,8 +14,8 @@ window.onload = function() {
     var layersControl;
     var leftSidebar;
     var historyControl;
-var   printProvider,
-	      printControl;
+    var printProvider,
+            printControl;
 
 //    var mapapp;
 //    var canvas;
@@ -176,27 +176,27 @@ var   printProvider,
 
 //       
 //    
-   
+
     // Create the print provider, subscribing to print events
-	  printProvider = L.print.provider({
-      //    capabilities: printConfig,
-          method: 'POST',
-		  dpi: 254,
-		  outputFormat: 'pdf',
-		  customParams: {
-			  mapTitle: 'Print Test',
-			  comment: 'Testing Leaflet printing'
-		  }
-	  });
+    printProvider = L.print.provider({
+        //    capabilities: printConfig,
+        method: 'POST',
+        dpi: 254,
+        outputFormat: 'pdf',
+        customParams: {
+            mapTitle: 'Print Test',
+            comment: 'Testing Leaflet printing'
+        }
+    });
 
-	  // Create a print control with the configured provider and add to the map
-	  printControl = L.control.print({
-		  provider: printProvider
-	  });
+    // Create a print control with the configured provider and add to the map
+    printControl = L.control.print({
+        provider: printProvider
+    });
 
-	  map.addControl(printControl);
-          
-          
+    map.addControl(printControl);
+
+
     var leftsidebarControl = L.Control.extend({
         options: {
             position: 'topleft'
@@ -378,7 +378,7 @@ var   printProvider,
         }
     });
 
- 
+
 
     $.ajax({
         url: Routing.generate('leaflet_userlayers'),
@@ -437,7 +437,17 @@ var   printProvider,
     initMapDraw(map);
     maptoolbar_init(this);
 
- //   layersControl.createHeatMapLayer();
+
+//    $.ajax({
+//        url: Routing.generate("default_heatmap_gradientform"),
+//        method: 'GET',
+//        success: function(html) {
+//            $(".sidebar_feature_content").html(html);
+//            heatmap_gradient_minicolors();
+//            heatmap_gradient_submit()
+//        }
+//    });
+    //   layersControl.createHeatMapLayer();
     $(".search_form").on("submit", function(e) {
         e.preventDefault();
 //    $("header").addClass("closed");
