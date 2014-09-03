@@ -531,6 +531,50 @@ class DefaultController extends Controller {
         //  }
         return new Response(\json_encode(array('success' => true, 'message' => 'User draw name  not exist')));
     }
+    private function getUploadfileLayerData($id, $datafilesPath) {
+        $em = $this->getDoctrine()->getManager();
+        $upload_files = $em->createQuery('SELECT p FROM Map2uCoreBundle:UserUploadfile p where p.id=' . $id)
+                ->getResult();
+        if (!$upload_files) {
+            return new Response(\json_encode(array('success' => true, 'message' => "upload file id:$id not exist")));
+        }
+        $message = '';
+        $success = true;
+        $upload_file = $upload_files[0];
+        
+     
+        $geom['datatype'] = 'topojson';
+        
+        $layerData = array();
+        $layerData['id'] = -1;
+        $layerData['layerTitle'] = $upload_file->getFileName();
+        $layerData['layerName'] = $upload_file->getFileName();
+        $layerData['tip_field'] = '';
+        $layerData['label_field'] = '';
+        $layerData['layerType'] = 'uploadfile';
+        $layerData['clusterLayer'] = false;
+        $layerData['layerShowInSwitcher'] = true;
+        $layerData['fileName'] = $upload_file->getFileName();
+        $layerData['fileType'] = $upload_file->getType();
+        
+       
+        $layerData['seq'] = 1;
+        $layerData['minZoom'] = null;
+        $layerData['maxZoom'] = null;
+
+        
+        
+       
+        
+        
+        
+        
+        
+        $geom = $this->getGeomJsonData($upload_file->getUserId(), true, $upload_file, $datafilesPath);
+        $sld_json = $this->getSldContent($upload_file->getSldfileName());
+        return new Response(\json_encode(array('success' => $success, 'datatype' => $geom['datatype'], 'message' => $message, 'layer' => $layerData, 'sld' => $sld_json, 'geomdata' => $geom)));
+        
+    }
 
     private function getUploadfilelayerLayerData($id, $datafilesPath) {
         $em = $this->getDoctrine()->getManager();
