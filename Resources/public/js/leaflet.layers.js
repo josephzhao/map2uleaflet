@@ -363,7 +363,7 @@ L.MAP2U.layers = function(options) {
         var maploaded = false;
         var thematicmap_layer;
         _this._map.dataLayers.forEach(function(layer) {
-            if (layer.layerType === 'uploadfilelayer' && layer.datasource === opt.datasource && layer.filename === opt.filename) {
+            if ((layer.layerType === 'uploadfilelayer' || layer.layerType === 'uploadfile' ) && layer.datasource === opt.datasource && layer.filename === opt.filename) {
                 maploaded = true;
                 thematicmap_layer = layer;
             }
