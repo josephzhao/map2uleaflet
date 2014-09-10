@@ -240,8 +240,8 @@ L.D3 = L.Class.extend({
             }
         }
 
-        if (this.thematicmap === true && this.thematicmap_rule) {
-            this.renderThematicMap(this.thematicmap_rule);
+        if (this.options.thematicmap === true && this.options.thematicmap_rule) {
+            this.renderThematicMap(this.options.thematicmap_rule);
         }
 
         if (this.options.showLabels && this._feature_labels)

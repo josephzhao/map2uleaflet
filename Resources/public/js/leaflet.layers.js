@@ -372,8 +372,8 @@ L.MAP2U.layers = function(options) {
             $.when(this.addUploadfile(Routing.generate('default_uploadfile_info'), opt.datasource)).done(function(a1){ alert(a1);});
         }
         if(thematicmap_layer && thematicmap_layer.layer) {
-            thematicmap_layer.layer.thematicmap = true;
-            thematicmap_layer.layer.thematicmap_rule=opt;
+            thematicmap_layer.layer.options.thematicmap = true;
+            thematicmap_layer.layer.options.thematicmap_rule=opt;
             thematicmap_layer.layer.renderThematicMap(opt);
         }
 
