@@ -358,6 +358,26 @@ L.MAP2U.layers = function(options) {
             }
         });
     };
+    control.renderThematicmap = function(opt) {
+        var _this = this;
+        var maploaded = false;
+        var thematicmap_layer;
+        _this._map.dataLayers.forEach(function(layer) {
+            if (layer.layerType === 'uploadfilelayer' && layer.datasource === opt.datasource && layer.filename === opt.filename) {
+                maploaded = true;
+                thematicmap_layer = layer;
+            }
+        });
+        if (maploaded === false||(maploaded === true && thematicmap_layer && !thematicmap_layer.layer)) {
+            $.when(this.addUploadfile(Routing.generate('default_uploadfile_info'), opt.datasource)).done(function(a1){ alert(a1);});
+        }
+        if(thematicmap_layer && thematicmap_layer.layer) {
+            thematicmap_layer.layer.thematicmap = true;
+            thematicmap_layer.layer.thematicmap_rule=opt;
+            thematicmap_layer.layer.renderThematicMap(opt);
+        }
+
+    };
     // load layer data from server aand create layers based on layer type;
     control.loadLayer = function(layer) {
 
@@ -377,7 +397,7 @@ L.MAP2U.layers = function(options) {
             url: Routing.generate('leaflet_maplayer'),
             type: 'GET',
             beforeSend: function() {
-                
+
                 _this._map.spin(true);
             },
             complete: function() {
@@ -408,7 +428,7 @@ L.MAP2U.layers = function(options) {
                         control.RenderGeojsonLayer(result, layer);
                         break;
                 }
-               
+
             },
             // Form data
             data: {id: layer.layer_id, layerType: layer.layerType},
@@ -426,12 +446,12 @@ L.MAP2U.layers = function(options) {
 //            options.spinner.spin(options.spinner_target);
 //        }
         //       spinner.spin(spinner_target);
-
+        var maplayer;
         $.ajax({
             url: getlayerdata_url,
             type: 'GET',
             beforeSend: function() {
-               
+
                 _this._map.spin(true);
             },
             complete: function() {
@@ -443,7 +463,7 @@ L.MAP2U.layers = function(options) {
             //Ajax events
             success: completeHandler = function(response) {
 
-                var result, maplayer;
+                var result;
                 if (typeof response === 'object') {
                     result = response;
                 } else {
@@ -466,7 +486,7 @@ L.MAP2U.layers = function(options) {
                         }
                     });
                     if (fileExist === false) {
-                        _this._map.dataLayers[_this._map.dataLayers.length] = {'defaultShowOnMap': true, 'layerType': 'uploadfile', 'layer': null, 'minZoom': null, 'maxZoom': null, 'index_id': _this._map.dataLayers.length + 1, 'layer_id': result.uploadfile.id, 'title': result.uploadfile.filename, 'filename': result.uploadfile.filename, 'name': result.uploadfile.filename, type: 'topojson'};
+                        _this._map.dataLayers[_this._map.dataLayers.length] = {'defaultShowOnMap': true, 'layerType': 'uploadfile', 'layer': null, 'minZoom': null, 'maxZoom': null, 'index_id': _this._map.dataLayers.length + 1, 'layer_id': result.uploadfile.id, 'title': result.uploadfile.filename, 'datasource':result.uploadfile.datasource, 'filename': result.uploadfile.filename, 'name': result.uploadfile.filename, type: 'topojson'};
                         maplayer = _this._map.dataLayers[_this._map.dataLayers.length - 1];
                         var overlay_layers_ul = $(".leaflet-control-container .section.overlay-layers > ul");
                         var item = $('<li>')
@@ -582,7 +602,7 @@ L.MAP2U.layers = function(options) {
                         }
                     }
                 }
-                return true;
+                return maplayer;
             },
             // Form data
             data: {id: uploadfile_id},
@@ -614,7 +634,7 @@ L.MAP2U.layers = function(options) {
                 url: Routing.generate('default_geoserver_wfs'),
                 type: 'POST',
                 beforeSend: function() {
-                  
+
                     _this._map.spin(true);
                 },
                 complete: function() {
@@ -801,7 +821,7 @@ L.MAP2U.layers = function(options) {
                             url: Routing.generate('draw_content'),
                             method: 'GET',
                             beforeSend: function() {
-                              
+
                                 _this._map.spin(true);
                             },
                             complete: function() {
@@ -817,7 +837,7 @@ L.MAP2U.layers = function(options) {
 
                                 $('#sidebar-left #sidebar_content').html('');
                                 $('#sidebar-left #sidebar_content').html(response);
-                               
+
                                 //                            $('#usergeometriesCarousel').carousel({pause: "hover",wrap: true});
 
                             }
@@ -834,7 +854,7 @@ L.MAP2U.layers = function(options) {
                             url: Routing.generate('draw_' + e.target.type),
                             method: 'GET',
                             beforeSend: function() {
-                              
+
                                 _this._map.spin(true);
                             },
                             complete: function() {
@@ -1345,7 +1365,7 @@ L.MAP2U.layers = function(options) {
                 url: url,
                 type: 'GET',
                 beforeSend: function() {
-                  
+
                     _this._map.spin(true);
                 },
                 complete: function() {
@@ -1974,8 +1994,8 @@ L.MAP2U.layers = function(options) {
     };
     control.renderClusterLayer = function(layer, collection) {
         var _this = this;
-        
-    //    _this._map.spin(true);
+
+        //    _this._map.spin(true);
 
 //                 
         var properties_key = Object.keys(collection.features[0].properties).map(function(k) {
@@ -2102,7 +2122,7 @@ L.MAP2U.layers = function(options) {
         markerclusters.addTo(_this._map);
         layer.layer = markerclusters;
 
-      //  _this._map.spin(false);
+        //  _this._map.spin(false);
 
 //var markers = new L.MarkerClusterGroup();
 //

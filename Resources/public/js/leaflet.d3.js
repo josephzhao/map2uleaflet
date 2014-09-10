@@ -240,6 +240,10 @@ L.D3 = L.Class.extend({
             }
         }
 
+        if (this.thematicmap === true && this.thematicmap_rule) {
+            this.renderThematicMap({rule: this.thematicmap_rule});
+        }
+
         if (this.options.showLabels && this._feature_labels)
         {
             this._feature_labels.attr("transform", function(d) {
@@ -338,6 +342,38 @@ L.D3 = L.Class.extend({
             overlayPane.appendChild(this._container);
             if (this.options.opacity < 1) {
                 this._updateOpacity();
+            }
+        }
+    },
+    renderThematicMap: function(rule) {
+        var ps = this._feature[0];
+        var pNameExist = false;
+        var propertyName = '';
+        if (ps.length > 0) {
+            var p = d3.select(ps[0]);
+            var properties = p[0][0].__data__.properties;
+            for (var property in properties) {
+                if (property.toLowerCase() === rule.fieldname.toLowerCase()) {
+                    pNameExist = true;
+                    propertyName = property;
+                    break;
+                }
+            }
+        }
+        if (pNameExist === true) {
+            for (var k = 0; k < ps.length; k++)
+            {
+                var p = d3.select(ps[k]);
+                var properties = p[0][0].__data__.properties;
+                for (var j = 0; j < rule.categories.length; j++) {
+                    if (parseFloat(properties[propertyName]) >= parseFloat(rule.categories[j].from) && parseFloat(properties[propertyName]) < parseFloat(rule.categories[j].to)) {
+                        p.style('fill', rule.categories[j].fill);
+                        p.style('fill-opacity', rule.opacity);
+                        p.style('stroke', rule.categories[j].boundary);
+                        p.style('stroke-opacity', rule.opacity);
+                        p.style('stroke-width', rule.width);
+                    }
+                }
             }
         }
     },
@@ -677,7 +713,7 @@ L.D3 = L.Class.extend({
 
                                     if (properties[propertyName].toLowerCase() === rule.Filter.PropertyIsEqualTo.Literal.toLowerCase()) {
                                         p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule);
-                                        
+
 //                                        if (geometryType === 'Polygon' || geometryType === 'MultiPolygon') {
 //                                            if (varFeatureTypeStyle.Rule.PolygonSymbolizer && rule.PolygonSymbolizer.Fill && rule.PolygonSymbolizer.Fill.fill)
 //                                                p.style('fill', rule.PolygonSymbolizer.Fill.fill);
@@ -930,7 +966,6 @@ L.D3 = L.Class.extend({
         {
             feature.style('stroke-dashoffset', rule.PolygonSymbolizer.Stroke['stroke-dashoffset']);
         }
-
         return feature;
     },
     onLoadSLD: function(json_sld) {

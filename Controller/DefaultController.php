@@ -79,6 +79,7 @@ class DefaultController extends Controller {
             foreach ($layers as $layer) {
                 $layerData = array();
                 $layerData['id'] = $layer->getId();
+                $layerData['datasource'] = $layer->getUseruploadfile()->getId();
                 $layerData['layerTitle'] = $layer->getLayerTitle();
                 $layerData['layerType'] = 'uploadfilelayer';
                 $layerData['layerName'] = $layer->getLayerName();
@@ -88,13 +89,14 @@ class DefaultController extends Controller {
                 $layerData['clusterLayer'] = false;
                 $layerData['layerShowInSwitcher'] = $layer->isLayerShowInSwitcher();
                 $layerData['defaultShowOnMap'] = $layer->isDefaultShowOnMap();
-                $layerData['fileName'] = $layer->getUseruploadfile()->getFileName();
+                $layerData['filename'] = $layer->getUseruploadfile()->getFileName();
                 array_push($layersData, $layerData);
             }
             if ($cluster_layers) {
                 foreach ($cluster_layers as $layer) {
                     $layerData = array();
                     $layerData['id'] = $layer->getId();
+                    $layerData['datasource'] = $layer->getUseruploadfile()->getId();
                     $layerData['layerTitle'] = $layer->getLayerTitle();
                     $layerData['layerName'] = $layer->getLayerName();
                     $layerData['layerType'] = 'leafletcluster';
@@ -104,7 +106,7 @@ class DefaultController extends Controller {
                     $layerData['clusterLayer'] = true;
                     $layerData['layerShowInSwitcher'] = $layer->isLayerShowInSwitcher();
                     $layerData['defaultShowOnMap'] = $layer->isDefaultShowOnMap();
-                    $layerData['fileName'] = $layer->getUseruploadfile()->getFileName();
+                    $layerData['filename'] = $layer->getUseruploadfile()->getFileName();
                     array_push($layersData, $layerData);
                 }
             }
@@ -112,6 +114,7 @@ class DefaultController extends Controller {
                 foreach ($wmslayers as $layer) {
                     $layerData = array();
                     $layerData['id'] = $layer->getId();
+                    $layerData['datasource'] = -1;
                     $layerData['layerTitle'] = $layer->getLayerTitle();
                     $layerData['layerName'] = $layer->getLayerName();
                     $layerData['layerType'] = $layer->getLayerType();
@@ -121,7 +124,7 @@ class DefaultController extends Controller {
                     $layerData['clusterLayer'] = $layer->isClusterMap();
                     $layerData['layerShowInSwitcher'] = $layer->isLayerShowInSwitcher();
                     $layerData['defaultShowOnMap'] = $layer->isDefaultShowOnMap();
-                    $layerData['fileName'] = "wms-" . $layer->getLayerName();
+                    $layerData['filename'] = "wms-" . $layer->getLayerName();
                     $layerData['hostName'] = $layer->getHostName();
                     array_push($layersData, $layerData);
                 }
