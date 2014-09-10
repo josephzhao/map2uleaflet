@@ -366,12 +366,25 @@ L.D3 = L.Class.extend({
                 var p = d3.select(ps[k]);
                 var properties = p[0][0].__data__.properties;
                 for (var j = 0; j < rule.categories.length; j++) {
-                    if (parseFloat(properties[propertyName]) >= parseFloat(rule.categories[j].from) && parseFloat(properties[propertyName]) < parseFloat(rule.categories[j].to)) {
-                        p.style('fill', rule.categories[j].fill);
-                        p.style('fill-opacity', rule.opacity);
-                        p.style('stroke', rule.categories[j].boundary);
-                        p.style('stroke-opacity', rule.opacity);
-                        p.style('stroke-width', rule.width);
+                    if (parseFloat(rule.categories[j].from === rule.min))
+                    {
+      if (parseFloat(properties[propertyName]) >= parseFloat(rule.categories[j].from) && parseFloat(properties[propertyName]) <= parseFloat(rule.categories[j].to)) {
+                            p.style('fill', rule.categories[j].fill);
+                            p.style('fill-opacity', rule.opacity);
+                            p.style('stroke', rule.categories[j].boundary);
+                            p.style('stroke-opacity', rule.opacity);
+                            p.style('stroke-width', rule.width);
+                        }
+                  
+                    }
+                    else {
+                        if (parseFloat(properties[propertyName]) > parseFloat(rule.categories[j].from) && parseFloat(properties[propertyName]) <= parseFloat(rule.categories[j].to)) {
+                            p.style('fill', rule.categories[j].fill);
+                            p.style('fill-opacity', rule.opacity);
+                            p.style('stroke', rule.categories[j].boundary);
+                            p.style('stroke-opacity', rule.opacity);
+                            p.style('stroke-width', rule.width);
+                        }
                     }
                 }
             }
