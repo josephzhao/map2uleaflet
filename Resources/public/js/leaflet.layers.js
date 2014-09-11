@@ -613,12 +613,11 @@ L.MAP2U.layers = function(options) {
                         }
                     }
                 }
-                if (callback) {
-                    maplayer.on('layerloaded', function() {
-                        alert("loaded");
+                window.layersControl.on('layerloaded', function() {
+                    alert("loaded");
+                    if (callback && maplayer)
                         callback(maplayer, opt);
-                    });
-                }
+                });
             },
             // Form data
             data: {id: uploadfile_id},
@@ -1076,7 +1075,7 @@ L.MAP2U.layers = function(options) {
             d3.select(e.element).style('cursor', 'default');
         });
         //            var bound = d3.geo.bounds(collection);
-        geojson_shapefile.fire("layerloaded");
+        this.fire("layerloaded");
     };
     control.loadTopoJSONLayer = function(layer) {
         var _this = this;
