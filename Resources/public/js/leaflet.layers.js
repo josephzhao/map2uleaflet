@@ -1076,7 +1076,7 @@ L.MAP2U.layers = function(options) {
             d3.select(e.element).style('cursor', 'default');
         });
         //            var bound = d3.geo.bounds(collection);
-        this.fire("layerloaded");
+        geojson_shapefile.fire("layerloaded");
     };
     control.loadTopoJSONLayer = function(layer) {
         var _this = this;
