@@ -82,22 +82,9 @@ L.D3 = L.Class.extend({
         };
         this._initContainer();
 
-//        this._overlayPane = d3.select(this._map.getPanes().overlayPane);
-//        
-//        this._overlayPane.selectAll("#" + this.options.id ? this.options.id : 'svg-shapefile').remove();
-
-        //      this._el = this._overlayPane.append("svg");
-
         this._el = d3.select(this._container).append("svg");
 
-//                    alert($(this._map.getPanes().overlayPane).css("height"));
-//                    alert($(this._map.getPanes().overlayPane).css("width"));
-//                    alert($(this._container).css("height"));
-//                    alert($(this._container).css("width"));
-
         this._g = this._el.append("g").attr("class", this.options.svgClass ? this.options.svgClass + " leaflet-zoom-hide" : "leaflet-zoom-hide");
-//        this._el.attr('id', this.options.id ? this.options.id : 'svg-shapefile');
-//        this._el.attr('name', this.options.name ? this.options.name : 'shapefile');
 
         if (this._loaded) {
             this.onLoaded();
@@ -412,10 +399,8 @@ L.D3 = L.Class.extend({
                                             {
 
                                                 var marktype = 'circle';
-                                                //  alert(_this._symbols[rule.PointSymbolizer.Graphic.Mark.WellKnownName]);
                                                 if (_this._symbols[rule.PointSymbolizer.Graphic.Mark.WellKnownName] !== undefined)
                                                     marktype = _this._symbols[rule.PointSymbolizer.Graphic.Mark.WellKnownName];
-
                                                 return marktype;
                                             }
                                         }
@@ -987,149 +972,13 @@ L.D3 = L.Class.extend({
 
             this.onLoadPointSLD();
         }
-
         if (this._feature && (this._featureType === 'Polygon' || this._featureType === 'MultiPolygon')) {
 
             this.onLoadPolygonSLD();
-
-//            this._feature.attr("d", function(d) {
-//                var f = d3.select(d);
-//                f.style('fill', function(d2) {
-//
-//                });
-//            });
-
-//            this._feature
-//                    .style("stroke-width", function(d, i) {
-//
-//                        if (d.type === 'Feature') {
-//
-//                            if (d.geometry.type === 'Polygon' || d.geometry.type === 'MultiPolygon') {
-////                                var f = rules.find('sld\\:PolygonSymbolizer sld\\:Stroke sld\\:CssParameter[name="stroke-width"]');
-////                                if (f.length === 0)
-////                                    f = rules.find('PolygonSymbolizer Stroke CssParameter[name="stroke-width"]');
-////                                if (f.length === 1)
-////                                {
-////
-////                                    return   f.text();
-////                                }
-//
-//                            }
-//                        }
-//
-//                    })
-//                    .style("stroke", function(d, i) {
-//                        if (d.type === 'Feature') {
-//                            if (d.geometry.type === 'Polygon' || d.geometry.type === 'MultiPolygon') {
-////                                var f = rules.find('sld\\:PolygonSymbolizer sld\\:Stroke sld\\:CssParameter[name="stroke"]');
-////                                if (f.length === 0)
-////                                    f = rules.find('PolygonSymbolizer Stroke CssParameter[name="stroke"]');
-////                                if (f.length === 1)
-////                                    return   f.text();
-//
-//                            }
-//                        }
-//
-//                    })
-//                    .style("stroke-opacity", function(d, i) {
-//                        if (d.type === 'Feature') {
-//                            if (d.geometry.type === 'Polygon' || d.geometry.type === 'MultiPolygon') {
-////                                var f = rules.find('sld\\:PolygonSymbolizer sld\\:Stroke sld\\:CssParameter[name="stroke-opacity"]');
-////                                if (f.length === 0)
-////                                    f = rules.find('PolygonSymbolizer Stroke CssParameter[name="stroke-opacity"]');
-////                                if (f.length === 1)
-////                                    return   f.text();
-//
-//                            }
-//                        }
-//
-//                    })
-//                    .style("stroke-linecap", function(d, i) {
-//                        if (d.type === 'Feature') {
-//                            if (d.geometry.type === 'Polygon' || d.geometry.type === 'MultiPolygon') {
-////                                var f = rules.find('sld\\:PolygonSymbolizer sld\\:Stroke sld\\:CssParameter[name="stroke-linecap"]');
-////                                if (f.length === 0)
-////                                    f = rules.find('PolygonSymbolizer Stroke CssParameter[name="stroke-linecap"]');
-////                                if (f.length === 1)
-////                                    return   f.text();
-//
-//                            }
-//                        }
-//
-//                    })
-//                    .style("stroke-linejoin", function(d, i) {
-//                        if (d.type === 'Feature') {
-//                            if (d.geometry.type === 'Polygon' || d.geometry.type === 'MultiPolygon') {
-////                                var f = rules.find('sld\\:PolygonSymbolizer sld\\:Stroke sld\\:CssParameter[name="stroke-linejoin"]');
-////                                if (f.length === 0)
-////                                    f = rules.find('PolygonSymbolizer Stroke CssParameter[name="stroke-linejoin"]');
-////                                if (f.length === 1)
-////                                    return   f.text();
-//
-//                            }
-//                        }
-//
-//                    })
-//                    .style("stroke-dashoffset", function(d, i) {
-//                        if (d.type === 'Feature') {
-//                            if (d.geometry.type === 'Polygon' || d.geometry.type === 'MultiPolygon') {
-////                                var f = rules.find('sld\\:PolygonSymbolizer sld\\:Stroke sld\\:CssParameter[name="stroke-dashoffset"]');
-////                                if (f.length === 0)
-////                                    f = rules.find('PolygonSymbolizer Stroke CssParameter[name="stroke-dashoffset"]');
-////                                if (f.length === 1)
-////                                    return   f.text();
-//
-//                            }
-//                        }
-//
-//                    })
-//                    .style("fill", function(d, i) {
-//                        if (d.type === 'Feature') {
-//                            if (d.geometry.type === 'Polygon' || d.geometry.type === 'MultiPolygon') {
-////                                var f = rules.find('sld\\:PolygonSymbolizer sld\\:Fill sld\\:CssParameter[name="fill"]');
-////                                if (f.length === 0)
-////                                    f = rules.find('PolygonSymbolizer Stroke CssParameter[name="fill"]');
-////                                if (f.length === 1)
-////                                    return   f.text();
-//
-//                            }
-//                        }
-//
-//                    })
-//                    .style("fill-opacity", function(d, i) {
-//                        if (d.type === 'Feature') {
-//                            if (d.geometry.type === 'Polygon' || d.geometry.type === 'MultiPolygon') {
-////                                var f = rules.find('sld\\:PolygonSymbolizer sld\\:Fill sld\\:CssParameter[name="fill-opacity"]');
-////                                if (f.length === 0)
-////                                    f = rules.find('PolygonSymbolizer Stroke CssParameter[name="fill-opacity"]');
-////                                if (f.length === 1)
-////                                    return   f.text();
-//
-//                            }
-//                        }
-//
-//                    });
         }
         if (this._feature && this._featureType === 'LineString' || this._featureType === 'MultiLineString' || this._featureType === 'Polyline' || this._featureType === 'MultiPolyline') {
             this.onLoadPolylineSLD();
         }
-
-
-//          <Fill>
-//              <CssParameter name="fill">
-//                <ogc:Literal>#4040C0</ogc:Literal>
-//              </CssParameter>
-//              <CssParameter name="fill-opacity">
-//                <ogc:Literal>1.0</ogc:Literal>
-//              </CssParameter>
-//            </Fill>
-//        alert(sld.NamedLayer);
-//        alert(sld.NamedLayer.Name);
-//        alert(sld.NamedLayer.UserStyle);
-//        alert(sld.NamedLayer.UserStyle.Name);
-//        alert(sld.NamedLayer.UserStyle.FeatureTypeStyle);
-//        alert(sld.NamedLayer.UserStyle.FeatureTypeStyle.Rule);
-//        alert(sld.NamedLayer.UserStyle.FeatureTypeStyle.Rule.PointSymbolizer);
 
     },
     _bindPopup: function() {

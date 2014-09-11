@@ -1083,8 +1083,7 @@ L.MAP2U.layers = function(options) {
 
                     if (layer.layer === undefined || layer.layer === null)
                     {
-                        //   alert("http://" + layer.hostName);
-                        //   alert(layer.name);
+                        
                         layer.layer = new L.TileLayer.WMS("http://" + layer.hostName,
                                 {
                                     layers: layer.name,
