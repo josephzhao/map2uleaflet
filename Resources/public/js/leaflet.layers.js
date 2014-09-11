@@ -389,7 +389,7 @@ L.MAP2U.layers = function(options) {
         }
     };
     // load layer data from server aand create layers based on layer type;
-    control.loadLayer = function(layer) {
+    control.loadLayer = function(layer, opt) {
 
         var result;
         var _this = this;
@@ -431,11 +431,11 @@ L.MAP2U.layers = function(options) {
                 ;
                 switch (result.datatype) {
                     case 'topojson':
-                        control.RenderTopojsonLayer(result, layer);
+                        control.RenderTopojsonLayer(result, layer, opt);
                         break;
                     case 'geojson':
 
-                        control.RenderGeojsonLayer(result, layer);
+                        control.RenderGeojsonLayer(result, layer, opt);
                         break;
                 }
 
@@ -449,7 +449,7 @@ L.MAP2U.layers = function(options) {
 
         return;
     };
-    control.addUploadfile = function(getlayerdata_url, uploadfile_id, callback, opt) {
+    control.addUploadfile = function(getlayerdata_url, uploadfile_id, opt) {
 
         var _this = this;
 //        if (options.spinner !== undefined && options.spinner !== null && options.spinner_target !== undefined && options.spinner_target !== null) {
@@ -529,7 +529,7 @@ L.MAP2U.layers = function(options) {
                             if (checked) {
                                 if (!maplayer.layer)
                                 {
-                                    control.loadLayer(maplayer);
+                                    control.loadLayer(maplayer, opt);
                                     //   control.loadTopoJSONLayer(maplayer);
                                 }
                                 else
@@ -691,7 +691,7 @@ L.MAP2U.layers = function(options) {
 
         return;
     };
-    control.RenderGeojsonLayer = function(result, layer) {
+    control.RenderGeojsonLayer = function(result, layer,opt) {
         var _this = this;
         var sld;
         if (typeof result.sld === 'object') {
@@ -717,7 +717,7 @@ L.MAP2U.layers = function(options) {
         }
         else {
             if (layer.layerType === 'userdraw')
-                control.renderUserdrawLayer(json_data, layer);
+                control.renderUserdrawLayer(json_data, layer,opt);
             else {
 
                 control.renderD3Layer(layer, json_data, sld, {
@@ -728,6 +728,7 @@ L.MAP2U.layers = function(options) {
                     maxZoom: layer.maxZoom,
                     layerType: layer.layerType,
                     sld: sld,
+                    thematicmap_rule:opt,
                     filename: result.layer['fileName'].toLowerCase(),
                     filetype: result.layer['fileType'].toLowerCase(),
                     showLabels: (result.layer['label_field'] !== '' && result.layer['label_field'] !== null),
@@ -911,7 +912,7 @@ L.MAP2U.layers = function(options) {
         return;
 
     };
-    control.RenderTopojsonLayer = function(result, layer) {
+    control.RenderTopojsonLayer = function(result, layer, opt) {
         var _this = this;
         var sld;
         if (typeof result.sld === 'object') {
@@ -1078,7 +1079,14 @@ L.MAP2U.layers = function(options) {
             d3.select(e.element).style('cursor', 'default');
         });
         //            var bound = d3.geo.bounds(collection);
-        this.fire("layerloaded");
+        if (opt.thematicmap === true) {
+            if (geojson_shapefile.options) {
+                geojson_shapefile.options.thematicmap = true;
+                geojson_shapefile.options.thematicmap_rule = opt;
+                if (geojson_shapefile.renderThematicMap)
+                    geojson_shapefile.renderThematicMap(geojson_shapefile.options.thematicmap_rule);
+            }
+        }
     };
     control.loadTopoJSONLayer = function(layer) {
         var _this = this;
