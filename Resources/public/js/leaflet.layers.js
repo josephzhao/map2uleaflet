@@ -952,7 +952,7 @@ L.MAP2U.layers = function(options) {
             maxZoom: layer.maxZoom,
             layerType: layer.layerType,
             sld: sld,
-            thematicmap: opt.thematicmap,
+            thematicmap: opt,
             filename: result.layer['fileName'].toLowerCase(),
             filetype: result.layer['fileType'].toLowerCase(),
             showLabels: (result.layer['label_field'] !== '' && result.layer['label_field'] !== null),
