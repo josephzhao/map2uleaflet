@@ -369,29 +369,24 @@ L.MAP2U.layers = function(options) {
             }
         });
         if (maploaded === false || (maploaded === true && thematicmap_layer && !thematicmap_layer.layer)) {
-            $.when(this.addUploadfile(Routing.generate('default_uploadfile_info'), opt.datasource)).done(function() {
-                _this._map.dataLayers.forEach(function(layer) {
-                    if ((layer.layerType === 'uploadfilelayer' || layer.layerType === 'uploadfile') && layer.datasource === opt.datasource && layer.filename === opt.filename) {
-                        maploaded = true;
-                        thematicmap_layer = layer;
-                    }
-                });
-                alert("11");
-                if (thematicmap_layer && thematicmap_layer.layer) {
-                    thematicmap_layer.layer.options.thematicmap = true;
-                    thematicmap_layer.layer.options.thematicmap_rule = opt;
-                    thematicmap_layer.layer.renderThematicMap(opt);
-                }
-            });
-        }
-         alert("22");
-        if (thematicmap_layer && thematicmap_layer.layer) {
-            thematicmap_layer.layer.options.thematicmap = true;
-            thematicmap_layer.layer.options.thematicmap_rule = opt;
-            thematicmap_layer.layer.renderThematicMap(opt);
-        }
+            window.layer_loading = null;
+            this.addUploadfile(Routing.generate('default_uploadfile_info'), opt.datasource);
 
+        }
+        while (window.layer_loading === null) {
+
+
+        }
+        if (window.layer_loading) {
+            thematicmap_layer = window.layer_loading;
+            if (thematicmap_layer && thematicmap_layer.layer) {
+                thematicmap_layer.layer.options.thematicmap = true;
+                thematicmap_layer.layer.options.thematicmap_rule = opt;
+                thematicmap_layer.layer.renderThematicMap(opt);
+            }
+        }
     };
+
     // load layer data from server aand create layers based on layer type;
     control.loadLayer = function(layer) {
 
@@ -461,7 +456,7 @@ L.MAP2U.layers = function(options) {
 //        }
         //       spinner.spin(spinner_target);
         var maplayer;
-        $.when(
+
         $.ajax({
             url: getlayerdata_url,
             type: 'GET',
@@ -617,7 +612,8 @@ L.MAP2U.layers = function(options) {
                         }
                     }
                 }
-                return maplayer;
+                window.layer_loading = maplayer;
+
             },
             // Form data
             data: {id: uploadfile_id},
@@ -625,8 +621,6 @@ L.MAP2U.layers = function(options) {
             cache: false,
             contentType: false
                     //   processData: false
-        })).then(function( data, textStatus, jqXHR){
-            alert( data + "  " +  textStatus + "   "  + jqXHR);
         });
     };
     control.renderWMSLayer = function(layer) {
