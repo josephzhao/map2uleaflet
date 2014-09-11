@@ -382,6 +382,7 @@ L.MAP2U.layers = function(options) {
 
     };
     control.renderThematicMapLayer = function(thematicmap_layer, opt) {
+        alert("eeee");
         if (thematicmap_layer && thematicmap_layer.layer) {
             thematicmap_layer.layer.options.thematicmap = true;
             thematicmap_layer.layer.options.thematicmap_rule = opt;
