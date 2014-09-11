@@ -363,17 +363,24 @@ L.MAP2U.layers = function(options) {
         var maploaded = false;
         var thematicmap_layer;
         _this._map.dataLayers.forEach(function(layer) {
-            if ((layer.layerType === 'uploadfilelayer' || layer.layerType === 'uploadfile' ) && layer.datasource === opt.datasource && layer.filename === opt.filename) {
+            if ((layer.layerType === 'uploadfilelayer' || layer.layerType === 'uploadfile') && layer.datasource === opt.datasource && layer.filename === opt.filename) {
                 maploaded = true;
                 thematicmap_layer = layer;
             }
         });
-        if (maploaded === false||(maploaded === true && thematicmap_layer && !thematicmap_layer.layer)) {
-            $.when(this.addUploadfile(Routing.generate('default_uploadfile_info'), opt.datasource)).done(function(a1){ alert(a1);});
+        if (maploaded === false || (maploaded === true && thematicmap_layer && !thematicmap_layer.layer)) {
+            $.when(this.addUploadfile(Routing.generate('default_uploadfile_info'), opt.datasource)).done(function() {
+                _this._map.dataLayers.forEach(function(layer) {
+                    if ((layer.layerType === 'uploadfilelayer' || layer.layerType === 'uploadfile') && layer.datasource === opt.datasource && layer.filename === opt.filename) {
+                        maploaded = true;
+                        thematicmap_layer = layer;
+                    }
+                });
+            });
         }
-        if(thematicmap_layer && thematicmap_layer.layer) {
+        if (thematicmap_layer && thematicmap_layer.layer) {
             thematicmap_layer.layer.options.thematicmap = true;
-            thematicmap_layer.layer.options.thematicmap_rule=opt;
+            thematicmap_layer.layer.options.thematicmap_rule = opt;
             thematicmap_layer.layer.renderThematicMap(opt);
         }
 
@@ -486,7 +493,7 @@ L.MAP2U.layers = function(options) {
                         }
                     });
                     if (fileExist === false) {
-                        _this._map.dataLayers[_this._map.dataLayers.length] = {'defaultShowOnMap': true, 'layerType': 'uploadfile', 'layer': null, 'minZoom': null, 'maxZoom': null, 'index_id': _this._map.dataLayers.length + 1, 'layer_id': result.uploadfile.id, 'title': result.uploadfile.filename, 'datasource':result.uploadfile.datasource, 'filename': result.uploadfile.filename, 'name': result.uploadfile.filename, type: 'topojson'};
+                        _this._map.dataLayers[_this._map.dataLayers.length] = {'defaultShowOnMap': true, 'layerType': 'uploadfile', 'layer': null, 'minZoom': null, 'maxZoom': null, 'index_id': _this._map.dataLayers.length + 1, 'layer_id': result.uploadfile.id, 'title': result.uploadfile.filename, 'datasource': result.uploadfile.datasource, 'filename': result.uploadfile.filename, 'name': result.uploadfile.filename, type: 'topojson'};
                         maplayer = _this._map.dataLayers[_this._map.dataLayers.length - 1];
                         var overlay_layers_ul = $(".leaflet-control-container .section.overlay-layers > ul");
                         var item = $('<li>')
@@ -1083,7 +1090,7 @@ L.MAP2U.layers = function(options) {
 
                     if (layer.layer === undefined || layer.layer === null)
                     {
-                        
+
                         layer.layer = new L.TileLayer.WMS("http://" + layer.hostName,
                                 {
                                     layers: layer.name,

@@ -39,7 +39,7 @@ window.onload = function() {
 //        $('#leafmap').css('height',$('#leafmap').height());
 //        $('#leafmap').css('width',$('#leafmap').width());
         $('#map-ui').height($(window).height() - 126);
-        $('.leaflet-sidebar #sidebar-left').height($(window).height() - 126);
+       // $('.leaflet-sidebar #sidebar-left').height($(window).height() - 146);
     });
     map = new L.MAP2U.Map('leafmap', {
         'zoomControl': false
