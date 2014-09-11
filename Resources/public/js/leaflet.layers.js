@@ -613,11 +613,14 @@ L.MAP2U.layers = function(options) {
                         }
                     }
                 }
-                window.layersControl.on('layerloaded', function() {
-                    alert("loaded");
-                    if (callback && maplayer)
+
+                if (callback && maplayer) {
+                    setTimeout(function() {
                         callback(maplayer, opt);
-                });
+                    }, 500);
+
+                }
+
             },
             // Form data
             data: {id: uploadfile_id},
