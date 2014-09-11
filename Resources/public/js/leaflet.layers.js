@@ -376,6 +376,7 @@ L.MAP2U.layers = function(options) {
                         thematicmap_layer = layer;
                     }
                 });
+                alert("11");
                 if (thematicmap_layer && thematicmap_layer.layer) {
                     thematicmap_layer.layer.options.thematicmap = true;
                     thematicmap_layer.layer.options.thematicmap_rule = opt;
@@ -383,7 +384,8 @@ L.MAP2U.layers = function(options) {
                 }
             });
         }
-        else if (thematicmap_layer && thematicmap_layer.layer) {
+         alert("22");
+        if (thematicmap_layer && thematicmap_layer.layer) {
             thematicmap_layer.layer.options.thematicmap = true;
             thematicmap_layer.layer.options.thematicmap_rule = opt;
             thematicmap_layer.layer.renderThematicMap(opt);
