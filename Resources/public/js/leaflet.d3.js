@@ -186,6 +186,7 @@ L.D3 = L.Class.extend({
                 .on('mouseout', this._mouseOutHandler);
         this._map.on('viewreset', this._reset, this);
         this._reset();
+     
     },
     onRemove: function(map) {
         // remove layer's DOM elements and listeners
