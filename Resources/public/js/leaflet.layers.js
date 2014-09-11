@@ -370,23 +370,24 @@ L.MAP2U.layers = function(options) {
         });
         if (maploaded === false || (maploaded === true && thematicmap_layer && !thematicmap_layer.layer)) {
             window.layer_loading = null;
-            this.addUploadfile(Routing.generate('default_uploadfile_info'), opt.datasource);
+            this.addUploadfile(Routing.generate('default_uploadfile_info'), opt.datasource, control.renderThematicMapLayer, opt);
 
         }
-        while (window.layer_loading === null) {
 
-
+        if (thematicmap_layer && thematicmap_layer.layer) {
+            thematicmap_layer.layer.options.thematicmap = true;
+            thematicmap_layer.layer.options.thematicmap_rule = opt;
+            thematicmap_layer.layer.renderThematicMap(opt);
         }
-        if (window.layer_loading) {
-            thematicmap_layer = window.layer_loading;
-            if (thematicmap_layer && thematicmap_layer.layer) {
-                thematicmap_layer.layer.options.thematicmap = true;
-                thematicmap_layer.layer.options.thematicmap_rule = opt;
-                thematicmap_layer.layer.renderThematicMap(opt);
-            }
+
+    };
+    control.renderThematicMapLayer = function(thematicmap_layer, opt) {
+        if (thematicmap_layer && thematicmap_layer.layer) {
+            thematicmap_layer.layer.options.thematicmap = true;
+            thematicmap_layer.layer.options.thematicmap_rule = opt;
+            thematicmap_layer.layer.renderThematicMap(opt);
         }
     };
-
     // load layer data from server aand create layers based on layer type;
     control.loadLayer = function(layer) {
 
@@ -448,7 +449,7 @@ L.MAP2U.layers = function(options) {
 
         return;
     };
-    control.addUploadfile = function(getlayerdata_url, uploadfile_id) {
+    control.addUploadfile = function(getlayerdata_url, uploadfile_id, callback, opt) {
 
         var _this = this;
 //        if (options.spinner !== undefined && options.spinner !== null && options.spinner_target !== undefined && options.spinner_target !== null) {
@@ -612,7 +613,8 @@ L.MAP2U.layers = function(options) {
                         }
                     }
                 }
-                window.layer_loading = maplayer;
+                if (callback)
+                    callback(maplayer, opt);
 
             },
             // Form data
