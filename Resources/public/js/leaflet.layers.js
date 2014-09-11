@@ -376,9 +376,14 @@ L.MAP2U.layers = function(options) {
                         thematicmap_layer = layer;
                     }
                 });
+                if (thematicmap_layer && thematicmap_layer.layer) {
+                    thematicmap_layer.layer.options.thematicmap = true;
+                    thematicmap_layer.layer.options.thematicmap_rule = opt;
+                    thematicmap_layer.layer.renderThematicMap(opt);
+                }
             });
         }
-        if (thematicmap_layer && thematicmap_layer.layer) {
+        else if (thematicmap_layer && thematicmap_layer.layer) {
             thematicmap_layer.layer.options.thematicmap = true;
             thematicmap_layer.layer.options.thematicmap_rule = opt;
             thematicmap_layer.layer.renderThematicMap(opt);
