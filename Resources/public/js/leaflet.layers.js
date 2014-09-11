@@ -369,7 +369,7 @@ L.MAP2U.layers = function(options) {
             }
         });
         if (maploaded === false || (maploaded === true && thematicmap_layer && !thematicmap_layer.layer)) {
-            window.layer_loading = null;
+           
             this.addUploadfile(Routing.generate('default_uploadfile_info'), opt.datasource, control.renderThematicMapLayer, opt);
 
         }
@@ -614,12 +614,12 @@ L.MAP2U.layers = function(options) {
                     }
                 }
 
-                if (callback && maplayer) {
-                    setTimeout(function() {
-                        callback(maplayer, opt);
-                    }, 500);
-
-                }
+//                if (callback && maplayer) {
+//                    setTimeout(function() {
+//                        callback(maplayer, opt);
+//                    }, 500);
+//
+//                }
 
             },
             // Form data
