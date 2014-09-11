@@ -369,7 +369,7 @@ L.MAP2U.layers = function(options) {
             }
         });
         if (maploaded === false || (maploaded === true && thematicmap_layer && !thematicmap_layer.layer)) {
-           
+
             this.addUploadfile(Routing.generate('default_uploadfile_info'), opt.datasource, opt);
 
         }
@@ -691,7 +691,7 @@ L.MAP2U.layers = function(options) {
 
         return;
     };
-    control.RenderGeojsonLayer = function(result, layer,opt) {
+    control.RenderGeojsonLayer = function(result, layer, opt) {
         var _this = this;
         var sld;
         if (typeof result.sld === 'object') {
@@ -717,7 +717,7 @@ L.MAP2U.layers = function(options) {
         }
         else {
             if (layer.layerType === 'userdraw')
-                control.renderUserdrawLayer(json_data, layer,opt);
+                control.renderUserdrawLayer(json_data, layer, opt);
             else {
 
                 control.renderD3Layer(layer, json_data, sld, {
@@ -728,7 +728,7 @@ L.MAP2U.layers = function(options) {
                     maxZoom: layer.maxZoom,
                     layerType: layer.layerType,
                     sld: sld,
-                    thematicmap_rule:opt,
+                    thematicmap: opt,
                     filename: result.layer['fileName'].toLowerCase(),
                     filetype: result.layer['fileType'].toLowerCase(),
                     showLabels: (result.layer['label_field'] !== '' && result.layer['label_field'] !== null),
@@ -952,6 +952,7 @@ L.MAP2U.layers = function(options) {
             maxZoom: layer.maxZoom,
             layerType: layer.layerType,
             sld: sld,
+            thematicmap: opt.thematicmap,
             filename: result.layer['fileName'].toLowerCase(),
             filetype: result.layer['fileType'].toLowerCase(),
             showLabels: (result.layer['label_field'] !== '' && result.layer['label_field'] !== null),
@@ -2015,6 +2016,14 @@ L.MAP2U.layers = function(options) {
             d3.select(e.element).style({'fill': e.element.fill});
             d3.select(e.element).style('cursor', 'default');
         });
+        if (opt.thematicmap.thematicmap === true) {
+            if (d3_layer.options) {
+                d3_layer.options.thematicmap = true;
+                d3_layer.options.thematicmap_rule = opt.thematicmap;
+                if (d3_layer.renderThematicMap)
+                    d3_layer.renderThematicMap(d3_layer.options.thematicmap_rule);
+            }
+        }
     };
     control.renderClusterLayer = function(layer, collection) {
         var _this = this;
