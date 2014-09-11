@@ -2016,7 +2016,7 @@ L.MAP2U.layers = function(options) {
             d3.select(e.element).style({'fill': e.element.fill});
             d3.select(e.element).style('cursor', 'default');
         });
-        if (opt.thematicmap.thematicmap === true) {
+        if (opt.thematicmap && opt.thematicmap.thematicmap === true) {
             if (d3_layer.options) {
                 d3_layer.options.thematicmap = true;
                 d3_layer.options.thematicmap_rule = opt.thematicmap;
