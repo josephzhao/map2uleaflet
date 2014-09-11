@@ -461,6 +461,7 @@ L.MAP2U.layers = function(options) {
 //        }
         //       spinner.spin(spinner_target);
         var maplayer;
+        $.when(
         $.ajax({
             url: getlayerdata_url,
             type: 'GET',
@@ -624,6 +625,8 @@ L.MAP2U.layers = function(options) {
             cache: false,
             contentType: false
                     //   processData: false
+        })).then(function( data, textStatus, jqXHR){
+            alert( data + "  " +  textStatus + "   "  + jqXHR);
         });
     };
     control.renderWMSLayer = function(layer) {
