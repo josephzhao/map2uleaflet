@@ -613,9 +613,12 @@ L.MAP2U.layers = function(options) {
                         }
                     }
                 }
-                if (callback)
-                    callback(maplayer, opt);
-
+                if (callback) {
+                  maplayer.layer.on('loaded',function(){
+                      alert("loaded");
+                        callback(maplayer, opt);
+                  });
+                }
             },
             // Form data
             data: {id: uploadfile_id},
