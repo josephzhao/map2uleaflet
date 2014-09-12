@@ -1968,7 +1968,7 @@ L.MAP2U.layers = function(options) {
             }
 
 
-            shapefilename = $('#thematicmap_div select#thematicmap_datasource option:selected').map(function() {
+            shapefilename = $('.thematicmap_div select#thematicmap_datasource option:selected').map(function() {
                 return  this.text;
             });
 
@@ -1976,7 +1976,7 @@ L.MAP2U.layers = function(options) {
 
                 return;
             }
-            shapefilename = $('#heatmap_div select#heatmap_datasource option:selected').map(function() {
+            shapefilename = $('.heatmap_div select#heatmap_datasource option:selected').map(function() {
                 return  this.text;
             });
             if (shapefilename.length > 0) {
