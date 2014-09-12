@@ -1929,6 +1929,11 @@ L.MAP2U.layers = function(options) {
             var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function() {
                 return  this.text;
             });
+            alert((shapefilename instanceof Array) + "   " + shapefilename);
+            alert(shapefilename[0] + "   " + shapefilename[0]===null);
+            if((shapefilename instanceof Array) && shapefilename.length>0 && shapefilename[0] !== null) {
+                
+            }
             if (shapefilename !== '' && shapefilename[0] !== undefined && d3_layer.options.filename === shapefilename[0].toLowerCase())
             {
 
