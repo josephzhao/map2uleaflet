@@ -1930,10 +1930,11 @@ L.MAP2U.layers = function(options) {
                 return  this.text;
             });
             var shapefilename_keys=Object.keys(shapefilename);
-            alert(shapefilename_keys.length);
-            alert($.isArray(shapefilename) + "   " + shapefilename[shapefilename_keys[0]]);
-            alert(shapefilename[shapefilename_keys[0]].toLowerCase() + "   " + shapefilename[shapefilename_keys[0]]===null);
-            if((shapefilename instanceof Array) && shapefilename.length>0 && shapefilename[0] !== null) {
+           
+          
+            alert(shapefilename[shapefilename_keys[0]].toString().toLowerCase());
+            
+            if((shapefilename[shapefilename_keys[0]] !==0 ) && shapefilename.length>0 && shapefilename[0] !== null) {
                 
             }
             if (shapefilename !== '' && shapefilename[0] !== undefined && d3_layer.options.filename === shapefilename[0].toLowerCase())
