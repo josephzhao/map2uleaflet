@@ -1932,9 +1932,9 @@ L.MAP2U.layers = function(options) {
             var shapefilename_keys=Object.keys(shapefilename);
            
           
-            alert(shapefilename[shapefilename_keys[0]].toString().toLowerCase());
+            alert(shapefilename[shapefilename_keys[0]].toString().length + "   " + shapefilename[shapefilename_keys[0]] !==0);
             
-            if((shapefilename[shapefilename_keys[0]] !==0 ) && shapefilename.length>0 && shapefilename[0] !== null) {
+            if((shapefilename[shapefilename_keys[0]] !==0 ) && shapefilename[shapefilename_keys[0]].toString().length>5) {
                 
             }
             if (shapefilename !== '' && shapefilename[0] !== undefined && d3_layer.options.filename === shapefilename[0].toLowerCase())
