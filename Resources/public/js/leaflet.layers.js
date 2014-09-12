@@ -1929,46 +1929,59 @@ L.MAP2U.layers = function(options) {
             var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function() {
                 return  this.text;
             });
-            var shapefilename_keys=Object.keys(shapefilename);
-            alert(d3_layer.options.filename === shapefilename[0].toLowerCase());
-            
-            if((shapefilename.length > 0 ) && shapefilename[shapefilename_keys[0]].toString().length>5) {
-                
-            }
-            if (shapefilename !== '' && shapefilename[0] !== undefined && d3_layer.options.filename === shapefilename[0].toLowerCase())
-            {
 
-                if ($('#geometries_selected').length > 0)
+            if (shapefilename.length > 0) {
+
+                if (d3_layer.options.filename === shapefilename[0].toLowerCase())
                 {
-                    var bExist = false;
-                    $("#geometries_selected > option").each(function() {
 
-                        if (parseInt(this.value) === parseInt(e.data.properties[properties_key[0]])) {
-                            bExist = true;
-                        }
-                    });
-                    if (bExist === false)
+                    if ($('#geometries_selected').length > 0)
                     {
-                        var fieldkey = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function() {
-                            return  this.text;
+                        var bExist = false;
+                        $("#geometries_selected > option").each(function() {
+
+                            if (parseInt(this.value) === parseInt(e.data.properties[properties_key[0]])) {
+                                bExist = true;
+                            }
                         });
-                        var p;
-                        if (fieldkey === '' || fieldkey[0] === '' || fieldkey[0] === undefined)
-                            p = e.data.properties[properties_key[1]];
-                        else
-                            p = e.data.properties[fieldkey[0]];
-                        if (document.getElementById('geometries_selected')) {
-                            var selectBoxOption = document.createElement("option"); //create new option 
-                            selectBoxOption.value = e.data.properties[properties_key[0]]; //set option value 
-                            selectBoxOption.text = p; //set option display text 
-                            document.getElementById('geometries_selected').add(selectBoxOption, null);
-                            //    alert(properties_key[0]+ ':'+ e.data.properties[properties_key[0]] + "\n" + properties_key[1] +':' + e.data.properties[properties_key[1]]);
+                        if (bExist === false)
+                        {
+                            var fieldkey = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function() {
+                                return  this.text;
+                            });
+                            var p;
+                            if (fieldkey === '' || fieldkey[0] === '' || fieldkey[0] === undefined)
+                                p = e.data.properties[properties_key[1]];
+                            else
+                                p = e.data.properties[fieldkey[0]];
+                            if (document.getElementById('geometries_selected')) {
+                                var selectBoxOption = document.createElement("option"); //create new option 
+                                selectBoxOption.value = e.data.properties[properties_key[0]]; //set option value 
+                                selectBoxOption.text = p; //set option display text 
+                                document.getElementById('geometries_selected').add(selectBoxOption, null);
+                                //    alert(properties_key[0]+ ':'+ e.data.properties[properties_key[0]] + "\n" + properties_key[1] +':' + e.data.properties[properties_key[1]]);
+                            }
                         }
                     }
                 }
+                return;
             }
-            ;
-            //  }
+
+
+            shapefilename = $('#thematicmap_div select#thematicmap_datasource option:selected').map(function() {
+                return  this.text;
+            });
+
+            if (shapefilename.length > 0) {
+
+                return;
+            }
+            shapefilename = $('#heatmap_div select#heatmap_datasource option:selected').map(function() {
+                return  this.text;
+            });
+            if (shapefilename.length > 0) {
+                return;
+            }
             var html = '';
             for (var key in e.data.properties) {
                 if (e.data.properties.hasOwnProperty(key)) {
@@ -1981,6 +1994,8 @@ L.MAP2U.layers = function(options) {
             }
             $('#sidebar-left #sidebar_content').html('');
             $('#sidebar-left #sidebar_content').html(html);
+
+
         });
         d3_layer.on("mouseover", function(e) {
             e.element.fill = $(e.element).css('fill');
