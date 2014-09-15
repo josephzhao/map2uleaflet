@@ -1,9 +1,9 @@
 
 
 
-L.MAP2U.layers = function(options) {
+L.MAP2U.layers = function (options) {
     var control = L.control(options);
-    control.onAdd = function(map) {
+    control.onAdd = function (map) {
         var layers = options.layers;
         this._map = map;
         var $container = $('<div>')
@@ -23,13 +23,6 @@ L.MAP2U.layers = function(options) {
                 .append(
                         $('<h4>')
                         .text(I18n.t('javascripts.map.layers.header')));
-        var ActiveLayerLabel = $('<label>')
-                .appendTo($ui);
-        ActiveLayerLabel.append("Active Layer");
-        var activeLayerSelect = $('<select id="activelayer_id" class="layers-ui" style="margin-left:4px;width:155px;"></select>').appendTo($ui);
-        activeLayerSelect.on('change', function() {
-            control.setActiveLayer(map.dataLayers, this.value);
-        });
         var barContent = $('<div>')
                 .attr('class', 'sidebar_content')
                 .appendTo($ui);
@@ -42,7 +35,7 @@ L.MAP2U.layers = function(options) {
                 .appendTo(baseSection);
         list = $('<ul>')
                 .appendTo(baseSection);
-        layers.forEach(function(layer) {
+        layers.forEach(function (layer) {
             var item = $('<li>')
                     .appendTo(list);
             if (map.hasLayer(layer.layer)) {
@@ -91,8 +84,8 @@ L.MAP2U.layers = function(options) {
                     .prop('checked', map.hasLayer(layer.layer))
                     .appendTo(label);
             label.append(layer.name);
-            item.on('click', function() {
-                layers.forEach(function(other) {
+            item.on('click', function () {
+                layers.forEach(function (other) {
                     if (other.layer === layer.layer) {
                         map.addLayer(other.layer);
                         // google map does not support this function
@@ -104,7 +97,7 @@ L.MAP2U.layers = function(options) {
                 });
                 map.fire('baselayerchange', {layer: layer.layer});
             });
-            map.on('layeradd layerremove', function() {
+            map.on('layeradd layerremove', function () {
                 item.toggleClass('active', map.hasLayer(layer.layer));
                 input.prop('checked', map.hasLayer(layer.layer));
             });
@@ -117,6 +110,18 @@ L.MAP2U.layers = function(options) {
                 .text(I18n.t('javascripts.map.layers.overlays'))
                 .attr("class", "deemphasize")
                 .appendTo(overlaySection);
+        overlaySection.find('.deemphasize')
+                .append('<i id="move_overlayer_up" class="fa fa-chevron-up"></i>')
+                .append('<i id="move_overlayer_down" class="fa fa-chevron-down"></i>')
+                .append('<i id="save_overlayers_index" class="fa fa-save"></i>')
+                .append('<i id="save_overlayers_minus" class="fa fa-minus"></i>')
+                .append('<i id="save_overlayers_plus" class="fa fa-plus"></i>')
+                .append('<i id="overlayers_unselectall" class="fa fa-times"></i>')
+                .append('<i id="overlayers_selectall" class="fa fa-check"></i>')
+                .css('border-bottom', '1px grey dotted');
+
+
+
         var list = $('<ul>')
                 .appendTo(overlaySection);
         function addOverlay(layer, activeLayerSelect, maxArea) {
@@ -153,7 +158,7 @@ L.MAP2U.layers = function(options) {
                 activeLayerSelect.append("<option value='" + layer.layer_id + "'>" + label_name + "</option>");
             }
 
-            input.on('change', function() {
+            input.on('change', function () {
                 checked = input.is(':checked');
                 if (checked) {
                     if (!layer.layer)
@@ -199,7 +204,7 @@ L.MAP2U.layers = function(options) {
                         .prop('checked', checked)
                         .appendTo(showlabel);
                 showlabel.append("Labels");
-                showlabel_input.on('change', function() {
+                showlabel_input.on('change', function () {
                     checked = showlabel_input.is(':checked');
                     if (layer.layer)
                     {
@@ -207,13 +212,13 @@ L.MAP2U.layers = function(options) {
                         if (checked) {
                             var kename = '';
                             var field_kename = [];
-                            var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function() {
+                            var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function () {
                                 return  this.text;
                             });
                             // only current map is the same with shapefile list selected file name
                             if (shapefilename === '' || shapefilename[0] === undefined || layer.layer.options.name === shapefilename[0].toLowerCase())
                             {
-                                field_kename = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function() {
+                                field_kename = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function () {
                                     return  this.text;
                                 });
                             }
@@ -261,7 +266,7 @@ L.MAP2U.layers = function(options) {
 //          input.prop('checked', map.hasLayer(layer));
 //        });
 
-            map.on('zoomend', function() {
+            map.on('zoomend', function () {
                 // alert(map.getBounds().toBBoxString());
                 // alert(maxArea);
 
@@ -281,16 +286,15 @@ L.MAP2U.layers = function(options) {
                         I18n.t('javascripts.site.map_' + layer.name + '_zoom_in_tooltip') : '');
             });
         }
-        map.dataLayers.forEach(function(layer) {
+        map.dataLayers.forEach(function (layer) {
             addOverlay(layer, activeLayerSelect, OSM.MAX_NOTE_REQUEST_AREA);
         });
 //      addOverlay(map.noteLayer, 'notes', OSM.MAX_NOTE_REQUEST_AREA);
 //      addOverlay(map.dataLayer, 'data', OSM.MAX_REQUEST_AREA);
         //    }
 
-
         options.sidebar.addPane($ui);
-        jQuery(window).resize(function() {
+        jQuery(window).resize(function () {
             barContent.height($('.leaflet-sidebar.right').height() - 70);
         });
         function toggle(e) {
@@ -301,68 +305,91 @@ L.MAP2U.layers = function(options) {
         }
         return $container[0];
     };
-    control.setActiveLayer = function(layers, id) {
-        layers.forEach(function(layer, i) {
-            if (layers[i].index_id !== undefined) {
-                // if the layer is user draw layer
-                if (parseInt(layers[i].index_id) === -1) {
-                    if (parseInt(id) === -1) {
-                        if (layers[i].layer)
-                            // $(layers[i].layer).attr('style', 'z-index:301');
-                            $(".leaflet-map-pane .leaflet-objects-pane .leaflet-overlay-pane svg.leaflet-zoom-animated").css('z-index', 301);
-                    } else {
-                        if (layers[i].layer)
-                            $(".leaflet-map-pane .leaflet-objects-pane .leaflet-overlay-pane svg.leaflet-zoom-animated").css('z-index', 299);
+    control.reorderLayers = function () {
+        var layers = this._map.dataLayers;
+        var activelayer = $("div.sidebar_content div.section.overlay-layers ul > li.selected");
+        $("div.sidebar_content div.section.overlay-layers ul > li").map(function (i) {
+
+            if (layers[$(this).data('index')].index_id !== undefined) {
+                if (activelayer.data("index") !== undefined && parseInt(activelayer.data("index")) === parseInt($(this).data('index'))) {
+
+                    if (parseInt(layers[$(this).data('index')].index_id) === -1) {
+                        if (layers[$(this).data('index')].layer) {
+                            $(".leaflet-map-pane .leaflet-objects-pane .leaflet-overlay-pane svg.leaflet-zoom-animated").css('z-index', 901);
+                        }
                     }
-                }
-                else {
-
-                    // if select layer id not empty
-                    if (layer.layer !== null && layer.layer !== undefined) {
-                        if (parseInt(layers[i].index_id) === parseInt(id)) {
-
-                            if ((layers[i].layer instanceof  L.MarkerClusterGroup) === true)
-                            {
-                                //  alert(map.dataLayers[i].layer._el);
-                                var clusterlayers = layers[i].layer._featureGroup._layers;
-                                var keys = Object.keys(clusterlayers).map(function(k) {
+                    else {
+                        if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true)
+                        {
+                            //  alert(map.dataLayers[i].layer._el);
+                            var clusterlayers = layers[$(this).data('index')].layer._featureGroup._layers;
+                            var keys = Object.keys(clusterlayers).map(function (k) {
+                                return  k;
+                            });
+                            if (clusterlayers[keys[0]] && clusterlayers[keys[0]]._container)
+                                $(clusterlayers[keys[0]]._container).parent().css("z-index", 901);
+                        }
+                        else {
+                            if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true) {
+                                var clusterlayers = layers[$(this).data('index')].layer._featureGroup._layers;
+                                var keys = Object.keys(clusterlayers).map(function (k) {
                                     return  k;
                                 });
                                 if (clusterlayers[keys[0]] && clusterlayers[keys[0]]._container)
-                                    $(clusterlayers[keys[0]]._container).parent().css("z-index", "301");
+                                    $(clusterlayers[keys[0]]._container).parent().css("z-index", 901);
                             }
                             else {
-                                if (layers[i].layer._container) {
-                                    $(layers[i].layer._container).css("z-index", "301");
+                                if (layers[$(this).data('index')].layer && layers[$(this).data('index')].layer._container) {
+                                    $(layers[$(this).data('index')].layer._container).css("z-index", 901);
                                 }
                             }
                         }
+                    }
+                }
+                else {
+                    // if the layer is user draw layer
+                    if (parseInt(layers[$(this).data('index')].index_id) === -1) {
+                        if (layers[$(this).data('index')].layer) {
+                            $(".leaflet-map-pane .leaflet-objects-pane .leaflet-overlay-pane svg.leaflet-zoom-animated").css('z-index', 300 - i);
+                        }
+                    }
+                    else {
+                        if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true)
+                        {
+                            //  alert(map.dataLayers[i].layer._el);
+                            var clusterlayers = layers[$(this).data('index')].layer._featureGroup._layers;
+                            var keys = Object.keys(clusterlayers).map(function (k) {
+                                return  k;
+                            });
+                            if (clusterlayers[keys[0]] && clusterlayers[keys[0]]._container)
+                                $(clusterlayers[keys[0]]._container).parent().css("z-index", 300 - i);
+                        }
                         else {
-                            if ((layers[i].layer instanceof  L.MarkerClusterGroup) === true) {
-                                var clusterlayers = layers[i].layer._featureGroup._layers;
-                                var keys = Object.keys(clusterlayers).map(function(k) {
+                            if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true) {
+                                var clusterlayers = layers[$(this).data('index')].layer._featureGroup._layers;
+                                var keys = Object.keys(clusterlayers).map(function (k) {
                                     return  k;
                                 });
                                 if (clusterlayers[keys[0]] && clusterlayers[keys[0]]._container)
-                                    $(clusterlayers[keys[0]]._container).parent().css("z-index", layers[i].index_id);
+                                    $(clusterlayers[keys[0]]._container).parent().css("z-index", 300 - i);
                             }
                             else {
-                                if (layers[i].layer._container) {
-                                    $(layers[i].layer._container).css("z-index", 300 - layers[i].index_id);
+                                if (layers[$(this).data('index')].layer && layers[$(this).data('index')].layer._container) {
+                                    $(layers[$(this).data('index')].layer._container).css("z-index", 300 - i);
                                 }
                             }
-
                         }
                     }
                 }
             }
         });
     };
-    control.renderThematicmap = function(opt) {
+
+    control.renderThematicmap = function (opt) {
         var _this = this;
         var maploaded = false;
         var thematicmap_layer;
-        _this._map.dataLayers.forEach(function(layer) {
+        _this._map.dataLayers.forEach(function (layer) {
             if ((layer.layerType === 'uploadfilelayer' || layer.layerType === 'uploadfile') && layer.datasource === opt.datasource && layer.filename === opt.filename) {
                 maploaded = true;
                 thematicmap_layer = layer;
@@ -381,7 +408,7 @@ L.MAP2U.layers = function(options) {
         }
 
     };
-    control.renderThematicMapLayer = function(thematicmap_layer, opt) {
+    control.renderThematicMapLayer = function (thematicmap_layer, opt) {
         if (thematicmap_layer && thematicmap_layer.layer) {
             thematicmap_layer.layer.options.thematicmap = true;
             thematicmap_layer.layer.options.thematicmap_rule = opt;
@@ -389,7 +416,7 @@ L.MAP2U.layers = function(options) {
         }
     };
     // load layer data from server aand create layers based on layer type;
-    control.loadLayer = function(layer, opt) {
+    control.loadLayer = function (layer, opt) {
 
         var result;
         var _this = this;
@@ -406,18 +433,18 @@ L.MAP2U.layers = function(options) {
         $.ajax({
             url: Routing.generate('leaflet_maplayer'),
             type: 'GET',
-            beforeSend: function() {
+            beforeSend: function () {
 
                 _this._map.spin(true);
             },
-            complete: function() {
+            complete: function () {
                 _this._map.spin(false);
             },
-            error: function() {
+            error: function () {
                 _this._map.spin(false);
             },
             //Ajax events
-            success: completeHandler = function(response) {
+            success: completeHandler = function (response) {
                 result = response;
                 if (response === '' || response === undefined || response === null)
                     return;
@@ -449,7 +476,7 @@ L.MAP2U.layers = function(options) {
 
         return;
     };
-    control.addUploadfile = function(getlayerdata_url, uploadfile_id, opt) {
+    control.addUploadfile = function (getlayerdata_url, uploadfile_id, opt) {
 
         var _this = this;
 //        if (options.spinner !== undefined && options.spinner !== null && options.spinner_target !== undefined && options.spinner_target !== null) {
@@ -461,18 +488,18 @@ L.MAP2U.layers = function(options) {
         $.ajax({
             url: getlayerdata_url,
             type: 'GET',
-            beforeSend: function() {
+            beforeSend: function () {
 
                 _this._map.spin(true);
             },
-            complete: function() {
+            complete: function () {
                 _this._map.spin(false);
             },
-            error: function() {
+            error: function () {
                 _this._map.spin(false);
             },
             //Ajax events
-            success: completeHandler = function(response) {
+            success: completeHandler = function (response) {
 
                 var result;
                 if (typeof response === 'object') {
@@ -483,14 +510,14 @@ L.MAP2U.layers = function(options) {
 
                 if (result.success === true) {
                     var layers = options.layers;
-                    layers.forEach(function(layer) {
+                    layers.forEach(function (layer) {
                         // if this file already exist, delete it first
                         if (layer.filename === result.uploadfile.filename) {
 
                         }
                     });
                     var fileExist = false;
-                    _this._map.dataLayers.forEach(function(layer) {
+                    _this._map.dataLayers.forEach(function (layer) {
                         if (layer.filename === result.uploadfile.filename) {
                             fileExist = true;
                             maplayer = layer;
@@ -524,7 +551,7 @@ L.MAP2U.layers = function(options) {
                             $("select#activelayer_id.layers-ui").append("<option value='" + maplayer.layer_id + "'>" + legend_label + "</option>");
                         }
 
-                        input.on('change', function() {
+                        input.on('change', function () {
                             checked = input.is(':checked');
                             if (checked) {
                                 if (!maplayer.layer)
@@ -569,7 +596,7 @@ L.MAP2U.layers = function(options) {
                                     .prop('checked', checked)
                                     .appendTo(showlabel);
                             showlabel.append("Labels");
-                            showlabel_input.on('change', function() {
+                            showlabel_input.on('change', function () {
                                 checked = showlabel_input.is(':checked');
                                 if (maplayer.layer)
                                 {
@@ -577,13 +604,13 @@ L.MAP2U.layers = function(options) {
                                     if (checked) {
                                         var kename = '';
                                         var field_kename = [];
-                                        var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function() {
+                                        var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function () {
                                             return  this.text;
                                         });
                                         // only current map is the same with shapefile list selected file name
                                         if (shapefilename === '' || shapefilename[0] === undefined || maplayer.layer.options.name === shapefilename[0].toLowerCase())
                                         {
-                                            field_kename = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function() {
+                                            field_kename = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function () {
                                                 return  this.text;
                                             });
                                         }
@@ -630,7 +657,7 @@ L.MAP2U.layers = function(options) {
                     //   processData: false
         });
     };
-    control.renderWMSLayer = function(layer) {
+    control.renderWMSLayer = function (layer) {
         if ((layer.layer === undefined || layer.layer === null) && layer.hostName !== undefined && layer.name !== undefined)
         {
             layer.layer = new L.TileLayer.WMS("http://" + layer.hostName,
@@ -643,7 +670,7 @@ L.MAP2U.layers = function(options) {
             layer.map.addLayer(layer.layer);
         }
     };
-    control.renderWFSLayer = function(layer) {
+    control.renderWFSLayer = function (layer) {
         var _this = this;
         if (layer.layer === undefined || layer.layer === null) {
 
@@ -651,20 +678,20 @@ L.MAP2U.layers = function(options) {
             $.ajax({
                 url: Routing.generate('default_geoserver_wfs'),
                 type: 'POST',
-                beforeSend: function() {
+                beforeSend: function () {
 
                     _this._map.spin(true);
                 },
-                complete: function() {
+                complete: function () {
                     _this._map.spin(false);
                 },
-                error: function() {
+                error: function () {
                     _this._map.spin(false);
                 },
                 data: {
                     address: geoJsonUrl
                 },
-                success: function(response) {
+                success: function (response) {
 
                     if (typeof response !== 'object')
                         response = JSON.parse(response);
@@ -691,7 +718,7 @@ L.MAP2U.layers = function(options) {
 
         return;
     };
-    control.RenderGeojsonLayer = function(result, layer, opt) {
+    control.RenderGeojsonLayer = function (result, layer, opt) {
         var _this = this;
         var sld;
         if (typeof result.sld === 'object') {
@@ -740,14 +767,14 @@ L.MAP2U.layers = function(options) {
             }
         }
     };
-    control.renderUserdrawLayer = function(data, layer) {
+    control.renderUserdrawLayer = function (data, layer) {
         var _this = this;
         if (data === null || data === undefined)
             return;
 
         _this._map.drawnItems.clearLayers();
         layer.layer = undefined;
-        $.each(data, function(i) {
+        $.each(data, function (i) {
             var feature;
             if (data[i] !== null && data[i].feature !== null) {
                 var coordinates;
@@ -798,7 +825,7 @@ L.MAP2U.layers = function(options) {
                 feature.index = _this._map.drawnItems.getLayers().length;
                 feature.type = data[i].geom_type;
                 feature.layer_id = -1;
-                feature.on('click', function(e) {
+                feature.on('click', function (e) {
 
                     var selectedfeature = e.target;
                     if (_this._map.drawControl._toolbars.edit._activeMode === null) {
@@ -831,7 +858,7 @@ L.MAP2U.layers = function(options) {
                                     'opacity': 0.6
                                 });
                             selectedfeature.selected = false;
-                            $("#geometries_selected option[value='" + selectedfeature.id + "']").each(function() {
+                            $("#geometries_selected option[value='" + selectedfeature.id + "']").each(function () {
                                 $(this).remove();
                             });
                         }
@@ -839,20 +866,20 @@ L.MAP2U.layers = function(options) {
                         $.ajax({
                             url: Routing.generate('draw_content'),
                             method: 'GET',
-                            beforeSend: function() {
+                            beforeSend: function () {
 
                                 _this._map.spin(true);
                             },
-                            complete: function() {
+                            complete: function () {
                                 _this._map.spin(false);
                             },
-                            error: function() {
+                            error: function () {
                                 _this._map.spin(false);
                             },
                             data: {
                                 id: e.target.id
                             },
-                            success: function(response) {
+                            success: function (response) {
 
                                 $('#sidebar-left #sidebar_content').html('');
                                 $('#sidebar-left #sidebar_content').html(response);
@@ -872,14 +899,14 @@ L.MAP2U.layers = function(options) {
                         $.ajax({
                             url: Routing.generate('draw_' + e.target.type),
                             method: 'GET',
-                            beforeSend: function() {
+                            beforeSend: function () {
 
                                 _this._map.spin(true);
                             },
-                            complete: function() {
+                            complete: function () {
                                 _this._map.spin(false);
                             },
-                            error: function() {
+                            error: function () {
                                 _this._map.spin(false);
                             },
                             data: {
@@ -888,7 +915,7 @@ L.MAP2U.layers = function(options) {
                                 radius: radius,
                                 index: e.target.index
                             },
-                            success: function(response) {
+                            success: function (response) {
                                 if ($('body.sonata-bc #ajax-dialog').length === 0) {
                                     $('<div class="modal fade" id="ajax-dialog" role="dialog"></div>').appendTo('body');
                                 } else {
@@ -912,7 +939,7 @@ L.MAP2U.layers = function(options) {
         return;
 
     };
-    control.RenderTopojsonLayer = function(result, layer, opt) {
+    control.RenderTopojsonLayer = function (result, layer, opt) {
         var _this = this;
         var sld;
         if (typeof result.sld === 'object') {
@@ -925,10 +952,10 @@ L.MAP2U.layers = function(options) {
         }
         var json_data = JSON.parse(result.geomdata['geom']); //JSON.parse(result.data[keys[k]]);
         //           var json_data = JSON.parse(result.data);
-        var key = Object.keys(json_data.objects).map(function(k) {
+        var key = Object.keys(json_data.objects).map(function (k) {
             return  k;
         });
-        var properties_key = Object.keys(json_data.objects[key].geometries[0].properties).map(function(k) {
+        var properties_key = Object.keys(json_data.objects[key].geometries[0].properties).map(function (k) {
             return  k;
         });
         var collection = topojson.feature(json_data, json_data.objects[key]);
@@ -938,7 +965,7 @@ L.MAP2U.layers = function(options) {
             return;
         }
 
-        d3.selectAll("#svg-leaflet-d3").each(function() {
+        d3.selectAll("#svg-leaflet-d3").each(function () {
             var elt = d3.select(this);
             if (elt.attr("filename").toString().toLowerCase() === result.layer['fileName'].toString().toLowerCase() && elt.attr("layertype").toString().toLowerCase() === layer.layerType)
                 elt.remove();
@@ -977,7 +1004,7 @@ L.MAP2U.layers = function(options) {
             label_field: result.layer['label_field'],
             featureAttributes: {
                 'layer_id': result.layer['id'],
-                'class': function(feature) {
+                'class': function (feature) {
                     return 'default_fcls';
                 }
             }
@@ -985,11 +1012,11 @@ L.MAP2U.layers = function(options) {
         geojson_shapefile.addTo(_this._map);
         geojson_shapefile.onLoadSLD(sld);
         layer.layer = geojson_shapefile;
-        geojson_shapefile.on('click', function(e) {
+        geojson_shapefile.on('click', function (e) {
             //   if (parseInt(e.target.options.layer_id) === parseInt($("select#activelayer_id.layers-ui").val())) {
 
             var mouse = d3.mouse(e.element);
-            var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function() {
+            var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function () {
                 return  this.text;
             });
             if (shapefilename !== null && shapefilename !== '' && shapefilename[0] !== undefined && geojson_shapefile.options.filename === shapefilename[0].toLowerCase())
@@ -998,7 +1025,7 @@ L.MAP2U.layers = function(options) {
                 if ($('#geometries_selected').length > 0)
                 {
                     var bExist = false;
-                    $("#geometries_selected > option").each(function() {
+                    $("#geometries_selected > option").each(function () {
 
                         if (parseInt(this.value) === parseInt(e.data.properties[properties_key[0]])) {
                             bExist = true;
@@ -1006,7 +1033,7 @@ L.MAP2U.layers = function(options) {
                     });
                     if (bExist === false)
                     {
-                        var fieldkey = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function() {
+                        var fieldkey = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function () {
                             return  this.text;
                         });
                         var p;
@@ -1039,16 +1066,16 @@ L.MAP2U.layers = function(options) {
             $('#sidebar-left #sidebar_content').html('');
             $('#sidebar-left #sidebar_content').html(html);
         });
-        geojson_shapefile.on("mouseover", function(e) {
+        geojson_shapefile.on("mouseover", function (e) {
             e.element.fill = $(e.element).css('fill');
             d3.select(e.element).style({'fill': 'red', 'fill-opacity': '0.8'});
             d3.select(e.element).style('cursor', 'pointer');
         });
-        geojson_shapefile.on('mousemove', function(e) {
+        geojson_shapefile.on('mousemove', function (e) {
 
             //    if (parseInt(e.target.options.layer_id) === parseInt($("select#activelayer_id.layers-ui").val())) {
 
-            var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function() {
+            var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function () {
                 return  this.text;
             });
             if (shapefilename === '' || shapefilename[0] === undefined || geojson_shapefile.options.filename === shapefilename[0].toLowerCase())
@@ -1056,7 +1083,7 @@ L.MAP2U.layers = function(options) {
                 var p;
                 var fieldkey = '';
                 var mouse = L.DomEvent.getMousePosition(e.originalEvent, _this._map._container);
-                fieldkey = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function() {
+                fieldkey = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function () {
                     return  this.text;
                 });
                 if (e.target.options.tip_field !== undefined && e.target.options.tip_field !== '' && e.target.options.tip_field !== null) {
@@ -1074,7 +1101,7 @@ L.MAP2U.layers = function(options) {
             }
             // }
         });
-        geojson_shapefile.on('mouseout', function(e) {
+        geojson_shapefile.on('mouseout', function (e) {
             options.map_tooltip.classed("hidden", true);
             d3.select(e.element).style({'fill': e.element.fill});
             d3.select(e.element).style('cursor', 'default');
@@ -1089,7 +1116,7 @@ L.MAP2U.layers = function(options) {
             }
         }
     };
-    control.loadTopoJSONLayer = function(layer) {
+    control.loadTopoJSONLayer = function (layer) {
         var _this = this;
         if (layer.type === 'topojsonfile' || layer.type === 'shapefile_topojson' || layer.type === 'topojson' || layer.type === 'geojson') {
             var url;
@@ -1133,7 +1160,7 @@ L.MAP2U.layers = function(options) {
                             data: {
                                 address: geoJsonUrl
                             },
-                            success: function(response) {
+                            success: function (response) {
 
                                 if (typeof response !== 'object')
                                     response = JSON.parse(response);
@@ -1255,7 +1282,7 @@ L.MAP2U.layers = function(options) {
 //                                });
                                 }
                                 else {
-                                    var properties_key = Object.keys(response.data.features[0].properties).map(function(k) {
+                                    var properties_key = Object.keys(response.data.features[0].properties).map(function (k) {
                                         return  k;
                                     });
                                     var rmax = 30;
@@ -1275,7 +1302,7 @@ L.MAP2U.layers = function(options) {
                                             opacity: 1,
                                             fillOpacity: 0.4
                                         },
-                                        pointToLayer: function(feature, latlng) {
+                                        pointToLayer: function (feature, latlng) {
                                             return new L.CircleMarker(latlng, {
                                                 radius: 5,
                                                 fillColor: "#A3C990",
@@ -1285,9 +1312,9 @@ L.MAP2U.layers = function(options) {
                                                 fillOpacity: 0.4
                                             });
                                         },
-                                        onEachFeature: function(feature, layer) {
-                                            (function(layer, properties) {
-                                                layer.on('mouseover', function(e) {
+                                        onEachFeature: function (feature, layer) {
+                                            (function (layer, properties) {
+                                                layer.on('mouseover', function (e) {
                                                     var layer = e.target;
                                                     layer.setStyle({
                                                         weight: 2,
@@ -1303,7 +1330,7 @@ L.MAP2U.layers = function(options) {
 //                                                $(e.target).css('fill-opacity', '0.8');
                                                     $(this).css('cursor', 'pointer');
                                                 });
-                                                layer.on('mouseout', function(e) {
+                                                layer.on('mouseout', function (e) {
 
 
                                                     geoJsonLayer.resetStyle(e.target);
@@ -1312,9 +1339,9 @@ L.MAP2U.layers = function(options) {
                                                     //      $(this).css('fill-opacity', $(this).fill_opacity);
                                                     $(this).css('cursor', 'default');
                                                 });
-                                                layer.on('mousemove', function(e) {                         //    if (parseInt(e.target.options.layer_id) === parseInt($("select#activelayer_id.layers-ui").val())) {
+                                                layer.on('mousemove', function (e) {                         //    if (parseInt(e.target.options.layer_id) === parseInt($("select#activelayer_id.layers-ui").val())) {
 
-                                                    var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function() {
+                                                    var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function () {
                                                         return  this.text;
                                                     });
                                                     if (shapefilename === '' || shapefilename[0] === undefined)
@@ -1322,7 +1349,7 @@ L.MAP2U.layers = function(options) {
                                                         var p;
                                                         var fieldkey = '';
                                                         var mouse = L.DomEvent.getMousePosition(e.originalEvent, _this._map._container);
-                                                        fieldkey = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function() {
+                                                        fieldkey = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function () {
                                                             return  this.text;
                                                         });
                                                         if (e.target.options.tip_field !== undefined && e.target.options.tip_field !== '' && e.target.options.tip_field !== null) {
@@ -1341,7 +1368,7 @@ L.MAP2U.layers = function(options) {
                                                     }
 
                                                 });
-                                                layer.on('click', function(e) {
+                                                layer.on('click', function (e) {
                                                     var html = '';
                                                     for (var key in properties) {
                                                         if (properties.hasOwnProperty(key)) {
@@ -1389,19 +1416,19 @@ L.MAP2U.layers = function(options) {
             $.ajax({
                 url: url,
                 type: 'GET',
-                beforeSend: function() {
+                beforeSend: function () {
 
                     _this._map.spin(true);
                 },
-                complete: function() {
+                complete: function () {
                     _this._map.spin(false);
                 },
-                error: function() {
+                error: function () {
                     _this._map.spin(false);
                 },
                 data: {id: layer.layer_id, type: layer.type},
                 //Ajax events
-                success: function(response) {
+                success: function (response) {
                     var result;
                     if (typeof response === 'object') {
                         result = response;
@@ -1418,7 +1445,7 @@ L.MAP2U.layers = function(options) {
                             data = JSON.parse(result.data);
                         }
                         _this._map.drawnItems.clearLayers();
-                        $.each(data, function(i) {
+                        $.each(data, function (i) {
                             var feature;
                             if (data[i] !== null && data[i].feature !== null) {
                                 var coordinates;
@@ -1469,7 +1496,7 @@ L.MAP2U.layers = function(options) {
                                 feature.index = _this._map.drawnItems.getLayers().length;
                                 feature.type = data[i].geom_type;
                                 feature.layer_id = -1;
-                                feature.on('click', function(e) {
+                                feature.on('click', function (e) {
 
 
 
@@ -1567,7 +1594,7 @@ L.MAP2U.layers = function(options) {
                                                     'opacity': 0.6
                                                 });
                                             feature.selected = false;
-                                            $("#geometries_selected option[value='" + feature.id + "']").each(function() {
+                                            $("#geometries_selected option[value='" + feature.id + "']").each(function () {
                                                 $(this).remove();
                                             });
                                         }
@@ -1578,7 +1605,7 @@ L.MAP2U.layers = function(options) {
                                             data: {
                                                 id: e.target.id
                                             },
-                                            success: function(response) {
+                                            success: function (response) {
 
                                                 $('div.sidebar_feature_content').html('');
                                                 $('div.sidebar_feature_content').html(response);
@@ -1601,7 +1628,7 @@ L.MAP2U.layers = function(options) {
                                                 radius: radius,
                                                 index: e.target.index
                                             },
-                                            success: function(response) {
+                                            success: function (response) {
                                                 if ($('body.sonata-bc #ajax-dialog').length === 0) {
                                                     $('<div class="modal fade" id="ajax-dialog" role="dialog"></div>').appendTo('body');
                                                 } else {
@@ -1638,21 +1665,21 @@ L.MAP2U.layers = function(options) {
 
 
 
-                        d3.selectAll("#svg-leaflet-d3").each(function() {
+                        d3.selectAll("#svg-leaflet-d3").each(function () {
                             var elt = d3.select(this);
                             if (elt.attr("filename").toString().toLowerCase() === result.filename.toString().toLowerCase() && elt.attr("layerType").toString().toLowerCase() === layer.layerType)
                                 elt.remove();
                         });
-                        var keys = Object.keys(result.data, function(k) {
+                        var keys = Object.keys(result.data, function (k) {
                             return k;
                         });
                         for (var k = 0; k < keys.length; k++) {
                             var json_data = JSON.parse(result.data[keys[k]].geom); //JSON.parse(result.data[keys[k]]);
                             //           var json_data = JSON.parse(result.data);
-                            var key = Object.keys(json_data.objects).map(function(k) {
+                            var key = Object.keys(json_data.objects).map(function (k) {
                                 return  k;
                             });
-                            var properties_key = Object.keys(json_data.objects[key].geometries[0].properties).map(function(k) {
+                            var properties_key = Object.keys(json_data.objects[key].geometries[0].properties).map(function (k) {
                                 return  k;
                             });
                             var collection = topojson.feature(json_data, json_data.objects[key]);
@@ -1684,7 +1711,7 @@ L.MAP2U.layers = function(options) {
                                 label_field: result.layers[keys[k]]['label_field'],
                                 featureAttributes: {
                                     'layer_id': result.layers[keys[k]]['id'],
-                                    'class': function(feature) {
+                                    'class': function (feature) {
                                         return 'default_fcls';
                                     }
                                 }
@@ -1692,11 +1719,11 @@ L.MAP2U.layers = function(options) {
                             geojson_shapefile.addTo(_this._map);
                             geojson_shapefile.onLoadSLD(sld);
                             layer.layer = geojson_shapefile;
-                            geojson_shapefile.on('click', function(e) {
+                            geojson_shapefile.on('click', function (e) {
                                 //   if (parseInt(e.target.options.layer_id) === parseInt($("select#activelayer_id.layers-ui").val())) {
 
                                 var mouse = d3.mouse(e.element);
-                                var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function() {
+                                var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function () {
                                     return  this.text;
                                 });
                                 if (shapefilename !== null && shapefilename !== '' && shapefilename[0] !== undefined && geojson_shapefile.options.filename === shapefilename[0].toLowerCase())
@@ -1705,7 +1732,7 @@ L.MAP2U.layers = function(options) {
                                     if ($('#geometries_selected').length > 0)
                                     {
                                         var bExist = false;
-                                        $("#geometries_selected > option").each(function() {
+                                        $("#geometries_selected > option").each(function () {
 
                                             if (parseInt(this.value) === parseInt(e.data.properties[properties_key[0]])) {
                                                 bExist = true;
@@ -1713,7 +1740,7 @@ L.MAP2U.layers = function(options) {
                                         });
                                         if (bExist === false)
                                         {
-                                            var fieldkey = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function() {
+                                            var fieldkey = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function () {
                                                 return  this.text;
                                             });
                                             var p;
@@ -1746,16 +1773,16 @@ L.MAP2U.layers = function(options) {
                                 $('div.sidebar_feature_content').html('');
                                 $('div.sidebar_feature_content').html(html);
                             });
-                            geojson_shapefile.on("mouseover", function(e) {
+                            geojson_shapefile.on("mouseover", function (e) {
                                 e.element.fill = $(e.element).css('fill');
                                 d3.select(e.element).style({'fill': 'red', 'fill-opacity': '0.8'});
                                 d3.select(e.element).style('cursor', 'pointer');
                             });
-                            geojson_shapefile.on('mousemove', function(e) {
+                            geojson_shapefile.on('mousemove', function (e) {
 
                                 //    if (parseInt(e.target.options.layer_id) === parseInt($("select#activelayer_id.layers-ui").val())) {
 
-                                var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function() {
+                                var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function () {
                                     return  this.text;
                                 });
                                 if (shapefilename === '' || shapefilename[0] === undefined || geojson_shapefile.options.filename === shapefilename[0].toLowerCase())
@@ -1763,7 +1790,7 @@ L.MAP2U.layers = function(options) {
                                     var p;
                                     var fieldkey = '';
                                     var mouse = L.DomEvent.getMousePosition(e.originalEvent, _this._map._container);
-                                    fieldkey = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function() {
+                                    fieldkey = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function () {
                                         return  this.text;
                                     });
                                     if (e.target.options.tip_field !== undefined && e.target.options.tip_field !== '' && e.target.options.tip_field !== null) {
@@ -1781,7 +1808,7 @@ L.MAP2U.layers = function(options) {
                                 }
                                 // }
                             });
-                            geojson_shapefile.on('mouseout', function(e) {
+                            geojson_shapefile.on('mouseout', function (e) {
                                 options.map_tooltip.classed("hidden", true);
                                 d3.select(e.element).style({'fill': e.element.fill});
                                 d3.select(e.element).style('cursor', 'default');
@@ -1797,7 +1824,7 @@ L.MAP2U.layers = function(options) {
             });
         }
     };
-    control.createHeatMapLayer = function(opt) {
+    control.createHeatMapLayer = function (opt) {
 
         var testData;
         if (opt && opt.data)
@@ -1865,7 +1892,7 @@ L.MAP2U.layers = function(options) {
             //   (there will always be a red spot with useLocalExtremas true)
             "useLocalExtrema": useLocalExtrema,
             // update the legend whenever there's an extrema change
-            onExtremaChange: function(data) {
+            onExtremaChange: function (data) {
                 // control.updateLegend(data);
 
                 // the onExtremaChange callback gives us min, max, and the gradientConfig
@@ -1900,7 +1927,7 @@ L.MAP2U.layers = function(options) {
         heatmapLayer.setData(testData);
         control.heatmap_layer = heatmapLayer;
         var _this = this;
-        this._map.on("resize", function() {
+        this._map.on("resize", function () {
             var size = _this._map.getSize();
             heatmapLayer._width = size.x;
             heatmapLayer._height = size.y;
@@ -1913,20 +1940,20 @@ L.MAP2U.layers = function(options) {
             heatmapLayer._draw();
         });
     };
-    control.renderD3Layer = function(layer, collection, sld, opt) {
+    control.renderD3Layer = function (layer, collection, sld, opt) {
         var _this = this;
         var d3_layer = new L.D3(collection, opt);
-        var properties_key = Object.keys(collection.features[0].properties).map(function(k) {
+        var properties_key = Object.keys(collection.features[0].properties).map(function (k) {
             return  k;
         });
         d3_layer.addTo(_this._map);
         d3_layer.onLoadSLD(sld);
         layer.layer = d3_layer;
-        d3_layer.on('click', function(e) {
+        d3_layer.on('click', function (e) {
             //   if (parseInt(e.target.options.layer_id) === parseInt($("select#activelayer_id.layers-ui").val())) {
 
             var mouse = d3.mouse(e.element);
-            var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function() {
+            var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function () {
                 return  this.text;
             });
 
@@ -1938,7 +1965,7 @@ L.MAP2U.layers = function(options) {
                     if ($('#geometries_selected').length > 0)
                     {
                         var bExist = false;
-                        $("#geometries_selected > option").each(function() {
+                        $("#geometries_selected > option").each(function () {
 
                             if (parseInt(this.value) === parseInt(e.data.properties[properties_key[0]])) {
                                 bExist = true;
@@ -1946,7 +1973,7 @@ L.MAP2U.layers = function(options) {
                         });
                         if (bExist === false)
                         {
-                            var fieldkey = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function() {
+                            var fieldkey = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function () {
                                 return  this.text;
                             });
                             var p;
@@ -1967,8 +1994,8 @@ L.MAP2U.layers = function(options) {
                 return;
             }
 
-
-            shapefilename = $('.thematicmap_div select#thematicmap_datasource option:selected').map(function() {
+            // if current show thematic map pane
+            shapefilename = $('.thematicmap_div select#thematicmap_datasource option:selected').map(function () {
                 return  this.text;
             });
 
@@ -1976,7 +2003,8 @@ L.MAP2U.layers = function(options) {
 
                 return;
             }
-            shapefilename = $('.heatmap_div select#heatmap_datasource option:selected').map(function() {
+            // if current show heat map pane
+            shapefilename = $('.heatmap_div select#heatmap_datasource option:selected').map(function () {
                 return  this.text;
             });
             if (shapefilename.length > 0) {
@@ -1997,16 +2025,16 @@ L.MAP2U.layers = function(options) {
 
 
         });
-        d3_layer.on("mouseover", function(e) {
+        d3_layer.on("mouseover", function (e) {
             e.element.fill = $(e.element).css('fill');
             d3.select(e.element).style({'fill': 'red', 'fill-opacity': '0.8'});
             d3.select(e.element).style('cursor', 'pointer');
         });
-        d3_layer.on('mousemove', function(e) {
+        d3_layer.on('mousemove', function (e) {
 
             //    if (parseInt(e.target.options.layer_id) === parseInt($("select#activelayer_id.layers-ui").val())) {
 
-            var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function() {
+            var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function () {
                 return  this.text;
             });
             if (shapefilename === '' || shapefilename[0] === undefined || d3_layer.options.name === shapefilename[0].toLowerCase())
@@ -2014,7 +2042,7 @@ L.MAP2U.layers = function(options) {
                 var p;
                 var fieldkey = '';
                 var mouse = L.DomEvent.getMousePosition(e.originalEvent, _this._map._container);
-                fieldkey = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function() {
+                fieldkey = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function () {
                     return  this.text;
                 });
                 if (e.target.options.tip_field !== '') {
@@ -2032,7 +2060,7 @@ L.MAP2U.layers = function(options) {
             }
             // }
         });
-        d3_layer.on('mouseout', function(e) {
+        d3_layer.on('mouseout', function (e) {
             options.map_tooltip.classed("hidden", true);
             d3.select(e.element).style({'fill': e.element.fill});
             d3.select(e.element).style('cursor', 'default');
@@ -2046,13 +2074,14 @@ L.MAP2U.layers = function(options) {
             }
         }
     };
-    control.renderClusterLayer = function(layer, collection) {
+
+    control.renderClusterLayer = function (layer, collection) {
         var _this = this;
 
         //    _this._map.spin(true);
 
 //                 
-        var properties_key = Object.keys(collection.features[0].properties).map(function(k) {
+        var properties_key = Object.keys(collection.features[0].properties).map(function (k) {
             return  k;
         });
 
@@ -2073,7 +2102,7 @@ L.MAP2U.layers = function(options) {
                 opacity: 1,
                 fillOpacity: 0.4
             },
-            pointToLayer: function(feature, latlng) {
+            pointToLayer: function (feature, latlng) {
                 return new L.CircleMarker(latlng, {
                     radius: 5,
                     fillColor: "#A3C990",
@@ -2083,9 +2112,9 @@ L.MAP2U.layers = function(options) {
                     fillOpacity: 0.4
                 });
             },
-            onEachFeature: function(feature, layer) {
-                (function(layer, properties) {
-                    layer.on('mouseover', function(e) {
+            onEachFeature: function (feature, layer) {
+                (function (layer, properties) {
+                    layer.on('mouseover', function (e) {
                         var layer = e.target;
                         layer.setStyle({
                             weight: 2,
@@ -2101,7 +2130,7 @@ L.MAP2U.layers = function(options) {
 //                                                $(e.target).css('fill-opacity', '0.8');
                         $(this).css('cursor', 'pointer');
                     });
-                    layer.on('mouseout', function(e) {
+                    layer.on('mouseout', function (e) {
 
 
                         geoJsonLayer.resetStyle(e.target);
@@ -2110,9 +2139,9 @@ L.MAP2U.layers = function(options) {
                         //      $(this).css('fill-opacity', $(this).fill_opacity);
                         $(this).css('cursor', 'default');
                     });
-                    layer.on('mousemove', function(e) {                         //    if (parseInt(e.target.options.layer_id) === parseInt($("select#activelayer_id.layers-ui").val())) {
+                    layer.on('mousemove', function (e) {                         //    if (parseInt(e.target.options.layer_id) === parseInt($("select#activelayer_id.layers-ui").val())) {
 
-                        var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function() {
+                        var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function () {
                             return  this.text;
                         });
                         if (shapefilename === '' || shapefilename[0] === undefined)
@@ -2120,7 +2149,7 @@ L.MAP2U.layers = function(options) {
                             var p;
                             var fieldkey = '';
                             var mouse = L.DomEvent.getMousePosition(e.originalEvent, _this._map._container);
-                            fieldkey = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function() {
+                            fieldkey = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function () {
                                 return  this.text;
                             });
                             if (e.target.options.tip_field !== undefined && e.target.options.tip_field !== '' && e.target.options.tip_field !== null) {
@@ -2139,7 +2168,7 @@ L.MAP2U.layers = function(options) {
                         }
 
                     });
-                    layer.on('click', function(e) {
+                    layer.on('click', function (e) {
                         var html = '';
                         for (var key in properties) {
                             if (properties.hasOwnProperty(key)) {
@@ -2199,20 +2228,20 @@ L.MAP2U.layers = function(options) {
 
 
     };
-    control.defineClusterIcon = function(cluster) {
+    control.defineClusterIcon = function (cluster) {
         var children = cluster.getAllChildMarkers(),
                 n = children.length, //Get number of markers in cluster
                 strokeWidth = 1, //Set clusterpie stroke width
                 //  r = rmax - 2 * strokeWidth - (n < 10 ? 12 : n < 100 ? 8 : n < 1000 ? 4 : 0), //Calculate clusterpie radius...
                 iconDim = (20 + strokeWidth) * 2, //r + strokeWidth) * 2, //...and divIcon dimensions (leaflet really want to know the size)
                 data = d3.nest() //Build a dataset for the pie chart
-                .key(function(d) {
+                .key(function (d) {
                     return d.feature.properties[0];
                 })
                 .entries(children, d3.map),
                 //bake some svg markup
                 html = bakeThePie({data: data,
-                    valueFunc: function(d) {
+                    valueFunc: function (d) {
                         return d.values.length;
                     },
                     strokeWidth: 1,
@@ -2221,10 +2250,10 @@ L.MAP2U.layers = function(options) {
                     pieClass: 'cluster-pie',
                     pieLabel: n,
                     pieLabelClass: 'marker-cluster-pie-label',
-                    pathClassFunc: function(d) {
+                    pathClassFunc: function (d) {
                         return "category-" + d.data.key;
                     },
-                    pathTitleFunc: function(d) {
+                    pathTitleFunc: function (d) {
                         return 10; //metadata.fields[categoryField].lookup[d.data.key] + ' (' + d.data.values.length + ' accident' + (d.data.values.length != 1 ? 's' : '') + ')';
                     }
                 }),
@@ -2237,7 +2266,7 @@ L.MAP2U.layers = function(options) {
         return myIcon;
     };
     /*function that generates a svg markup for the pie chart*/
-    control.bakeThePie = function(options) {
+    control.bakeThePie = function (options) {
         /*data and valueFunc are required*/
         if (!options.data || !options.valueFunc) {
             return '';
@@ -2247,10 +2276,10 @@ L.MAP2U.layers = function(options) {
                 r = options.outerRadius ? options.outerRadius : 28, //Default outer radius = 28px
                 rInner = options.innerRadius ? options.innerRadius : r - 10, //Default inner radius = r-10
                 strokeWidth = options.strokeWidth ? options.strokeWidth : 1, //Default stroke is 1
-                pathClassFunc = options.pathClassFunc ? options.pathClassFunc : function() {
+                pathClassFunc = options.pathClassFunc ? options.pathClassFunc : function () {
                     return '';
                 }, //Class for each path
-                pathTitleFunc = options.pathTitleFunc ? options.pathTitleFunc : function() {
+                pathTitleFunc = options.pathTitleFunc ? options.pathTitleFunc : function () {
                     return '';
                 }, //Title for each path
                 pieClass = options.pieClass ? options.pieClass : 'marker-cluster-pie', //Class for the whole pie
@@ -2294,7 +2323,7 @@ L.MAP2U.layers = function(options) {
         return serializeXmlNode(svg);
     };
     /*Function for generating a legend with the same categories as in the clusterPie*/
-    control.renderLegend = function() {
+    control.renderLegend = function () {
         var data = d3.entries(metadata.fields[categoryField].lookup),
                 legenddiv = d3.select('body').append('div')
                 .attr('id', 'legend');
@@ -2306,16 +2335,16 @@ L.MAP2U.layers = function(options) {
         legenditems
                 .enter()
                 .append('div')
-                .attr('class', function(d) {
+                .attr('class', function (d) {
                     return 'category-' + d.key;
                 })
                 .classed({'legenditem': true})
-                .text(function(d) {
+                .text(function (d) {
                     return d.value;
                 });
     };
     /*Helper function*/
-    control.serializeXmlNode = function(xmlNode) {
+    control.serializeXmlNode = function (xmlNode) {
         if (typeof window.XMLSerializer !== "undefined") {
             return (new window.XMLSerializer()).serializeToString(xmlNode);
         } else if (typeof xmlNode.xml !== "undefined") {
@@ -2323,14 +2352,14 @@ L.MAP2U.layers = function(options) {
         }
         return "";
     };
-    control.refreshOverlays = function() {
+    control.refreshOverlays = function () {
 
 
         var _this = this;
         var overlay_layers_ul = $(".leaflet-control-container .section.overlay-layers > ul");
         overlay_layers_ul.html('');
         $("select#activelayer_id.layers-ui").empty();
-        _this._map.dataLayers.forEach(function(layer) {
+        _this._map.dataLayers.forEach(function (layer, i) {
 
 
 
@@ -2341,26 +2370,42 @@ L.MAP2U.layers = function(options) {
                         placement: 'top'
                     })
                     .appendTo(overlay_layers_ul);
-            var label = $('<label>')
-                    .appendTo(item);
+            item.data('index', i);
+            item.css('border-bottom', '1px grey dotted');
+            var label = $('<label>');
+            //           .appendTo(item);
             var checked = _this._map.hasLayer(layer.layer);
             var input = $('<input>')
                     .attr('type', 'checkbox')
                     .prop('checked', checked)
-                    .appendTo(label);
+                    .appendTo(item);
+            //     .appendTo(label);
             var legend_label = I18n.t('javascripts.map.layers.' + layer.name);
             if (legend_label.indexOf('missing ') === 1)
             {
-                label.append(layer.name);
-                $("select#activelayer_id.layers-ui").append("<option value='" + layer.index_id + "'>" + layer.name + "</option>");
+                if (layer.name.length > 25)
+                    //  $(layer.name.substr(0, 22) + "...").appendTo(item);
+                    label.append(layer.name.substr(0, 22) + "...");
+                else
+                    //  $(layer.name).appendTo(item);
+                    label.append(layer.name);
+
+                //   $("select#activelayer_id.layers-ui").append("<option value='" + layer.index_id + "'>" + layer.name + "</option>");
             }
             else
             {
-                label.append(legend_label);
-                $("select#activelayer_id.layers-ui").append("<option value='" + layer.index_id + "'>" + legend_label + "</option>");
+                if (legend_label.length > 25)
+                    //  $(legend_label.substr(0, 22) + "...").appendTo(item);
+                    label.append(legend_label.substr(0, 22) + "...");
+                else
+                    //   $(legend_label).appendTo(item);
+                    label.append(legend_label);
+                //   $("select#activelayer_id.layers-ui").append("<option value='" + layer.index_id + "'>" + legend_label + "</option>");
             }
+            label.appendTo(item);
+            label.css('display', 'inline-block');
 
-            input.on('change', function() {
+            input.on('change', function () {
                 checked = input.is(':checked');
                 if (checked) {
                     if (!layer.layer)
@@ -2399,12 +2444,19 @@ L.MAP2U.layers = function(options) {
                 if (layer.layer)
                     _this._map.fire('overlaylayerchange', {layer: layer.layer});
             });
+
+//            var layer_moveup = '<i class="move_layer_up fa fa-chevron-up"></i>';
+//            $(layer_moveup).appendTo(item);
+//            var layer_movedown = '<i class="move_layer_down fa fa-chevron-down"></i>';
+//            $(layer_movedown).appendTo(item);
+
             if (layer.type === 'shapefile_topojson')
             {
                 var ul = $('<ul>');
                 var li_showlabel = $('<li>');
+
                 ul.append(li_showlabel);
-                label.append("<br>");
+                //   label.append("<br>");
                 item.append(ul);
                 var showlabel = $('<label>')
                         .appendTo(li_showlabel);
@@ -2413,7 +2465,7 @@ L.MAP2U.layers = function(options) {
                         .prop('checked', checked)
                         .appendTo(showlabel);
                 showlabel.append("Labels");
-                showlabel_input.on('change', function() {
+                showlabel_input.on('change', function () {
                     checked = showlabel_input.is(':checked');
                     if (layer.layer)
                     {
@@ -2421,13 +2473,13 @@ L.MAP2U.layers = function(options) {
                         if (checked) {
                             var kename = '';
                             var field_kename = [];
-                            var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function() {
+                            var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function () {
                                 return  this.text;
                             });
                             // only current map is the same with shapefile list selected file name
                             if (shapefilename === '' || shapefilename[0] === undefined || layer.layer.options.name === shapefilename[0].toLowerCase())
                             {
-                                field_kename = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function() {
+                                field_kename = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function () {
                                     return  this.text;
                                 });
                             }
@@ -2453,7 +2505,7 @@ L.MAP2U.layers = function(options) {
                 $(input).prop('checked', true)
                         .trigger('change');
             }
-            _this._map.on('zoomend', function() {
+            _this._map.on('zoomend', function () {
                 // alert(map.getBounds().toBBoxString());
                 // alert(maxArea);
                 return;
@@ -2509,6 +2561,160 @@ L.MAP2U.layers = function(options) {
 //                        I18n.t('javascripts.site.map_' + layer.name + '_zoom_in_tooltip') : '');
             });
         });
+
+        $('div.sidebar_content div.section.overlay-layers i#move_overlayer_up').on('click', function () {
+            var selected = $('div.sidebar_content div.section.overlay-layers ul > li.selected');
+            if (selected.prev()) {
+                selected.insertBefore(selected.prev());
+                _this.reorderLayers();
+            }
+
+        });
+        $('div.sidebar_content div.section.overlay-layers i#move_overlayer_down').on('click', function () {
+            var selected = $('div.sidebar_content div.section.overlay-layers ul > li.selected');
+            if (selected.next()) {
+                selected.insertAfter(selected.next());
+                _this.reorderLayers();
+            }
+
+        });
+        // save current layers status to server
+        $('div.sidebar_content div.section.overlay-layers i#save_overlayers_plus').on('click', function () {
+            $.ajax({
+                url: Routing.generate('default_mapoverlayselectionform'),
+                type: 'GET',
+                beforeSend: function () {
+
+                    //      _this._map.spin(true);
+                },
+                complete: function () {
+                    //        _this._map.spin(false);
+                },
+                error: function () {
+                    //       _this._map.spin(false);
+                },
+                //Ajax events
+                success: completeHandler = function (response) {
+                    
+                 
+                    $("#sidebar-left #sidebar_content").html(response);
+                },
+                // Form data
+                data: {},
+                //Options to tell JQuery not to process data or worry about content-type
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+
+        });
+        $('div.sidebar_content div.section.overlay-layers i#save_overlayers_minus').on('click', function () {
+            var selected = $('div.sidebar_content div.section.overlay-layers ul > li.selected');
+            if (selected.data("index") !== undefined) {
+                if (confirm('Do you want to remove it from overlayers?')) {
+                    selected.remove();
+                    $('div.sidebar_content div.section.overlay-layers ul').hide().fadeIn('fast');
+                    ;
+                }
+            }
+        });
+        // save current layers status to server
+        $('div.sidebar_content div.section.overlay-layers i#overlayers_selectall').on('click', function () {
+            $('div.sidebar_content div.section.overlay-layers ul > li').map(function () {
+                $(this).find("input[type=checkbox]").prop('checked', true)
+                        .trigger('change');
+            });
+        });
+        $('div.sidebar_content div.section.overlay-layers i#overlayers_unselectall').on('click', function () {
+            $('div.sidebar_content div.section.overlay-layers ul > li').map(function () {
+                $(this).find("input[type=checkbox]").prop('checked', false)
+                        .trigger('change');
+            });
+        });
+
+        $('div.sidebar_content div.section.overlay-layers ul > li').click(function (e) {
+            var _that = this;
+            $('div.sidebar_content div.section.overlay-layers ul > li').map(function () {
+                if (_that !== this) {
+                    $(this).removeClass("selected");
+                }
+            });
+            if ($(this).hasClass("selected"))
+                $(this).removeClass("selected");
+            else
+                $(this).addClass("selected");
+
+            _this.reorderLayers();
+            e.stopPropagation();
+        });
+
+        // save current layers status to server
+        $('div.sidebar_content div.section.overlay-layers i#save_overlayers_index').on('click', function () {
+            var formData = new FormData();
+            var activelayer = _this._map.dataLayers[$("select#activelayer_id option:selected").val()];
+            var mapcenter = _this._map.getCenter();
+            var mapZoomLevel = _this._map.getZoom();
+            var basemap = $('div.sidebar_content div.section input[type=radio]:checked').val();
+            alert(basemap);
+            formData.append('activelayer', JSON.stringify({'layer_id': activelayer.layer_id, 'layerType': activelayer.layerType, 'filename': activelayer.filename}));
+            formData.append('mapcenter', JSON.stringify(mapcenter));
+            formData.append('zoomlevel', mapZoomLevel);
+            formData.append('basemap', basemap);
+            var layerdata = [];
+
+
+
+
+            $('div.sidebar_content div.section.overlay-layers ul > li').map(function (i) {
+                if ($(this).data("index") !== undefined) {
+                    var defaultShowOnMap = $(this).find("input[type=checkbox]").is(':checked');
+                    alert(defaultShowOnMap + "   " + $(this).data("index"));
+                    var layer = _this._map.dataLayers[$(this).data("index")];
+                    layerdata.push(JSON.stringify({'id': layer.layer_id
+                        , 'type': layer.layerType
+                        , 'filename': layer.filename
+                        , 'index': i
+                        , 'defaultShowOnMap': defaultShowOnMap
+                    }));
+                }
+            });
+            formData.append('data', layerdata);
+            $.ajax({
+                url: Routing.generate('leaflet_save_mapoverlayers'),
+                type: 'POST',
+                beforeSend: function () {
+
+                    //      _this._map.spin(true);
+                },
+                complete: function () {
+                    //        _this._map.spin(false);
+                },
+                error: function () {
+                    //       _this._map.spin(false);
+                },
+                //Ajax events
+                success: completeHandler = function (response) {
+                    var result = response;
+                    if (response === '' || response === undefined || response === null)
+                        return;
+                    if (typeof result !== 'object')
+                        result = JSON.parse(result);
+                    if (result.success !== true) {
+                        // if load data not suceess
+                        alert(result.message);
+                        return;
+                    }
+                },
+                // Form data
+                data: formData,
+                //Options to tell JQuery not to process data or worry about content-type
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+
+        });
+
         $("select#activelayer_id.layers-ui").trigger('change');
     };
 

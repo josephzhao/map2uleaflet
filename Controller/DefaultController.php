@@ -251,7 +251,7 @@ class DefaultController extends Controller {
                 $data = $this->getWFSLayerData($id, $datafilesPath, $source);
                 break;
             case 'userdraw':
-               
+
                 $data = $this->getUserdrawLayerData($datafilesPath);
 
                 break;
@@ -534,6 +534,7 @@ class DefaultController extends Controller {
         //  }
         return new Response(\json_encode(array('success' => true, 'message' => 'User draw name  not exist')));
     }
+
     private function getUploadfileLayerData($id, $datafilesPath) {
         $em = $this->getDoctrine()->getManager();
         $upload_files = $em->createQuery('SELECT p FROM Map2uCoreBundle:UserUploadfile p where p.id=' . $id)
@@ -544,10 +545,10 @@ class DefaultController extends Controller {
         $message = '';
         $success = true;
         $upload_file = $upload_files[0];
-        
-     
+
+
         $geom['datatype'] = 'topojson';
-        
+
         $layerData = array();
         $layerData['id'] = -1;
         $layerData['layerTitle'] = $upload_file->getFileName();
@@ -559,24 +560,23 @@ class DefaultController extends Controller {
         $layerData['layerShowInSwitcher'] = true;
         $layerData['fileName'] = $upload_file->getFileName();
         $layerData['fileType'] = $upload_file->getType();
-        
-       
+
+
         $layerData['seq'] = 1;
         $layerData['minZoom'] = null;
         $layerData['maxZoom'] = null;
 
-        
-        
-       
-        
-        
-        
-        
-        
+
+
+
+
+
+
+
+
         $geom = $this->getGeomJsonData($upload_file->getUserId(), true, $upload_file, $datafilesPath);
         $sld_json = $this->getSldContent($upload_file->getSldfileName());
         return new Response(\json_encode(array('success' => $success, 'datatype' => $geom['datatype'], 'message' => $message, 'layer' => $layerData, 'sld' => $sld_json, 'geomdata' => $geom)));
-        
     }
 
     private function getUploadfilelayerLayerData($id, $datafilesPath) {
@@ -786,6 +786,33 @@ class DefaultController extends Controller {
             return json_encode($json);
         }
         return '';
+    }
+
+    /**
+     * get upload file extend.
+     * params:
+     * @Route("/mapoverlayers", name="leaflet_save_mapoverlayers", options={"expose"=true})
+     * @Method("POST")
+     */
+    public function mapoverlayersAction(Request $request) {
+
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        if (!$user) {
+            return new Response(\json_encode(array('success' => false, 'message' => 'Please Login first!')));
+        }
+        $mapstatus = $em->createQuery("SELECT p FROM Map2uCoreBundle:SystemSettings p where p.userId=" . $user->getId() . " and name='mapstatus'")
+                ->getResult();
+        if (!$mapstatus) {
+            $mapstatus = new Map2u\CoreBundle\Entity\SystemSettings();
+            $mapstatus->setName('mapstatus');
+        }
+
+        $data = $request->get("data");
+        $mapstatus->setSettings(serialize($data));
+        $em->persist($mapstatus);
+        $em->flush();
+        return new Response(\json_encode(array('success' => true, 'message' => 'Settings successfully saved!')));
     }
 
 }

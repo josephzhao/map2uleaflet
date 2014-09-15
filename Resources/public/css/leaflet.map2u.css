@@ -294,3 +294,63 @@ input[type="button"]:last-child,input[type="submit"]:last-child,input[type="rese
 .navbar_search_form input[type=submit]{float:right;cursor:pointer;border:0;line-height:20px;padding:2px 5px;font-size:12px;min-height:20px;
   min-width: 0;  width:auto;margin:0 0 0px 0;color:white;background:#7092ff;text-align:center;border-radius:0 2px 2px 0;-moz-border-radius:0 2px 2px 0}
 .navbar_search_form .describe_location{position:absolute;top:6px;right:6px;font-size:10px;color:#7092ff}
+
+
+div.sidebar_content div.section.overlay-layers i.move_layer_up
+,div.sidebar_content div.section.overlay-layers i#move_overlayer_down
+,div.sidebar_content div.section.overlay-layers i#overlayers_selectall
+,div.sidebar_content div.section.overlay-layers i.move_layer_down {
+    color: #60a94f;
+    float: right;
+    border: 1px #CCC dotted;
+    margin:1px;
+    cursor: pointer;
+}
+
+div.sidebar_content div.section.overlay-layers i#overlayers_unselectall
+{
+    color: #60a94f;
+    float: right;
+    border: 1px #CCC dotted;
+    margin:1px 4px 1px 1px;
+    cursor: pointer;
+}
+
+div.sidebar_content div.section.overlay-layers i#save_overlayers_index
+{
+    color: #60a94f;
+    float: right;
+    border: 1px #CCC dotted;
+    margin:1px 4px 1px 4px;
+    cursor: pointer;
+}
+div.sidebar_content div.section.overlay-layers i#move_overlayer_up{
+    color: #60a94f;
+    float: right;
+    border: 1px #CCC dotted;
+    margin:1px 10px 1px 1px;
+    cursor: pointer;
+}
+div.sidebar_content div.section.overlay-layers i#save_overlayers_plus
+,div.sidebar_content div.section.overlay-layers i#save_overlayers_minus{
+    color: #60a94f;
+    float: right;
+    border: 1px #CCC dotted;
+    margin:1px 1px 1px 1px;
+    cursor: pointer;
+}
+div.sidebar_content div.section.overlay-layers{
+    margin-bottom: 10px;
+}
+div.sidebar_content div.section.overlay-layers ul > li {
+    width: 190px;
+    display: inline-block;
+}
+
+div.sidebar_content div.section.overlay-layers ul > li.selected {
+    background-color: #08C;
+}
+div.sidebar_content div.section.overlay-layers ul > li.selected > label {
+    color: white;
+}
+
