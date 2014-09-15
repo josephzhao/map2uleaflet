@@ -526,8 +526,8 @@ L.MAP2U.layers = function (options) {
                     if (fileExist === false) {
                         _this._map.dataLayers[_this._map.dataLayers.length] = {'defaultShowOnMap': true, 'layerType': 'uploadfile', 'layer': null, 'minZoom': null, 'maxZoom': null, 'index_id': _this._map.dataLayers.length + 1, 'layer_id': result.uploadfile.id, 'title': result.uploadfile.filename, 'datasource': result.uploadfile.datasource, 'filename': result.uploadfile.filename, 'name': result.uploadfile.filename, type: 'topojson'};
                         maplayer = _this._map.dataLayers[_this._map.dataLayers.length - 1];
-                        _this.addOverlayItem(maplayer,_this._map.dataLayers.length - 1);
-                        
+                        _this.addOverlayItem(maplayer, _this._map.dataLayers.length - 1);
+
 //                        var overlay_layers_ul = $(".leaflet-control-container .section.overlay-layers > ul");
 //                        var item = $('<li>')
 //                                .tooltip({
@@ -585,56 +585,56 @@ L.MAP2U.layers = function (options) {
 //                                _this._map.fire('overlaylayerchange', {layer: maplayer.layer});
 //                        });
 //                        
-                        
-                        if (maplayer.type === 'shapefile_topojson')
-                        {
-                            var ul = $('<ul>');
-                            var li_showlabel = $('<li>');
-                            ul.append(li_showlabel);
-                            label.append("<br>");
-                            item.append(ul);
-                            var showlabel = $('<label>')
-                                    .appendTo(li_showlabel);
-                            var showlabel_input = $('<input>')
-                                    .attr('type', 'checkbox')
-                                    .prop('checked', checked)
-                                    .appendTo(showlabel);
-                            showlabel.append("Labels");
-                            showlabel_input.on('change', function () {
-                                checked = showlabel_input.is(':checked');
-                                if (maplayer.layer)
-                                {
-                                    maplayer.layer.options.showLabels = checked;
-                                    if (checked) {
-                                        var kename = '';
-                                        var field_kename = [];
-                                        var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function () {
-                                            return  this.text;
-                                        });
-                                        // only current map is the same with shapefile list selected file name
-                                        if (shapefilename === '' || shapefilename[0] === undefined || maplayer.layer.options.name === shapefilename[0].toLowerCase())
-                                        {
-                                            field_kename = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function () {
-                                                return  this.text;
-                                            });
-                                        }
-                                        if (field_kename.length === 0 && maplayer.layer.options.label_field !== '' && maplayer.layer.options.label_field !== null) {
-                                            kename = maplayer.layer.options.label_field;
-                                        }
-                                        else
-                                        {
-                                            if (field_kename[0] === '' || field_kename[0] === null)
-                                                kename = undefined;
-                                            else
-                                                kename = field_kename[0];
-                                        }
-                                        maplayer.layer.showFeatureLabels(kename);
-                                    } else {
-                                        maplayer.layer.removeFeatureLabels();
-                                    }
-                                }
-                            });
-                        }
+
+//                        if (maplayer.type === 'shapefile_topojson')
+//                        {
+//                            var ul = $('<ul>');
+//                            var li_showlabel = $('<li>');
+//                            ul.append(li_showlabel);
+//                            label.append("<br>");
+//                            item.append(ul);
+//                            var showlabel = $('<label>')
+//                                    .appendTo(li_showlabel);
+//                            var showlabel_input = $('<input>')
+//                                    .attr('type', 'checkbox')
+//                                    .prop('checked', checked)
+//                                    .appendTo(showlabel);
+//                            showlabel.append("Labels");
+//                            showlabel_input.on('change', function () {
+//                                checked = showlabel_input.is(':checked');
+//                                if (maplayer.layer)
+//                                {
+//                                    maplayer.layer.options.showLabels = checked;
+//                                    if (checked) {
+//                                        var kename = '';
+//                                        var field_kename = [];
+//                                        var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function () {
+//                                            return  this.text;
+//                                        });
+//                                        // only current map is the same with shapefile list selected file name
+//                                        if (shapefilename === '' || shapefilename[0] === undefined || maplayer.layer.options.name === shapefilename[0].toLowerCase())
+//                                        {
+//                                            field_kename = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function () {
+//                                                return  this.text;
+//                                            });
+//                                        }
+//                                        if (field_kename.length === 0 && maplayer.layer.options.label_field !== '' && maplayer.layer.options.label_field !== null) {
+//                                            kename = maplayer.layer.options.label_field;
+//                                        }
+//                                        else
+//                                        {
+//                                            if (field_kename[0] === '' || field_kename[0] === null)
+//                                                kename = undefined;
+//                                            else
+//                                                kename = field_kename[0];
+//                                        }
+//                                        maplayer.layer.showFeatureLabels(kename);
+//                                    } else {
+//                                        maplayer.layer.removeFeatureLabels();
+//                                    }
+//                                }
+//                            });
+//                        }
 
 
                         if (maplayer.defaultShowOnMap === true)
@@ -642,9 +642,9 @@ L.MAP2U.layers = function (options) {
                             $(input).prop('checked', true)
                                     .trigger('change');
                         }
-
+                        _this.overlayToolButtons();
                     }
-                    _this.overlayToolButtons();
+
                 }
 
 //                if (callback && maplayer) {
@@ -2360,7 +2360,7 @@ L.MAP2U.layers = function (options) {
         return "";
     };
     control.overlayToolButtons = function () {
-        var _this=this;
+        var _this = this;
         $('div.sidebar_content div.section.overlay-layers i#move_overlayer_up').on('click', function () {
             var selected = $('div.sidebar_content div.section.overlay-layers ul > li.selected');
             if (selected.prev()) {
@@ -2515,7 +2515,7 @@ L.MAP2U.layers = function (options) {
         });
 
     };
-    control.addOverlayItem = function (layer,i) {
+    control.addOverlayItem = function (layer, i) {
         var overlay_layers_ul = $(".leaflet-control-container .section.overlay-layers > ul");
         var _this = this;
         var item = $('<li>')
@@ -2781,8 +2781,8 @@ L.MAP2U.layers = function (options) {
         });
 
         _this.overlayToolButtons();
-       
-        
+
+
         $("select#activelayer_id.layers-ui").trigger('change');
     };
 
