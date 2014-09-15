@@ -526,7 +526,7 @@ L.MAP2U.layers = function (options) {
                     if (fileExist === false) {
                         _this._map.dataLayers[_this._map.dataLayers.length] = {'defaultShowOnMap': true, 'layerType': 'uploadfile', 'layer': null, 'minZoom': null, 'maxZoom': null, 'index_id': _this._map.dataLayers.length + 1, 'layer_id': result.uploadfile.id, 'title': result.uploadfile.filename, 'datasource': result.uploadfile.datasource, 'filename': result.uploadfile.filename, 'name': result.uploadfile.filename, type: 'topojson'};
                         maplayer = _this._map.dataLayers[_this._map.dataLayers.length - 1];
-                        _this.addOverlayItem(maplayer, _this._map.dataLayers.length - 1);
+                        _this.addOverlayItem(maplayer, _this._map.dataLayers.length - 1, opt);
 
 //                        var overlay_layers_ul = $(".leaflet-control-container .section.overlay-layers > ul");
 //                        var item = $('<li>')
@@ -2511,7 +2511,7 @@ L.MAP2U.layers = function (options) {
         });
 
     };
-    control.addOverlayItem = function (layer, i) {
+    control.addOverlayItem = function (layer, i, opt) {
         var overlay_layers_ul = $(".leaflet-control-container .section.overlay-layers > ul");
         var _this = this;
         var item = $('<li>')
@@ -2550,7 +2550,7 @@ L.MAP2U.layers = function (options) {
             if (checked) {
                 if (!layer.layer)
                 {
-                    control.loadLayer(layer);
+                    control.loadLayer(layer, opt);
                 }
                 else
                 {
