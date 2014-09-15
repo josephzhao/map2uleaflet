@@ -637,11 +637,7 @@ L.MAP2U.layers = function (options) {
 //                        }
 
 
-                        if (maplayer.defaultShowOnMap === true)
-                        {
-                            $(input).prop('checked', true)
-                                    .trigger('change');
-                        }
+
                         _this.overlayToolButtons();
                     }
 
@@ -2568,6 +2564,12 @@ L.MAP2U.layers = function (options) {
             if (layer.layer)
                 _this._map.fire('overlaylayerchange', {layer: layer.layer});
         });
+
+        if (layer.defaultShowOnMap === true)
+        {
+            $(input).prop('checked', true)
+                    .trigger('change');
+        }
 
     };
     control.refreshOverlays = function () {
