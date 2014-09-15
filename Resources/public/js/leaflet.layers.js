@@ -638,7 +638,9 @@ L.MAP2U.layers = function (options) {
                             $(input).prop('checked', true)
                                     .trigger('change');
                         }
+
                     }
+                    this.overlayToolButtons();
                 }
 
 //                if (callback && maplayer) {
@@ -2352,6 +2354,161 @@ L.MAP2U.layers = function (options) {
         }
         return "";
     };
+    control.overlayToolButtons = function () {
+        $('div.sidebar_content div.section.overlay-layers i#move_overlayer_up').on('click', function () {
+            var selected = $('div.sidebar_content div.section.overlay-layers ul > li.selected');
+            if (selected.prev()) {
+                selected.insertBefore(selected.prev());
+                _this.reorderLayers();
+            }
+
+        });
+        $('div.sidebar_content div.section.overlay-layers i#move_overlayer_down').on('click', function () {
+            var selected = $('div.sidebar_content div.section.overlay-layers ul > li.selected');
+            if (selected.next()) {
+                selected.insertAfter(selected.next());
+                _this.reorderLayers();
+            }
+
+        });
+        // save current layers status to server
+        $('div.sidebar_content div.section.overlay-layers i#save_overlayers_plus').on('click', function () {
+            $.ajax({
+                url: Routing.generate('default_mapoverlayselectionform'),
+                type: 'GET',
+                beforeSend: function () {
+
+                    //      _this._map.spin(true);
+                },
+                complete: function () {
+                    //        _this._map.spin(false);
+                },
+                error: function () {
+                    //       _this._map.spin(false);
+                },
+                //Ajax events
+                success: completeHandler = function (response) {
+
+
+                    $("#sidebar-left #sidebar_content").html(response);
+                },
+                // Form data
+                data: {},
+                //Options to tell JQuery not to process data or worry about content-type
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+
+        });
+        $('div.sidebar_content div.section.overlay-layers i#save_overlayers_minus').on('click', function () {
+            var selected = $('div.sidebar_content div.section.overlay-layers ul > li.selected');
+            if (selected.data("index") !== undefined) {
+                if (confirm('Do you want to remove it from overlayers?')) {
+                    selected.remove();
+                    $('div.sidebar_content div.section.overlay-layers ul').hide().fadeIn('fast');
+                    ;
+                }
+            }
+        });
+        // save current layers status to server
+        $('div.sidebar_content div.section.overlay-layers i#overlayers_selectall').on('click', function () {
+            $('div.sidebar_content div.section.overlay-layers ul > li').map(function () {
+                $(this).find("input[type=checkbox]").prop('checked', true)
+                        .trigger('change');
+            });
+        });
+        $('div.sidebar_content div.section.overlay-layers i#overlayers_unselectall').on('click', function () {
+            $('div.sidebar_content div.section.overlay-layers ul > li').map(function () {
+                $(this).find("input[type=checkbox]").prop('checked', false)
+                        .trigger('change');
+            });
+        });
+
+        $('div.sidebar_content div.section.overlay-layers ul > li').click(function (e) {
+            var _that = this;
+            $('div.sidebar_content div.section.overlay-layers ul > li').map(function () {
+                if (_that !== this) {
+                    $(this).removeClass("selected");
+                }
+            });
+            if ($(this).hasClass("selected"))
+                $(this).removeClass("selected");
+            else
+                $(this).addClass("selected");
+
+            _this.reorderLayers();
+            e.stopPropagation();
+        });
+
+        // save current layers status to server
+        $('div.sidebar_content div.section.overlay-layers i#save_overlayers_index').on('click', function () {
+            var formData = new FormData();
+            var activelayer = _this._map.dataLayers[$("select#activelayer_id option:selected").val()];
+            var mapcenter = _this._map.getCenter();
+            var mapZoomLevel = _this._map.getZoom();
+            var basemap = $('div.sidebar_content div.section input[type=radio]:checked').val();
+            alert(basemap);
+            formData.append('activelayer', JSON.stringify({'layer_id': activelayer.layer_id, 'layerType': activelayer.layerType, 'filename': activelayer.filename}));
+            formData.append('mapcenter', JSON.stringify(mapcenter));
+            formData.append('zoomlevel', mapZoomLevel);
+            formData.append('basemap', basemap);
+            var layerdata = [];
+
+
+
+
+            $('div.sidebar_content div.section.overlay-layers ul > li').map(function (i) {
+                if ($(this).data("index") !== undefined) {
+                    var defaultShowOnMap = $(this).find("input[type=checkbox]").is(':checked');
+                    alert(defaultShowOnMap + "   " + $(this).data("index"));
+                    var layer = _this._map.dataLayers[$(this).data("index")];
+                    layerdata.push(JSON.stringify({'id': layer.layer_id
+                        , 'type': layer.layerType
+                        , 'filename': layer.filename
+                        , 'index': i
+                        , 'defaultShowOnMap': defaultShowOnMap
+                    }));
+                }
+            });
+            formData.append('data', layerdata);
+            $.ajax({
+                url: Routing.generate('leaflet_save_mapoverlayers'),
+                type: 'POST',
+                beforeSend: function () {
+
+                    //      _this._map.spin(true);
+                },
+                complete: function () {
+                    //        _this._map.spin(false);
+                },
+                error: function () {
+                    //       _this._map.spin(false);
+                },
+                //Ajax events
+                success: completeHandler = function (response) {
+                    var result = response;
+                    if (response === '' || response === undefined || response === null)
+                        return;
+                    if (typeof result !== 'object')
+                        result = JSON.parse(result);
+                    if (result.success !== true) {
+                        // if load data not suceess
+                        alert(result.message);
+                        return;
+                    }
+                },
+                // Form data
+                data: formData,
+                //Options to tell JQuery not to process data or worry about content-type
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+
+        });
+
+    };
     control.refreshOverlays = function () {
 
 
@@ -2562,159 +2719,7 @@ L.MAP2U.layers = function (options) {
             });
         });
 
-        $('div.sidebar_content div.section.overlay-layers i#move_overlayer_up').on('click', function () {
-            var selected = $('div.sidebar_content div.section.overlay-layers ul > li.selected');
-            if (selected.prev()) {
-                selected.insertBefore(selected.prev());
-                _this.reorderLayers();
-            }
-
-        });
-        $('div.sidebar_content div.section.overlay-layers i#move_overlayer_down').on('click', function () {
-            var selected = $('div.sidebar_content div.section.overlay-layers ul > li.selected');
-            if (selected.next()) {
-                selected.insertAfter(selected.next());
-                _this.reorderLayers();
-            }
-
-        });
-        // save current layers status to server
-        $('div.sidebar_content div.section.overlay-layers i#save_overlayers_plus').on('click', function () {
-            $.ajax({
-                url: Routing.generate('default_mapoverlayselectionform'),
-                type: 'GET',
-                beforeSend: function () {
-
-                    //      _this._map.spin(true);
-                },
-                complete: function () {
-                    //        _this._map.spin(false);
-                },
-                error: function () {
-                    //       _this._map.spin(false);
-                },
-                //Ajax events
-                success: completeHandler = function (response) {
-                    
-                 
-                    $("#sidebar-left #sidebar_content").html(response);
-                },
-                // Form data
-                data: {},
-                //Options to tell JQuery not to process data or worry about content-type
-                cache: false,
-                contentType: false,
-                processData: false
-            });
-
-        });
-        $('div.sidebar_content div.section.overlay-layers i#save_overlayers_minus').on('click', function () {
-            var selected = $('div.sidebar_content div.section.overlay-layers ul > li.selected');
-            if (selected.data("index") !== undefined) {
-                if (confirm('Do you want to remove it from overlayers?')) {
-                    selected.remove();
-                    $('div.sidebar_content div.section.overlay-layers ul').hide().fadeIn('fast');
-                    ;
-                }
-            }
-        });
-        // save current layers status to server
-        $('div.sidebar_content div.section.overlay-layers i#overlayers_selectall').on('click', function () {
-            $('div.sidebar_content div.section.overlay-layers ul > li').map(function () {
-                $(this).find("input[type=checkbox]").prop('checked', true)
-                        .trigger('change');
-            });
-        });
-        $('div.sidebar_content div.section.overlay-layers i#overlayers_unselectall').on('click', function () {
-            $('div.sidebar_content div.section.overlay-layers ul > li').map(function () {
-                $(this).find("input[type=checkbox]").prop('checked', false)
-                        .trigger('change');
-            });
-        });
-
-        $('div.sidebar_content div.section.overlay-layers ul > li').click(function (e) {
-            var _that = this;
-            $('div.sidebar_content div.section.overlay-layers ul > li').map(function () {
-                if (_that !== this) {
-                    $(this).removeClass("selected");
-                }
-            });
-            if ($(this).hasClass("selected"))
-                $(this).removeClass("selected");
-            else
-                $(this).addClass("selected");
-
-            _this.reorderLayers();
-            e.stopPropagation();
-        });
-
-        // save current layers status to server
-        $('div.sidebar_content div.section.overlay-layers i#save_overlayers_index').on('click', function () {
-            var formData = new FormData();
-            var activelayer = _this._map.dataLayers[$("select#activelayer_id option:selected").val()];
-            var mapcenter = _this._map.getCenter();
-            var mapZoomLevel = _this._map.getZoom();
-            var basemap = $('div.sidebar_content div.section input[type=radio]:checked').val();
-            alert(basemap);
-            formData.append('activelayer', JSON.stringify({'layer_id': activelayer.layer_id, 'layerType': activelayer.layerType, 'filename': activelayer.filename}));
-            formData.append('mapcenter', JSON.stringify(mapcenter));
-            formData.append('zoomlevel', mapZoomLevel);
-            formData.append('basemap', basemap);
-            var layerdata = [];
-
-
-
-
-            $('div.sidebar_content div.section.overlay-layers ul > li').map(function (i) {
-                if ($(this).data("index") !== undefined) {
-                    var defaultShowOnMap = $(this).find("input[type=checkbox]").is(':checked');
-                    alert(defaultShowOnMap + "   " + $(this).data("index"));
-                    var layer = _this._map.dataLayers[$(this).data("index")];
-                    layerdata.push(JSON.stringify({'id': layer.layer_id
-                        , 'type': layer.layerType
-                        , 'filename': layer.filename
-                        , 'index': i
-                        , 'defaultShowOnMap': defaultShowOnMap
-                    }));
-                }
-            });
-            formData.append('data', layerdata);
-            $.ajax({
-                url: Routing.generate('leaflet_save_mapoverlayers'),
-                type: 'POST',
-                beforeSend: function () {
-
-                    //      _this._map.spin(true);
-                },
-                complete: function () {
-                    //        _this._map.spin(false);
-                },
-                error: function () {
-                    //       _this._map.spin(false);
-                },
-                //Ajax events
-                success: completeHandler = function (response) {
-                    var result = response;
-                    if (response === '' || response === undefined || response === null)
-                        return;
-                    if (typeof result !== 'object')
-                        result = JSON.parse(result);
-                    if (result.success !== true) {
-                        // if load data not suceess
-                        alert(result.message);
-                        return;
-                    }
-                },
-                // Form data
-                data: formData,
-                //Options to tell JQuery not to process data or worry about content-type
-                cache: false,
-                contentType: false,
-                processData: false
-            });
-
-        });
-
+        this.overlayToolButtons();
         $("select#activelayer_id.layers-ui").trigger('change');
     };
 
