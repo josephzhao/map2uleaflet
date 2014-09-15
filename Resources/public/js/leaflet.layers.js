@@ -644,7 +644,7 @@ L.MAP2U.layers = function (options) {
                         }
 
                     }
-                    this.overlayToolButtons();
+                    _this.overlayToolButtons();
                 }
 
 //                if (callback && maplayer) {
@@ -2360,6 +2360,7 @@ L.MAP2U.layers = function (options) {
         return "";
     };
     control.overlayToolButtons = function () {
+        var _this=this;
         $('div.sidebar_content div.section.overlay-layers i#move_overlayer_up').on('click', function () {
             var selected = $('div.sidebar_content div.section.overlay-layers ul > li.selected');
             if (selected.prev()) {
@@ -2779,7 +2780,9 @@ L.MAP2U.layers = function (options) {
             });
         });
 
-        this.overlayToolButtons();
+        _this.overlayToolButtons();
+       
+        
         $("select#activelayer_id.layers-ui").trigger('change');
     };
 
