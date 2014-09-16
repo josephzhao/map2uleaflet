@@ -114,7 +114,7 @@ L.MAP2U.layers = function (options) {
                 .append('<button id="move_overlayer_up"><i class="fa fa-chevron-up"></i></button>')
                 .append('<button id="move_overlayer_down"><i class="fa fa-chevron-down"></i></button>')
                 .append('<button id="save_overlayers_index"><i class="fa fa-save"></i></button>')
-                .append('<button id="save_overlayers_index"><i class="fa fa-minus"></i></button>')
+                .append('<button id="overlayers_minus"><i class="fa fa-minus"></i></button>')
                 .append('<button id="overlayers_plus"><i class="fa fa-plus"></i></button>')
                 .append('<button id="overlayers_unselectall"><i class="fa fa-times"></i></button>')
                 .append('<button id="overlayers_selectall"><i class="fa fa-check"></i></button>')
@@ -682,8 +682,8 @@ L.MAP2U.layers = function (options) {
             json_data = JSON.parse(result.geomdata['geom']);
         else
             json_data = result.geomdata['geom'];
-        var bounds=d3.geo.bounds(json_data);
-        layer.bounds=bounds;
+        var bounds = d3.geo.bounds(json_data);
+        layer.bounds = bounds;
         if (layer.clusterLayer) {
 
             control.renderClusterLayer(layer, json_data);
@@ -907,8 +907,8 @@ L.MAP2U.layers = function (options) {
             return  k;
         });
         var collection = topojson.feature(json_data, json_data.objects[key]);
-        var bounds=d3.geo.bounds(collection);
-        layer.bounds=bounds;
+        var bounds = d3.geo.bounds(collection);
+        layer.bounds = bounds;
         if (layer.clusterLayer) {
 
             control.renderClusterLayer(layer, collection);
@@ -2369,10 +2369,15 @@ L.MAP2U.layers = function (options) {
         $('div.sidebar_content div.section.overlay-layers button#overlayers_zoom_to_layer').on('click', function () {
             var selected = $('div.sidebar_content div.section.overlay-layers ul > li.selected');
             if (selected.data("index") !== undefined && _this._map.dataLayers[selected.data("index")] && _this._map.dataLayers[selected.data("index")].bounds) {
-              //  alert("zoom to level");
+                //  alert("zoom to level");
                 var bound = _this._map.dataLayers[selected.data("index")].bounds;
                 _this._map.fitBounds([[bound[0][1], bound[0][0]], [bound[1][1], bound[1][0]]]);
 
+            }
+            else {
+                var bounds=_this._map.getBounds();
+                alert(JSON.stringify(bounds));
+                _this._map.fitBounds(_this._map.getBounds());
             }
         });
         // save current layers status to server
@@ -2382,7 +2387,7 @@ L.MAP2U.layers = function (options) {
                         .trigger('change');
             });
         });
-        $('div.sidebar_content div.section.overlay-layers div#overlayers_unselectall').on('click', function () {
+        $('div.sidebar_content div.section.overlay-layers button#overlayers_unselectall').on('click', function () {
             $('div.sidebar_content div.section.overlay-layers ul > li').map(function () {
                 $(this).find("input[type=checkbox]").prop('checked', false)
                         .trigger('change');
@@ -2416,12 +2421,19 @@ L.MAP2U.layers = function (options) {
         // save current layers status to server
         $('div.sidebar_content div.section.overlay-layers button#save_overlayers_index').on('click', function () {
             var formData = new FormData();
-            var activelayer = _this._map.dataLayers[$("select#activelayer_id option:selected").val()];
+            var activelayer = null;
+            var selected = $('div.sidebar_content div.section.overlay-layers ul > li.selected');
+            if (selected.data("index") !== undefined && _this._map.dataLayers[selected.data("index")]) {
+                activelayer = _this._map.dataLayers[selected.data("index")];
+            }
             var mapcenter = _this._map.getCenter();
             var mapZoomLevel = _this._map.getZoom();
             var basemap = $('div.sidebar_content div.section input[type=radio]:checked').val();
             alert(basemap);
-            formData.append('activelayer', JSON.stringify({'layer_id': activelayer.layer_id, 'layerType': activelayer.layerType, 'filename': activelayer.filename}));
+            if (activelayer === null)
+                formData.append('activelayer', null);
+            else
+                formData.append('activelayer', JSON.stringify({'layer_id': activelayer.layer_id, 'layerType': activelayer.layerType, 'filename': activelayer.filename}));
             formData.append('mapcenter', JSON.stringify(mapcenter));
             formData.append('zoomlevel', mapZoomLevel);
             formData.append('basemap', basemap);
