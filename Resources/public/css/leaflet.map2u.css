@@ -89,12 +89,12 @@ and open the template in the editor.
     border: 1px solid green;
 }
 .maptoolbar-control .maptoolbar-control-reset {
-     background-position: 3px 3px;
+    background-position: 3px 3px;
     background-image: url(../images/home.png);
     background-repeat: no-repeat;
 }
 .maptoolbar-control .maptoolbar-control-prev {
-     background-position: 1px 2px;
+    background-position: 1px 2px;
     background-image: url(../images/glyphicons_210_left_arrow.png);
     background-repeat: no-repeat;
 }
@@ -178,7 +178,7 @@ div.uploadfile_link a.uploadfile {
 .sonata-bc #map-ui .layers-ui ul { list-style-type: none;  }
 .layers-ui .base-layers .leaflet-container{width:100%;height:50px;cursor:pointer}
 .layers-ui .base-layers li{overflow:hidden;border-radius:3px;border:2px solid #fff;margin-bottom:8px;position:relative;transition:border-color 0.08s ease-in}
-.layers-ui .base-layers li label{position:absolute;top:0;left:0;padding:2px 6px;border-bottom-right-radius:3px;cursor:pointer;font-weight:600;font-size:16px;text-stroke:2px #fff;background:rgba(255,255,255,0.9);z-index:2}
+.layers-ui .base-layers li label{position:absolute;top:0;left:0;padding:2px 6px;border-bottom-right-radius:3px;cursor:pointer;font-weight:600;font-size:18px;text-stroke:2px #fff;background:rgba(255,255,255,0.9);z-index:2}
 .layers-ui .base-layers li label input[type="radio"]{display:none}
 .layers-ui .base-layers li.active{border-color:#60a94f}
 .layers-ui .base-layers li:hover{border-color:#cccccc}
@@ -286,59 +286,78 @@ input[type="button"]:last-child,input[type="submit"]:last-child,input[type="rese
     position: relative;
     padding: 2px;
     width:250px;
-  /*  background-color: #EEE;*/
+    /*  background-color: #EEE;*/
 }
 .navbar_search_form .query_wrapper{position:relative;overflow:hidden;border-radius:2px 0 0 2px}
 .navbar_search_form input[type=text]{width:100%;height:24px;border-right:none;transition:300ms linear;-webkit-transition:300ms linear;-moz-transition:300ms linear}
 .navbar_search_form input:focus{outline:none;box-shadow:0px 0px 7px #9ED485}
 .navbar_search_form input[type=submit]{float:right;cursor:pointer;border:0;line-height:20px;padding:2px 5px;font-size:12px;min-height:20px;
-  min-width: 0;  width:auto;margin:0 0 0px 0;color:white;background:#7092ff;text-align:center;border-radius:0 2px 2px 0;-moz-border-radius:0 2px 2px 0}
+                                       min-width: 0;  width:auto;margin:0 0 0px 0;color:white;background:#7092ff;text-align:center;border-radius:0 2px 2px 0;-moz-border-radius:0 2px 2px 0}
 .navbar_search_form .describe_location{position:absolute;top:6px;right:6px;font-size:10px;color:#7092ff}
 
 
-div.sidebar_content div.section.overlay-layers i.move_layer_up
-,div.sidebar_content div.section.overlay-layers i#move_overlayer_down
-,div.sidebar_content div.section.overlay-layers i#overlayers_selectall
-,div.sidebar_content div.section.overlay-layers i.move_layer_down {
-    color: #60a94f;
-    float: right;
-    border: 1px #CCC dotted;
-    margin:1px;
-    cursor: pointer;
-}
 
-div.sidebar_content div.section.overlay-layers i#overlayers_unselectall
+div.sidebar_content div.section.overlay-layers button#move_overlayer_down
+,div.sidebar_content div.section.overlay-layers button#overlayers_selectall
 {
     color: #60a94f;
     float: right;
+    width:18px;
+    height:18px;
+    margin:0 2px;
+
     border: 1px #CCC dotted;
-    margin:1px 4px 1px 1px;
     cursor: pointer;
 }
-
-div.sidebar_content div.section.overlay-layers i#save_overlayers_index
+div.sidebar_content div.section.overlay-layers button#overlayers_unselectall
 {
     color: #60a94f;
     float: right;
+    width:18px;
+    height:18px;
+    margin:0 2px;
+
     border: 1px #CCC dotted;
-    margin:1px 4px 1px 4px;
     cursor: pointer;
 }
-div.sidebar_content div.section.overlay-layers i#move_overlayer_up{
+
+div.sidebar_content div.section.overlay-layers button#save_overlayers_index
+,div.sidebar_content div.section.overlay-layers button#overlayers_zoom_to_layer
+{
     color: #60a94f;
     float: right;
+    width:18px;
+    height:18px;
+    margin:0 2px;
+
     border: 1px #CCC dotted;
-    margin:1px 10px 1px 1px;
     cursor: pointer;
 }
-div.sidebar_content div.section.overlay-layers i#save_overlayers_plus
-,div.sidebar_content div.section.overlay-layers i#save_overlayers_minus{
+div.sidebar_content div.section.overlay-layers button#move_overlayer_up{
     color: #60a94f;
     float: right;
+    width:18px;
+    height:18px;
+ 
     border: 1px #CCC dotted;
-    margin:1px 1px 1px 1px;
     cursor: pointer;
 }
+div.sidebar_content div.section.overlay-layers button#overlayers_plus
+,div.sidebar_content div.section.overlay-layers button#overlayers_minus{
+    color: #60a94f;
+    float: right;
+    width:18px;
+    height:18px;
+    margin:0 2px;
+    border: 1px #CCC dotted;
+    cursor: pointer;
+}
+
+div.sidebar_content div.section.overlay-layers div i{
+    margin-top:0px;
+    margin-left:2px;
+}
+
 div.sidebar_content div.section.overlay-layers{
     margin-bottom: 10px;
 }

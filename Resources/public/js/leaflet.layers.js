@@ -111,13 +111,14 @@ L.MAP2U.layers = function (options) {
                 .attr("class", "deemphasize")
                 .appendTo(overlaySection);
         overlaySection.find('.deemphasize')
-                .append('<i id="move_overlayer_up" class="fa fa-chevron-up"></i>')
-                .append('<i id="move_overlayer_down" class="fa fa-chevron-down"></i>')
-                .append('<i id="save_overlayers_index" class="fa fa-save"></i>')
-                .append('<i id="save_overlayers_minus" class="fa fa-minus"></i>')
-                .append('<i id="save_overlayers_plus" class="fa fa-plus"></i>')
-                .append('<i id="overlayers_unselectall" class="fa fa-times"></i>')
-                .append('<i id="overlayers_selectall" class="fa fa-check"></i>')
+                .append('<button id="move_overlayer_up"><i class="fa fa-chevron-up"></i></button>')
+                .append('<button id="move_overlayer_down"><i class="fa fa-chevron-down"></i></button>')
+                .append('<button id="save_overlayers_index"><i class="fa fa-save"></i></button>')
+                .append('<button id="save_overlayers_index"><i class="fa fa-minus"></i></button>')
+                .append('<button id="overlayers_plus"><i class="fa fa-plus"></i></button>')
+                .append('<button id="overlayers_unselectall"><i class="fa fa-times"></i></button>')
+                .append('<button id="overlayers_selectall"><i class="fa fa-check"></i></button>')
+                .append('<button id="overlayers_zoom_to_layer"><i class="fa fa-globe"></i></button>')
                 .css('border-bottom', '1px grey dotted');
 
 
@@ -309,6 +310,8 @@ L.MAP2U.layers = function (options) {
         var layers = this._map.dataLayers;
         var activelayer = $("div.sidebar_content div.section.overlay-layers ul > li.selected");
         $("div.sidebar_content div.section.overlay-layers ul > li").map(function (i) {
+
+            $(this).data('index', i);
 
             if (layers[$(this).data('index')].index_id !== undefined) {
                 if (activelayer.data("index") !== undefined && parseInt(activelayer.data("index")) === parseInt($(this).data('index'))) {
@@ -528,64 +531,6 @@ L.MAP2U.layers = function (options) {
                         maplayer = _this._map.dataLayers[_this._map.dataLayers.length - 1];
                         _this.addOverlayItem(maplayer, _this._map.dataLayers.length - 1, opt);
 
-//                        var overlay_layers_ul = $(".leaflet-control-container .section.overlay-layers > ul");
-//                        var item = $('<li>')
-//                                .tooltip({
-//                                    placement: 'top'
-//                                })
-//                                .appendTo(overlay_layers_ul);
-//                        var label = $('<label>')
-//                                .appendTo(item);
-//                        var checked = false;
-//                        var input = $('<input>')
-//                                .attr('type', 'checkbox')
-//                                .prop('checked', checked)
-//                                .appendTo(label);
-//                        var legend_label = I18n.t('javascripts.map.layers.' + maplayer.name);
-//                        if (legend_label.indexOf('missing ') === 1)
-//                        {
-//                            label.append(maplayer.name);
-//                            $("select#activelayer_id.layers-ui").append("<option value='" + maplayer.layer_id + "'>" + maplayer.name + "</option>");
-//                        }
-//                        else
-//                        {
-//                            label.append(legend_label);
-//                            $("select#activelayer_id.layers-ui").append("<option value='" + maplayer.layer_id + "'>" + legend_label + "</option>");
-//                        }
-//
-//                        input.on('change', function () {
-//                            checked = input.is(':checked');
-//                            if (checked) {
-//                                if (!maplayer.layer)
-//                                {
-//                                    control.loadLayer(maplayer, opt);
-//                                    //   control.loadTopoJSONLayer(maplayer);
-//                                }
-//                                else
-//                                {
-////                                    if (maplayer.type === 'geojson' || maplayer.name === 'My draw geometries') {
-////                                        //                           control.loadGeoJSONLayer(layer);
-////                                        control.loadTopoJSONLayer(maplayer);
-////                                    }
-//                                    if (maplayer.layer)
-//                                        _this._map.addLayer(maplayer.layer);
-//                                }
-//                            } else {
-////                                if (maplayer.type === 'shapefile_topojson') {
-////
-////
-////                                }
-////                                if (maplayer.type === 'geojson' || maplayer.name === 'My draw geometries') {
-////
-////                                }
-//                                if (maplayer.layer)
-//                                    _this._map.removeLayer(maplayer.layer);
-//                            }
-//                            if (maplayer.layer)
-//                                _this._map.fire('overlaylayerchange', {layer: maplayer.layer});
-//                        });
-//                        
-
 //                        if (maplayer.type === 'shapefile_topojson')
 //                        {
 //                            var ul = $('<ul>');
@@ -737,7 +682,8 @@ L.MAP2U.layers = function (options) {
             json_data = JSON.parse(result.geomdata['geom']);
         else
             json_data = result.geomdata['geom'];
-
+        var bounds=d3.geo.bounds(json_data);
+        layer.bounds=bounds;
         if (layer.clusterLayer) {
 
             control.renderClusterLayer(layer, json_data);
@@ -961,6 +907,8 @@ L.MAP2U.layers = function (options) {
             return  k;
         });
         var collection = topojson.feature(json_data, json_data.objects[key]);
+        var bounds=d3.geo.bounds(collection);
+        layer.bounds=bounds;
         if (layer.clusterLayer) {
 
             control.renderClusterLayer(layer, collection);
@@ -2357,7 +2305,7 @@ L.MAP2U.layers = function (options) {
     };
     control.overlayToolButtons = function () {
         var _this = this;
-        $('div.sidebar_content div.section.overlay-layers i#move_overlayer_up').on('click', function () {
+        $('div.sidebar_content div.section.overlay-layers button#move_overlayer_up').on('click', function () {
             var selected = $('div.sidebar_content div.section.overlay-layers ul > li.selected');
             if (selected.prev()) {
                 selected.insertBefore(selected.prev());
@@ -2365,7 +2313,7 @@ L.MAP2U.layers = function (options) {
             }
 
         });
-        $('div.sidebar_content div.section.overlay-layers i#move_overlayer_down').on('click', function () {
+        $('div.sidebar_content div.section.overlay-layers button#move_overlayer_down').on('click', function () {
             var selected = $('div.sidebar_content div.section.overlay-layers ul > li.selected');
             if (selected.next()) {
                 selected.insertAfter(selected.next());
@@ -2374,7 +2322,7 @@ L.MAP2U.layers = function (options) {
 
         });
         // save current layers status to server
-        $('div.sidebar_content div.section.overlay-layers i#save_overlayers_plus').on('click', function () {
+        $('div.sidebar_content div.section.overlay-layers button#overlayers_plus').on('click', function () {
             $.ajax({
                 url: Routing.generate('default_mapoverlayselectionform'),
                 type: 'GET',
@@ -2403,24 +2351,38 @@ L.MAP2U.layers = function (options) {
             });
 
         });
-        $('div.sidebar_content div.section.overlay-layers i#save_overlayers_minus').on('click', function () {
+        $('div.sidebar_content div.section.overlay-layers button#overlayers_minus').on('click', function () {
             var selected = $('div.sidebar_content div.section.overlay-layers ul > li.selected');
-            if (selected.data("index") !== undefined) {
+            if (selected.data("index") !== undefined && _this._map.dataLayers[selected.data("index")] && _this._map.dataLayers[selected.data("index")].index_id !== -1) {
                 if (confirm('Do you want to remove it from overlayers?')) {
+                    if (_this._map.dataLayers[selected.data("index")] && _this._map.dataLayers[selected.data("index")].layer) {
+                        _this._map.removeLayer(_this._map.dataLayers[selected.data("index")].layer);
+                    }
+                    _this._map.dataLayers.splice(selected.data("index"), 1);
                     selected.remove();
+                    _this.reorderLayers();
                     $('div.sidebar_content div.section.overlay-layers ul').hide().fadeIn('fast');
-                    ;
+
                 }
             }
         });
+        $('div.sidebar_content div.section.overlay-layers button#overlayers_zoom_to_layer').on('click', function () {
+            var selected = $('div.sidebar_content div.section.overlay-layers ul > li.selected');
+            if (selected.data("index") !== undefined && _this._map.dataLayers[selected.data("index")] && _this._map.dataLayers[selected.data("index")].bounds) {
+              //  alert("zoom to level");
+                var bound = _this._map.dataLayers[selected.data("index")].bounds;
+                _this._map.fitBounds([[bound[0][1], bound[0][0]], [bound[1][1], bound[1][0]]]);
+
+            }
+        });
         // save current layers status to server
-        $('div.sidebar_content div.section.overlay-layers i#overlayers_selectall').on('click', function () {
+        $('div.sidebar_content div.section.overlay-layers button#overlayers_selectall').on('click', function () {
             $('div.sidebar_content div.section.overlay-layers ul > li').map(function () {
                 $(this).find("input[type=checkbox]").prop('checked', true)
                         .trigger('change');
             });
         });
-        $('div.sidebar_content div.section.overlay-layers i#overlayers_unselectall').on('click', function () {
+        $('div.sidebar_content div.section.overlay-layers div#overlayers_unselectall').on('click', function () {
             $('div.sidebar_content div.section.overlay-layers ul > li').map(function () {
                 $(this).find("input[type=checkbox]").prop('checked', false)
                         .trigger('change');
@@ -2435,16 +2397,24 @@ L.MAP2U.layers = function (options) {
                 }
             });
             if ($(this).hasClass("selected"))
+            {
                 $(this).removeClass("selected");
+                $('div.sidebar_content div.section.overlay-layers button#overlayers_zoom_to_layer').prop('disabled', true);
+                ;
+            }
             else
+            {
                 $(this).addClass("selected");
+                $('div.sidebar_content div.section.overlay-layers button#overlayers_zoom_to_layer').prop('disabled', false);
+                ;
+            }
 
             _this.reorderLayers();
             e.stopPropagation();
         });
 
         // save current layers status to server
-        $('div.sidebar_content div.section.overlay-layers i#save_overlayers_index').on('click', function () {
+        $('div.sidebar_content div.section.overlay-layers button#save_overlayers_index').on('click', function () {
             var formData = new FormData();
             var activelayer = _this._map.dataLayers[$("select#activelayer_id option:selected").val()];
             var mapcenter = _this._map.getCenter();
