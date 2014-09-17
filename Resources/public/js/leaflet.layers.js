@@ -111,14 +111,14 @@ L.MAP2U.layers = function (options) {
                 .attr("class", "deemphasize")
                 .appendTo(overlaySection);
         overlaySection.find('.deemphasize')
-                .append('<button id="move_overlayer_up"><i class="fa fa-chevron-up"></i></button>')
-                .append('<button id="move_overlayer_down"><i class="fa fa-chevron-down"></i></button>')
-                .append('<button id="save_overlayers_index"><i class="fa fa-save"></i></button>')
-                .append('<button id="overlayers_minus"><i class="fa fa-minus"></i></button>')
-                .append('<button id="overlayers_plus"><i class="fa fa-plus"></i></button>')
-                .append('<button id="overlayers_unselectall"><i class="fa fa-times"></i></button>')
-                .append('<button id="overlayers_selectall"><i class="fa fa-check"></i></button>')
-                .append('<button id="overlayers_zoom_to_layer"><i class="fa fa-globe"></i></button>')
+                .append('<div class="overlayers_btn disabled" id="move_overlayer_up"><i class="fa fa-chevron-up"></i></div>')
+                .append('<div class="overlayers_btn disabled" id="move_overlayer_down"><i class="fa fa-chevron-down"></i></div>')
+                .append('<div class="overlayers_btn" id="save_overlayers_index"><i class="fa fa-save"></i></div>')
+                .append('<div class="overlayers_btn disabled" id="overlayers_minus"><i class="fa fa-minus"></i></div>')
+                .append('<div class="overlayers_btn" id="overlayers_plus"><i class="fa fa-plus"></i></div>')
+                .append('<div class="overlayers_btn" id="overlayers_unselectall"><i class="fa fa-times"></i></div>')
+                .append('<div class="overlayers_btn" id="overlayers_selectall"><i class="fa fa-check"></i></div>')
+                .append('<div class="overlayers_btn disabled" id="overlayers_zoom_to_layer"><i class="fa fa-globe"></i></div>')
                 .css('border-bottom', '1px grey dotted');
 
 
@@ -2305,7 +2305,7 @@ L.MAP2U.layers = function (options) {
     };
     control.overlayToolButtons = function () {
         var _this = this;
-        $('div.sidebar_content div.section.overlay-layers button#move_overlayer_up').on('click', function () {
+        $('div.sidebar_content div.section.overlay-layers div#move_overlayer_up').on('click', function () {
             var selected = $('div.sidebar_content div.section.overlay-layers ul > li.selected');
             if (selected.prev()) {
                 selected.insertBefore(selected.prev());
@@ -2313,7 +2313,7 @@ L.MAP2U.layers = function (options) {
             }
 
         });
-        $('div.sidebar_content div.section.overlay-layers button#move_overlayer_down').on('click', function () {
+        $('div.sidebar_content div.section.overlay-layers div#move_overlayer_down').on('click', function () {
             var selected = $('div.sidebar_content div.section.overlay-layers ul > li.selected');
             if (selected.next()) {
                 selected.insertAfter(selected.next());
@@ -2322,7 +2322,7 @@ L.MAP2U.layers = function (options) {
 
         });
         // save current layers status to server
-        $('div.sidebar_content div.section.overlay-layers button#overlayers_plus').on('click', function () {
+        $('div.sidebar_content div.section.overlay-layers div#overlayers_plus').on('click', function () {
             $.ajax({
                 url: Routing.generate('default_mapoverlayselectionform'),
                 type: 'GET',
@@ -2351,7 +2351,7 @@ L.MAP2U.layers = function (options) {
             });
 
         });
-        $('div.sidebar_content div.section.overlay-layers button#overlayers_minus').on('click', function () {
+        $('div.sidebar_content div.section.overlay-layers div#overlayers_minus').on('click', function () {
             var selected = $('div.sidebar_content div.section.overlay-layers ul > li.selected');
             if (selected.data("index") !== undefined && _this._map.dataLayers[selected.data("index")] && _this._map.dataLayers[selected.data("index")].index_id !== -1) {
                 if (confirm('Do you want to remove it from overlayers?')) {
@@ -2366,7 +2366,7 @@ L.MAP2U.layers = function (options) {
                 }
             }
         });
-        $('div.sidebar_content div.section.overlay-layers button#overlayers_zoom_to_layer').on('click', function () {
+        $('div.sidebar_content div.section.overlay-layers div#overlayers_zoom_to_layer').on('click', function () {
             var selected = $('div.sidebar_content div.section.overlay-layers ul > li.selected');
             if (selected.data("index") !== undefined && _this._map.dataLayers[selected.data("index")] && _this._map.dataLayers[selected.data("index")].bounds) {
                 //  alert("zoom to level");
@@ -2381,13 +2381,13 @@ L.MAP2U.layers = function (options) {
             }
         });
         // save current layers status to server
-        $('div.sidebar_content div.section.overlay-layers button#overlayers_selectall').on('click', function () {
+        $('div.sidebar_content div.section.overlay-layers div#overlayers_selectall').on('click', function () {
             $('div.sidebar_content div.section.overlay-layers ul > li').map(function () {
                 $(this).find("input[type=checkbox]").prop('checked', true)
                         .trigger('change');
             });
         });
-        $('div.sidebar_content div.section.overlay-layers button#overlayers_unselectall').on('click', function () {
+        $('div.sidebar_content div.section.overlay-layers div#overlayers_unselectall').on('click', function () {
             $('div.sidebar_content div.section.overlay-layers ul > li').map(function () {
                 $(this).find("input[type=checkbox]").prop('checked', false)
                         .trigger('change');
@@ -2404,14 +2404,19 @@ L.MAP2U.layers = function (options) {
             if ($(this).hasClass("selected"))
             {
                 $(this).removeClass("selected");
-                $('div.sidebar_content div.section.overlay-layers button#overlayers_zoom_to_layer').prop('disabled', true);
-                ;
+                $('div.sidebar_content div.section.overlay-layers div#overlayers_zoom_to_layer').addClass('disabled');
+                $('div.sidebar_content div.section.overlay-layers div#overlayers_minus').addClass('disabled');
+                $('div.sidebar_content div.section.overlay-layers div#move_overlayer_up').addClass('disabled');
+                $('div.sidebar_content div.section.overlay-layers div#move_overlayer_down').addClass('disabled');
+                
             }
             else
             {
                 $(this).addClass("selected");
-                $('div.sidebar_content div.section.overlay-layers button#overlayers_zoom_to_layer').prop('disabled', false);
-                ;
+                $('div.sidebar_content div.section.overlay-layers div#overlayers_zoom_to_layer').removeClass('disabled');
+                $('div.sidebar_content div.section.overlay-layers div#overlayers_minus').removeClass('disabled');
+                $('div.sidebar_content div.section.overlay-layers div#move_overlayer_up').removeClass('disabled');
+                $('div.sidebar_content div.section.overlay-layers div#move_overlayer_down').removeClass('disabled');
             }
 
             _this.reorderLayers();
@@ -2419,7 +2424,7 @@ L.MAP2U.layers = function (options) {
         });
 
         // save current layers status to server
-        $('div.sidebar_content div.section.overlay-layers button#save_overlayers_index').on('click', function () {
+        $('div.sidebar_content div.section.overlay-layers div#save_overlayers_index').on('click', function () {
             var formData = new FormData();
             var activelayer = null;
             var selected = $('div.sidebar_content div.section.overlay-layers ul > li.selected');
