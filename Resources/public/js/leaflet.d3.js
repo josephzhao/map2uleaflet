@@ -320,11 +320,12 @@ L.D3 = L.Class.extend({
             if (container) {
                 container.attr('id', this.options.id ? this.options.id : 'svg-leaflet-d3');
                 container.attr('filetype', this.options.filetype ? this.options.filetype : 'svg-leaflet-d3');
+                container.attr('layerId', this.options.layerId ? this.options.layerId : 0);
                 container.attr('filename', this.options.filename ? this.options.filename : 'svg-data-filename');
                 container.attr('zIndex', this.options.zIndex ? this.options.zIndex : '');
                 container.attr('minZoom', this.options.minZoom ? this.options.minZoom : '');
                 container.attr('maxZoom', this.options.maxZoom ? this.options.maxZoom : '');
-                container.attr('layerType', this.options.layerType ? this.options.layerType : 'uploadfilelayer');
+                container.attr('layerType', this.options.layerType ? this.options.layerType : 'useruploadfile');
             }
             this._updateZIndex();
             overlayPane.appendChild(this._container);
@@ -337,6 +338,9 @@ L.D3 = L.Class.extend({
         var ps = this._feature[0];
         var pNameExist = false;
         var propertyName = '';
+        if(typeof rule.categories !=='object')
+            rule.categories =JSON.parse(rule.categories);
+        
         if (ps.length > 0) {
             var p = d3.select(ps[0]);
             var properties = p[0][0].__data__.properties;
@@ -354,7 +358,7 @@ L.D3 = L.Class.extend({
                 var p = d3.select(ps[k]);
                 var properties = p[0][0].__data__.properties;
                 for (var j = 0; j < rule.categories.length; j++) {
-                    if (parseFloat(rule.categories[j].from) === rule.min)
+                    if (parseFloat(rule.categories[j].from) === parseFloat(rule.min))
                     {
                         if (parseFloat(properties[propertyName]) >= parseFloat(rule.categories[j].from) && parseFloat(properties[propertyName]) <= parseFloat(rule.categories[j].to)) {
                             p.style('fill', rule.categories[j].fill);

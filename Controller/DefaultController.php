@@ -217,6 +217,39 @@ class DefaultController extends Controller {
     }
 
     /**
+     * get map layer info.
+     * params:
+     * @Route("/maplayerinfo", name="leaflet_maplayerinfo", options={"expose"=true})
+     * @Method("GET")
+     * @Template()
+     */
+    public function mapLayerinfoAction(Request $request) {
+        $id = $request->get("id");
+        $layertype = $request->get("layerType");
+        switch ($layertype) {
+            case 'clustermap':
+                $data = $this->getClustermapInfo($id);
+                break;
+            case 'heatmap':
+                $data = $this->getHeatmapInfo($id);
+                break;
+            case 'thematicmap':
+                $data = $this->getThematicmapInfo($id);
+                break;
+            case 'useruploadfile':
+                $data = $this->getUserUploadfileInfo($id);
+                break;
+            case 'uploadfilelayer':
+                $data = $this->getUploadfileLayerInfo($id);
+            case 'wfs':
+                $data = $this->getWFSLayerInfo($id);
+            default:
+                return new Response(\json_encode(array('success' => false, 'message' => 'no valid layer type info!', 'data' => null)));
+        }
+        return new Response(\json_encode(array('success' => true, 'layer' => $data)));
+    }
+
+    /**
      * get map layers extend.
      * params:
      * @Route("/maplayer", name="leaflet_maplayer", options={"expose"=true})
@@ -235,13 +268,17 @@ class DefaultController extends Controller {
         $datafilesPath = $this->get('kernel')->getRootDir() . '/../Data';
 
         switch ($layertype) {
-            case 'leafletcluster':
+            case 'clustermap':
                 $data = $this->getClusterLayerData($id, $datafilesPath);
                 break;
-            case 'leafletheatmap':
+            case 'heatmap':
                 $data = $this->getHeatmapLayerData($id, $datafilesPath);
                 break;
+            case 'thematicmap':
+                $data = $this->getThematicMapLayerData($id, $datafilesPath);
+                break;
             case 'uploadfile':
+            case 'useruploadfile':
                 $data = $this->getUploadfileLayerData($id, $datafilesPath);
                 break;
             case 'uploadfilelayer':
@@ -251,7 +288,6 @@ class DefaultController extends Controller {
                 $data = $this->getWFSLayerData($id, $datafilesPath, $source);
                 break;
             case 'userdraw':
-
                 $data = $this->getUserdrawLayerData($datafilesPath);
 
                 break;
@@ -535,6 +571,135 @@ class DefaultController extends Controller {
         return new Response(\json_encode(array('success' => true, 'message' => 'User draw name  not exist')));
     }
 
+    private function getClustermapInfo($id) {
+        $em = $this->getDoctrine()->getManager();
+        $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:LeafletClusterLayer p where p.id=' . $id)
+                ->getResult();
+        $layerData = array();
+        if ($layers) {
+            $layerData['id'] = $layers[0]->getId();
+            $layerData['layerTitle'] = $layers[0]->getLayerTitle();
+            $layerData['layerName'] = $layers[0]->getLayerName();
+            $layerData['datasource'] = $layers[0]->getId();
+            $layerData['layerType'] = 'clustermap';
+            $layerData['layerShowInSwitcher'] = true;
+            $layerData['fileName'] = $layers[0]->getFileName();
+            $layerData['fileType'] = $layers[0]->getType();
+        }
+        return $layerData;
+    }
+
+    private function getHeatmapInfo($id) {
+        $em = $this->getDoctrine()->getManager();
+        $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:LeafletHeatmapLayer p where p.id=' . $id)
+                ->getResult();
+        $layerData = array();
+        $layerOpt = array();
+        if ($layers) {
+            $layerData['id'] = $layers[0]->getId();
+            $layerData['layerTitle'] = $layers[0]->getFileName();
+            $layerData['layerName'] = $layers[0]->getFileName();
+            $layerData['datasource'] = $layers[0]->getDatasourceId();
+            $layerData['layerType'] = 'heatmap';
+            $layerData['layerShowInSwitcher'] = true;
+            $layerData['fileName'] = $layers[0]->getFileName();
+            $layerData['fileType'] = $layers[0]->getType();
+
+            $layerOpt['fieldname'] = $layers[0]->getFieldname();
+            $layerOpt['gradient'] = $layers[0]->getGradient();
+            $layerOpt['category'] = $layers[0]->getCategory();
+        }
+        $layerData['opt'] = $layerOpt;
+        return $layerData;
+    }
+
+    private function getThematicmapInfo($id) {
+        $em = $this->getDoctrine()->getManager();
+        $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:ThematicMap p where p.id=' . $id)
+                ->getResult();
+        $layerData = array();
+        $layerOpt = array();
+     
+        if ($layers) {
+            $layerData['id'] = $layers[0]->getId();
+            $layerData['layerTitle'] = $layers[0]->getLayerTitle();
+            $layerData['layerName'] = $layers[0]->getLayerName();
+            $layerData['datasource'] = $layers[0]->getDatasourceId();
+            $layerData['layerType'] = 'thematicmap';
+            $layerData['layerShowInSwitcher'] = true;
+
+            if (isset($layers[0]->useruploadfile)) {
+                $layerOpt['fileName'] = $layers[0]->getUseruploadfile()->getFileName();
+                $layerOpt['fileType'] = $layers[0]->getUseruploadfile()->getType();
+            } else {
+                $layerOpt['fileName'] = null;
+                $layerOpt['fileType'] = null;
+            }
+            $layerOpt['thematicmap'] = true;
+
+            $layerOpt['fieldname'] = $layers[0]->getFieldname();
+            $layerOpt['gradient'] = $layers[0]->getGradient();
+            $layerOpt['category'] = unserialize($layers[0]->getCategory());
+            $layerOpt['min'] = $layerOpt['category']['min'];
+            $layerOpt['max'] = $layerOpt['category']['max'];
+            $layerOpt['categories'] = unserialize($layers[0]->getCategories());
+        }
+
+        $layerData['opt'] = $layerOpt;
+        return $layerData;
+    }
+
+    private function getUserUploadfileInfo($id) {
+        $em = $this->getDoctrine()->getManager();
+        $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UserUploadfile p where p.id=' . $id)
+                ->getResult();
+        $layerData = array();
+        if ($layers) {
+            $layerData['id'] = $layers[0]->getId();
+            $layerData['layerTitle'] = $layers[0]->getFileName();
+            $layerData['layerName'] = $layers[0]->getFileName();
+            $layerData['datasource'] = $layers[0]->getId();
+            $layerData['layerType'] = 'useruploadfile';
+            $layerData['layerShowInSwitcher'] = true;
+            $layerData['fileName'] = $layers[0]->getFileName();
+            $layerData['fileType'] = $layers[0]->getType();
+        }
+        return $layerData;
+    }
+
+    private function getUploadfileLayerInfo($id) {
+        $em = $this->getDoctrine()->getManager();
+        $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UploadfileLayer p where p.id=' . $id)
+                ->getResult();
+        $layerData = array();
+        if ($layers) {
+            $layerData['id'] = $layers[0]->getId();
+            $layerData['layerTitle'] = $layers[0]->getLayerTitle();
+            $layerData['layerName'] = $layers[0]->getLayerName();
+            $layerData['datasource'] = $layers[0]->getUseruploadfile()->getId();
+            $layerData['layerType'] = 'uploadfilelayer';
+            $layerData['layerShowInSwitcher'] = true;
+            $layerData['fileName'] = $layers[0]->getFileName();
+            $layerData['fileType'] = $layers[0]->getType();
+        }
+        return $layerData;
+    }
+
+    private function getWFSLayerInfo($id) {
+        $em = $this->getDoctrine()->getManager();
+        $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:GeoServerLayer p where p.id=' . $id)
+                ->getResult();
+        $layerData = array();
+        $layerData['layerTitle'] = $layers[0]->getFileName();
+        $layerData['layerName'] = $layers[0]->getFileName();
+        $layerData['datasource'] = $layers[0]->getId();
+        $layerData['layerType'] = 'wfs';
+        $layerData['layerShowInSwitcher'] = true;
+        $layerData['fileName'] = $layers[0]->getFileName();
+        $layerData['fileType'] = $layers[0]->getType();
+        return $layerData;
+    }
+
     private function getUploadfileLayerData($id, $datafilesPath) {
         $em = $this->getDoctrine()->getManager();
         $upload_files = $em->createQuery('SELECT p FROM Map2uCoreBundle:UserUploadfile p where p.id=' . $id)
@@ -546,7 +711,6 @@ class DefaultController extends Controller {
         $success = true;
         $upload_file = $upload_files[0];
 
-
         $geom['datatype'] = 'topojson';
 
         $layerData = array();
@@ -555,26 +719,18 @@ class DefaultController extends Controller {
         $layerData['layerName'] = $upload_file->getFileName();
         $layerData['tip_field'] = '';
         $layerData['label_field'] = '';
-        $layerData['layerType'] = 'uploadfile';
+        $layerData['source'] = $upload_file->getId();
+        $layerData['layerType'] = 'useruploadfile';
         $layerData['clusterLayer'] = false;
         $layerData['layerShowInSwitcher'] = true;
         $layerData['fileName'] = $upload_file->getFileName();
         $layerData['fileType'] = $upload_file->getType();
 
-
         $layerData['seq'] = 1;
         $layerData['minZoom'] = null;
         $layerData['maxZoom'] = null;
 
-
-
-
-
-
-
-
-
-        $geom = $this->getGeomJsonData($upload_file->getUserId(), true, $upload_file, $datafilesPath);
+        $geom = $this->getGeomJsonData($upload_file->getUserId(), true, $upload_file->getId(), $datafilesPath);
         $sld_json = $this->getSldContent($upload_file->getSldfileName());
         return new Response(\json_encode(array('success' => $success, 'datatype' => $geom['datatype'], 'message' => $message, 'layer' => $layerData, 'sld' => $sld_json, 'geomdata' => $geom)));
     }
@@ -593,8 +749,58 @@ class DefaultController extends Controller {
         $layerData['layerType'] = 'uploadfilelayer';
         $layerData['clusterLayer'] = false;
 
-        $geom = $this->getGeomJsonData($layer->getUserId(), $layer->isTopojsonOnly(), $layer->getUseruploadfile(), $datafilesPath);
+        $geom = $this->getGeomJsonData($layer->getUserId(), $layer->isTopojsonOnly(), $layer->getUseruploadfile()->getId(), $datafilesPath);
         $sld_json = $this->getSldContent($layer->getDefaultSldName());
+        return new Response(\json_encode(array('success' => $success, 'datatype' => $geom['datatype'], 'message' => $message, 'layer' => $layerData, 'sld' => $sld_json, 'geomdata' => $geom)));
+    }
+
+    private function getHeatmapLayerData($id, $datafilesPath) {
+        $em = $this->getDoctrine()->getManager();
+        $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:LeafletClusterLayer p where p.id=' . $id)
+                ->getResult();
+        if (!$layers) {
+            return new Response(\json_encode(array('success' => true, 'message' => "cluster layer id:$id not exist")));
+        }
+        $message = '';
+        $success = true;
+        $layer = $layers[0];
+        $layerData = $this->setLayerInfo($layer);
+        $layerData['layerType'] = 'heatmap';
+        $layerData['clusterLayer'] = true;
+        $geom = $this->getGeomJsonData($layer->getUserId(), $layer->isTopojsonOnly(), $layer->getUseruploadfile()->getId(), $datafilesPath);
+        $sld_json = $this->getSldContent($layer->getDefaultSldName());
+        return new Response(\json_encode(array('success' => $success, 'datatype' => $geom['datatype'], 'message' => $message, 'layer' => $layerData, 'sld' => $sld_json, 'geomdata' => $geom)));
+    }
+
+    private function getThematicMapLayerData($id, $datafilesPath) {
+        $em = $this->getDoctrine()->getManager();
+        $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:ThematicMap p where p.id=' . $id)
+                ->getResult();
+        if (!$layers) {
+            return new Response(\json_encode(array('success' => true, 'message' => "cluster layer id:$id not exist")));
+        }
+        $message = '';
+        $success = true;
+        $layer = $layers[0];
+        $layerData = array();
+        $layerData['id'] = $layer->getId();
+        $layerData['layerTitle'] = $layer->getLayerTitle();
+        $layerData['layerName'] = $layer->getLayerName();
+
+        $layerData['datasource'] = $layer->getDatasourceId();
+        $layerData['minZoom'] = $layer->getMinZoom();
+        $layerData['maxZoom'] = $layer->getMaxZoom();
+        $layerData['layerShowInSwitcher'] = true;
+        if (isset($layer->useruploadfile)) {
+            $layerData['fileName'] = $layer->getUseruploadfile()->getFileName();
+            $layerData['fileType'] = $layer->getUseruploadfile()->getType();
+        } else {
+            $layerData['fileName'] = null;
+            $layerData['fileType'] = null;
+        }
+        $layerData['layerType'] = 'thematicmap';
+        $geom = $this->getGeomJsonData($layer->getUserId(), true, $layer->getDatasourceId(), $datafilesPath);
+        $sld_json = null;//$this->getSldContent($layer->getDefaultSldName());
         return new Response(\json_encode(array('success' => $success, 'datatype' => $geom['datatype'], 'message' => $message, 'layer' => $layerData, 'sld' => $sld_json, 'geomdata' => $geom)));
     }
 
@@ -611,7 +817,7 @@ class DefaultController extends Controller {
         $layerData = $this->setLayerInfo($layer);
         $layerData['layerType'] = 'leafletcluster';
         $layerData['clusterLayer'] = true;
-        $geom = $this->getGeomJsonData($layer->getUserId(), $layer->isTopojsonOnly(), $layer->getUseruploadfile(), $datafilesPath);
+        $geom = $this->getGeomJsonData($layer->getUserId(), $layer->isTopojsonOnly(), $layer->getUseruploadfile()->getId(), $datafilesPath);
         $sld_json = $this->getSldContent($layer->getDefaultSldName());
         return new Response(\json_encode(array('success' => $success, 'datatype' => $geom['datatype'], 'message' => $message, 'layer' => $layerData, 'sld' => $sld_json, 'geomdata' => $geom)));
     }
@@ -634,19 +840,19 @@ class DefaultController extends Controller {
         return new Response(\json_encode(array('success' => true, 'datatype' => $geom['datatype'], 'message' => 'User draw geometries', 'layer' => $layerData, 'sld' => null, 'geomdata' => $geom)));
     }
 
-    private function getGeomJsonData($userid, $topojson_type, $uploadfile, $datafilesPath) {
+    private function getGeomJsonData($userid, $topojson_type, $uploadfile_id, $datafilesPath) {
         $conn = $this->get('database_connection');
         $geom = array();
 
         $geom['datatype'] = "geojson";
         $sql = "SELECT row_to_json(fc) as geom FROM ( SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features FROM (SELECT 'Feature' As type, ST_AsGeoJSON(lg.the_geom)::json As geometry
     , row_to_json(lp) As properties
-   FROM useruploadfile_geoms_" . $uploadfile->getId() . " As lg 
-         INNER JOIN (SELECT ogc_fid FROM useruploadfile_geoms_" . $uploadfile->getId() . ") As lp 
+   FROM useruploadfile_geoms_" . $uploadfile_id . " As lg 
+         INNER JOIN (SELECT ogc_fid FROM useruploadfile_geoms_" . $uploadfile_id . ") As lp 
        ON lg.ogc_fid = lp.ogc_fid  ) As f )  As fc";
         if ($topojson_type === true) {
-            if (file_exists($datafilesPath . '/uploads/' . $userid . '/topojson/usershapefile-' . $uploadfile->getId() . '.json')) {
-                $theGeom = file_get_contents($datafilesPath . '/uploads/' . $userid . '/topojson/usershapefile-' . $uploadfile->getId() . '.json');
+            if (file_exists($datafilesPath . '/uploads/' . $userid . '/topojson/usershapefile-' . $uploadfile_id . '.json')) {
+                $theGeom = file_get_contents($datafilesPath . '/uploads/' . $userid . '/topojson/usershapefile-' . $uploadfile_id . '.json');
                 $geom['geom'] = $theGeom;
                 $geom['datatype'] = "topojson";
                 return $geom;

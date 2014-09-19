@@ -110,18 +110,61 @@ L.MAP2U.layers = function (options) {
                 .text(I18n.t('javascripts.map.layers.overlays'))
                 .attr("class", "deemphasize")
                 .appendTo(overlaySection);
-        overlaySection.find('.deemphasize')
-                .append('<div class="overlayers_btn disabled" id="move_overlayer_up"><i class="fa fa-chevron-up"></i></div>')
-                .append('<div class="overlayers_btn disabled" id="move_overlayer_down"><i class="fa fa-chevron-down"></i></div>')
-                .append('<div class="overlayers_btn" id="save_overlayers_index"><i class="fa fa-save"></i></div>')
-                .append('<div class="overlayers_btn disabled" id="overlayers_minus"><i class="fa fa-minus"></i></div>')
-                .append('<div class="overlayers_btn" id="overlayers_plus"><i class="fa fa-plus"></i></div>')
-                .append('<div class="overlayers_btn" id="overlayers_unselectall"><i class="fa fa-times"></i></div>')
-                .append('<div class="overlayers_btn" id="overlayers_selectall"><i class="fa fa-check"></i></div>')
-                .append('<div class="overlayers_btn disabled" id="overlayers_zoom_to_layer"><i class="fa fa-globe"></i></div>')
-                .css('border-bottom', '1px grey dotted');
+        if (options.buttons === undefined) {
+            overlaySection.find('.deemphasize')
+                    .append('<div class="overlayers_btn disabled" id="move_overlayer_up"><i class="fa fa-chevron-up"></i></div>')
+                    .append('<div class="overlayers_btn disabled" id="move_overlayer_down"><i class="fa fa-chevron-down"></i></div>')
+                    .append('<div class="overlayers_btn" id="save_overlayers_index"><i class="fa fa-save"></i></div>')
+                    .append('<div class="overlayers_btn disabled" id="overlayers_minus"><i class="fa fa-minus"></i></div>')
+                    .append('<div class="overlayers_btn" id="overlayers_plus"><i class="fa fa-plus"></i></div>')
+                    .append('<div class="overlayers_btn" id="overlayers_unselectall"><i class="fa fa-times"></i></div>')
+                    .append('<div class="overlayers_btn" id="overlayers_selectall"><i class="fa fa-check"></i></div>')
+                    .append('<div class="overlayers_btn disabled" id="overlayers_zoom_to_layer"><i class="fa fa-globe"></i></div>')
+                    .css('border-bottom', '1px grey dotted');
 
+        }
+        else {
+            if (options.buttons.up === true) {
+                overlaySection.find('.deemphasize')
+                        .append('<div class="overlayers_btn disabled" id="move_overlayer_up"><i class="fa fa-chevron-up"></i></div>');
+            }
+            if (options.buttons.down === true) {
+                overlaySection.find('.deemphasize')
+                        .append('<div class="overlayers_btn disabled" id="move_overlayer_down"><i class="fa fa-chevron-down"></i></div>');
 
+            }
+            if (options.buttons.save === true) {
+                overlaySection.find('.deemphasize')
+                        .append('<div class="overlayers_btn" id="save_overlayers_index"><i class="fa fa-save"></i></div>');
+            }
+            if (options.buttons.minus === true) {
+                overlaySection.find('.deemphasize')
+                        .append('<div class="overlayers_btn disabled" id="overlayers_minus"><i class="fa fa-minus"></i></div>');
+
+            }
+            if (options.buttons.plus === true) {
+                overlaySection.find('.deemphasize')
+                        .append('<div class="overlayers_btn" id="overlayers_plus"><i class="fa fa-plus"></i></div>');
+
+            }
+            if (options.buttons.unselectall === true) {
+                overlaySection.find('.deemphasize')
+                        .append('<div class="overlayers_btn" id="overlayers_unselectall"><i class="fa fa-times"></i></div>');
+
+            }
+            if (options.buttons.selectall === true) {
+                overlaySection.find('.deemphasize')
+                        .append('<div class="overlayers_btn" id="overlayers_selectall"><i class="fa fa-check"></i></div>');
+
+            }
+            if (options.buttons.zoom === true) {
+                overlaySection.find('.deemphasize')
+                        .append('<div class="overlayers_btn disabled" id="overlayers_zoom_to_layer"><i class="fa fa-globe"></i></div>');
+
+            }
+            overlaySection.find('.deemphasize')
+                    .css('border-bottom', '1px grey dotted');
+        }
 
         var list = $('<ul>')
                 .appendTo(overlaySection);
@@ -151,12 +194,12 @@ L.MAP2U.layers = function (options) {
             if (label_name.indexOf('missing ') === 1)
             {
                 label.append(layer.name);
-                activeLayerSelect.append("<option value='" + layer.layer_id + "'>" + layer.name + "</option>");
+                activeLayerSelect.append("<option value='" + layer.layerId + "'>" + layer.name + "</option>");
             }
             else
             {
                 label.append(label_name);
-                activeLayerSelect.append("<option value='" + layer.layer_id + "'>" + label_name + "</option>");
+                activeLayerSelect.append("<option value='" + layer.layerId + "'>" + label_name + "</option>");
             }
 
             input.on('change', function () {
@@ -393,7 +436,7 @@ L.MAP2U.layers = function (options) {
         var maploaded = false;
         var thematicmap_layer;
         _this._map.dataLayers.forEach(function (layer) {
-            if ((layer.layerType === 'uploadfilelayer' || layer.layerType === 'uploadfile') && layer.datasource === opt.datasource && layer.filename === opt.filename) {
+            if (layer.layerType === 'thematicmap' && layer.datasource === opt.datasource && layer.layerId === opt.layerId) {
                 maploaded = true;
                 thematicmap_layer = layer;
             }
@@ -404,7 +447,7 @@ L.MAP2U.layers = function (options) {
 
         }
 
-        if (thematicmap_layer && thematicmap_layer.layer) {
+        if (thematicmap_layer && thematicmap_layer.layer && thematicmap_layer.layer.renderThematicMap) {
             thematicmap_layer.layer.options.thematicmap = true;
             thematicmap_layer.layer.options.thematicmap_rule = opt;
             thematicmap_layer.layer.renderThematicMap(opt);
@@ -412,17 +455,77 @@ L.MAP2U.layers = function (options) {
 
     };
     control.renderThematicMapLayer = function (thematicmap_layer, opt) {
-        if (thematicmap_layer && thematicmap_layer.layer) {
+        if (thematicmap_layer && thematicmap_layer.layer && thematicmap_layer.layer.renderThematicMap) {
             thematicmap_layer.layer.options.thematicmap = true;
             thematicmap_layer.layer.options.thematicmap_rule = opt;
             thematicmap_layer.layer.renderThematicMap(opt);
         }
+    };
+    control.loadLayerInfoFromSource = function (id, type) {
+        var result;
+        var _this = this;
+
+        $.ajax({
+            url: Routing.generate('leaflet_maplayerinfo'),
+            type: 'GET',
+            beforeSend: function () {
+
+                _this._map.spin(true);
+            },
+            complete: function () {
+                _this._map.spin(false);
+            },
+            error: function () {
+                _this._map.spin(false);
+            },
+            //Ajax events
+            success: completeHandler = function (response) {
+                result = response;
+                if (response === '' || response === undefined || response === null)
+                    return;
+                if (typeof result !== 'object')
+                    result = JSON.parse(result);
+                if (result.success !== true) {
+                    // if load data not suceess
+                    alert(result.message);
+                    return;
+                }
+                if (typeof result.layer === 'string')
+                    result.layer = JSON.parse(result.layer);
+
+                var layer = {'defaultShowOnMap': true, 'layerType': result.layer.layerType, 'layer': null, 'minZoom': null, 'maxZoom': null, 'index_id': _this._map.dataLayers.length + 1, 'layerId': result.layer.id, 'title': result.layer.layerTitle, 'datasource': result.layer.datasource, 'filename': result.layer.fileName, 'name': result.layer.layerName, type: result.layer.datatype};
+                if (result.layer.opt !== undefined && typeof result.layer.opt !== 'object')
+                    result.layer.opt = JSON.parse(result.layer.opt);
+
+                _this._map.dataLayers[_this._map.dataLayers.length] = layer;
+                _this.addOverlayItem(layer, _this._map.dataLayers.length - 1, result.layer.opt);
+
+//                ;
+//                switch (result.datatype) {
+//                    case 'topojson':
+//                        control.RenderTopojsonLayer(result, layer, opt);
+//                        break;
+//                    case 'geojson':
+//
+//                        control.RenderGeojsonLayer(result, layer, opt);
+//                        break;
+//                }
+
+            },
+            // Form data
+            data: {id: id, layerType: type},
+            //Options to tell JQuery not to process data or worry about content-type
+            cache: false,
+            contentType: false
+        });
+
     };
     // load layer data from server aand create layers based on layer type;
     control.loadLayer = function (layer, opt) {
 
         var result;
         var _this = this;
+
         if (layer.layerType === 'wms') {
             control.renderWMSLayer(layer);
             return;
@@ -471,7 +574,7 @@ L.MAP2U.layers = function (options) {
 
             },
             // Form data
-            data: {id: layer.layer_id, layerType: layer.layerType},
+            data: {id: layer.layerId, layerType: layer.layerType},
             //Options to tell JQuery not to process data or worry about content-type
             cache: false,
             contentType: false
@@ -527,7 +630,7 @@ L.MAP2U.layers = function (options) {
                         }
                     });
                     if (fileExist === false) {
-                        _this._map.dataLayers[_this._map.dataLayers.length] = {'defaultShowOnMap': true, 'layerType': 'uploadfile', 'layer': null, 'minZoom': null, 'maxZoom': null, 'index_id': _this._map.dataLayers.length + 1, 'layer_id': result.uploadfile.id, 'title': result.uploadfile.filename, 'datasource': result.uploadfile.datasource, 'filename': result.uploadfile.filename, 'name': result.uploadfile.filename, type: 'topojson'};
+                        _this._map.dataLayers[_this._map.dataLayers.length] = {'defaultShowOnMap': true, 'layerType': 'uploadfile', 'layer': null, 'minZoom': null, 'maxZoom': null, 'index_id': _this._map.dataLayers.length + 1, 'layerId': result.uploadfile.id, 'title': result.uploadfile.filename, 'datasource': result.uploadfile.datasource, 'filename': result.uploadfile.filename, 'name': result.uploadfile.filename, type: 'topojson'};
                         maplayer = _this._map.dataLayers[_this._map.dataLayers.length - 1];
                         _this.addOverlayItem(maplayer, _this._map.dataLayers.length - 1, opt);
 
@@ -644,10 +747,11 @@ L.MAP2U.layers = function (options) {
                         response = JSON.parse(response);
                     if (typeof response.data !== 'object')
                         response.data = JSON.parse(response.data);
-                    if (!layer.clusterLayer) {
-                        control.renderD3Layer(response.data, {
+                    if (layer.layerType !== 'clustermap') {
+                        control.renderD3Layer(layer, response.data, layer.sld, {
                             id: 'svg-leaflet-d3',
-                            layer_id: layer.layer_id,
+                            layerId: layer.layerId,
+                            datasource: layer.datasource,
                             zIndex: (300 - layer.index_id),
                             minZoom: layer.minZoom,
                             maxZoom: layer.maxZoom,
@@ -684,7 +788,7 @@ L.MAP2U.layers = function (options) {
             json_data = result.geomdata['geom'];
         var bounds = d3.geo.bounds(json_data);
         layer.bounds = bounds;
-        if (layer.clusterLayer) {
+        if (layer.layerType === 'clustermap') {
 
             control.renderClusterLayer(layer, json_data);
             return;
@@ -697,15 +801,16 @@ L.MAP2U.layers = function (options) {
 
                 control.renderD3Layer(layer, json_data, sld, {
                     id: 'svg-leaflet-d3',
-                    layer_id: layer.layer_id,
+                    layerId: layer.layerId,
+                    datasource: layer.datasource,
                     zIndex: (300 - layer.index_id),
                     minZoom: layer.minZoom,
                     maxZoom: layer.maxZoom,
                     layerType: layer.layerType,
                     sld: sld,
                     thematicmap: opt,
-                    filename: result.layer['fileName'].toLowerCase(),
-                    filetype: result.layer['fileType'].toLowerCase(),
+                    filename: result.layer['fileName'] ? result.layer['fileName'].toLowerCase() : '',
+                    filetype: result.layer['fileType'] ? result.layer['fileType'].toLowerCase() : '',
                     showLabels: (result.layer['label_field'] !== '' && result.layer['label_field'] !== null),
                     type: result.datatype,
                     tip_field: result.layer['tip_field'],
@@ -772,7 +877,7 @@ L.MAP2U.layers = function (options) {
                 feature.name = data[i].keyname;
                 feature.index = _this._map.drawnItems.getLayers().length;
                 feature.type = data[i].geom_type;
-                feature.layer_id = -1;
+                feature.layerId = -1;
                 feature.on('click', function (e) {
 
                     var selectedfeature = e.target;
@@ -909,7 +1014,7 @@ L.MAP2U.layers = function (options) {
         var collection = topojson.feature(json_data, json_data.objects[key]);
         var bounds = d3.geo.bounds(collection);
         layer.bounds = bounds;
-        if (layer.clusterLayer) {
+        if (layer.layerType === 'clustermap') {
 
             control.renderClusterLayer(layer, collection);
             return;
@@ -917,21 +1022,22 @@ L.MAP2U.layers = function (options) {
 
         d3.selectAll("#svg-leaflet-d3").each(function () {
             var elt = d3.select(this);
-            if (elt.attr("filename").toString().toLowerCase() === result.layer['fileName'].toString().toLowerCase() && elt.attr("layertype").toString().toLowerCase() === layer.layerType)
+            if (elt.attr("layerType") !== undefined && elt.attr("layerType") !== '' && elt.attr("layerId") !== undefined && parseInt(elt.attr("layerId")) === parseInt(result.layer['layerId']) && elt.attr("layertype").toString().toLowerCase() === layer.layerType)
                 elt.remove();
         });
 
         control.renderD3Layer(layer, collection, sld, {
             id: 'svg-leaflet-d3',
-            layer_id: layer.layer_id,
+            layerId: layer.layerId,
             zIndex: (300 - layer.index_id),
             minZoom: layer.minZoom,
             maxZoom: layer.maxZoom,
+            datasource: layer.datasource,
             layerType: layer.layerType,
             sld: sld,
             thematicmap: opt,
-            filename: result.layer['fileName'].toLowerCase(),
-            filetype: result.layer['fileType'].toLowerCase(),
+            filename: result.layer['fileName'] ? result.layer['fileName'].toLowerCase() : '',
+            filetype: result.layer['fileType'] ? result.layer['fileType'].toLowerCase() : '',
             showLabels: (result.layer['label_field'] !== '' && result.layer['label_field'] !== null),
             type: result.datatype,
             tip_field: result.layer['tip_field'],
@@ -940,20 +1046,20 @@ L.MAP2U.layers = function (options) {
         return;
         var geojson_shapefile = new L.D3(collection, {
             id: 'svg-leaflet-d3',
-            layer_id: layer.layer_id,
+            layerId: layer.layerId,
             zIndex: (300 - layer.index_id),
             minZoom: layer.minZoom,
             maxZoom: layer.maxZoom,
             layerType: layer.layerType,
             sld: sld,
-            filename: result.layer['fileName'].toLowerCase(),
-            filetype: result.layer['fileType'].toLowerCase(),
+            filename: result.layer['fileName'] ? result.layer['fileName'].toLowerCase() : '',
+            filetype: result.layer['fileType'] ? result.layer['fileType'].toLowerCase() : '',
             showLabels: (result.layer['label_field'] !== '' && result.layer['label_field'] !== null),
             type: result.datatype,
             tip_field: result.layer['tip_field'],
             label_field: result.layer['label_field'],
             featureAttributes: {
-                'layer_id': result.layer['id'],
+                'layerId': result.layer['id'],
                 'class': function (feature) {
                     return 'default_fcls';
                 }
@@ -1116,10 +1222,10 @@ L.MAP2U.layers = function (options) {
                                     response = JSON.parse(response);
                                 if (typeof response.data !== 'object')
                                     response.data = JSON.parse(response.data);
-                                if (!layer.clusterLayer) {
+                                if (layer.layerType !== 'clustermap') {
                                     var geojson_layer = new L.D3(response.data, {
                                         id: 'svg-leaflet-d3',
-                                        layer_id: layer.layer_id,
+                                        layerId: layer.layerId,
                                         zIndex: (300 - layer.index_id),
                                         minZoom: layer.minZoom,
                                         maxZoom: layer.maxZoom,
@@ -1376,7 +1482,7 @@ L.MAP2U.layers = function (options) {
                 error: function () {
                     _this._map.spin(false);
                 },
-                data: {id: layer.layer_id, type: layer.type},
+                data: {id: layer.layerId, type: layer.type},
                 //Ajax events
                 success: function (response) {
                     var result;
@@ -1445,7 +1551,7 @@ L.MAP2U.layers = function (options) {
                                 feature.name = data[i].keyname;
                                 feature.index = _this._map.drawnItems.getLayers().length;
                                 feature.type = data[i].geom_type;
-                                feature.layer_id = -1;
+                                feature.layerId = -1;
                                 feature.on('click', function (e) {
 
 
@@ -1647,7 +1753,7 @@ L.MAP2U.layers = function (options) {
 //                            });
                             var geojson_shapefile = new L.D3(collection, {
                                 id: 'svg-leaflet-d3',
-                                layer_id: layer.layer_id,
+                                layerId: layer.layerId,
                                 zIndex: (300 - layer.index_id),
                                 minZoom: layer.minZoom,
                                 maxZoom: layer.maxZoom,
@@ -1660,7 +1766,7 @@ L.MAP2U.layers = function (options) {
                                 tip_field: result.layers[keys[k]]['tip_field'],
                                 label_field: result.layers[keys[k]]['label_field'],
                                 featureAttributes: {
-                                    'layer_id': result.layers[keys[k]]['id'],
+                                    'layerId': result.layers[keys[k]]['id'],
                                     'class': function (feature) {
                                         return 'default_fcls';
                                     }
@@ -2375,7 +2481,7 @@ L.MAP2U.layers = function (options) {
 
             }
             else {
-                var bounds=_this._map.getBounds();
+                var bounds = _this._map.getBounds();
                 alert(JSON.stringify(bounds));
                 _this._map.fitBounds(_this._map.getBounds());
             }
@@ -2408,7 +2514,7 @@ L.MAP2U.layers = function (options) {
                 $('div.sidebar_content div.section.overlay-layers div#overlayers_minus').addClass('disabled');
                 $('div.sidebar_content div.section.overlay-layers div#move_overlayer_up').addClass('disabled');
                 $('div.sidebar_content div.section.overlay-layers div#move_overlayer_down').addClass('disabled');
-                
+
             }
             else
             {
@@ -2438,7 +2544,7 @@ L.MAP2U.layers = function (options) {
             if (activelayer === null)
                 formData.append('activelayer', null);
             else
-                formData.append('activelayer', JSON.stringify({'layer_id': activelayer.layer_id, 'layerType': activelayer.layerType, 'filename': activelayer.filename}));
+                formData.append('activelayer', JSON.stringify({'layerId': activelayer.layerId, 'layerType': activelayer.layerType, 'filename': activelayer.filename}));
             formData.append('mapcenter', JSON.stringify(mapcenter));
             formData.append('zoomlevel', mapZoomLevel);
             formData.append('basemap', basemap);
@@ -2452,7 +2558,7 @@ L.MAP2U.layers = function (options) {
                     var defaultShowOnMap = $(this).find("input[type=checkbox]").is(':checked');
                     alert(defaultShowOnMap + "   " + $(this).data("index"));
                     var layer = _this._map.dataLayers[$(this).data("index")];
-                    layerdata.push(JSON.stringify({'id': layer.layer_id
+                    layerdata.push(JSON.stringify({'id': layer.layerId
                         , 'type': layer.layerType
                         , 'filename': layer.filename
                         , 'index': i
@@ -2557,7 +2663,7 @@ L.MAP2U.layers = function (options) {
             $(input).prop('checked', true)
                     .trigger('change');
         }
-
+        _this.overlayToolButtons();
     };
     control.refreshOverlays = function () {
 
