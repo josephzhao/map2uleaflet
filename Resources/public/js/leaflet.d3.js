@@ -11,12 +11,12 @@ L.D3 = L.Class.extend({
         keyname: 'ogc_id',
         labelClass: "feature-label"
     },
-    initialize: function(data, options) {
+    initialize: function (data, options) {
         var _this = this;
         L.setOptions(_this, options);
         _this._loaded = false;
         if (typeof data === "string") {
-            d3[_this.options.type](data, function(err, json) {
+            d3[_this.options.type](data, function (err, json) {
                 if (err) {
                     return;
                 } else {
@@ -45,28 +45,28 @@ L.D3 = L.Class.extend({
             _this.fire("dataLoaded");
         }
 
-        this._clickHandler = function(data, idx) {
+        this._clickHandler = function (data, idx) {
             _this.fire('click', {
                 element: this,
                 data: data,
                 originalEvent: d3.event
             });
         };
-        this._mouseOverHandler = function(data, idx) {
+        this._mouseOverHandler = function (data, idx) {
             _this.fire('mouseover', {
                 element: this,
                 data: data,
                 originalEvent: d3.event
             });
         };
-        this._mouseMoveHandler = function(data, idx) {
+        this._mouseMoveHandler = function (data, idx) {
             _this.fire('mousemove', {
                 element: this,
                 data: data,
                 originalEvent: d3.event
             });
         };
-        this._mouseOutHandler = function(data, idx) {
+        this._mouseOutHandler = function (data, idx) {
             _this.fire('mouseout', {
                 element: this,
                 data: data,
@@ -74,9 +74,9 @@ L.D3 = L.Class.extend({
             });
         };
     },
-    onAdd: function(map) {
+    onAdd: function (map) {
         this._map = map;
-        this._project = function(x) {
+        this._project = function (x) {
             var point = map.latLngToLayerPoint(new L.LatLng(x[1], x[0]));
             return [point.x, point.y];
         };
@@ -94,11 +94,11 @@ L.D3 = L.Class.extend({
         this._popup = L.popup();
         this.fire("added");
     },
-    addTo: function(map) {
+    addTo: function (map) {
         map.addLayer(this);
         return this;
     },
-    showFeatureLabels: function(keyname) {
+    showFeatureLabels: function (keyname) {
         var _this = this;
         this._g.selectAll("text").remove();
         if (keyname === undefined && this.options.keyname === undefined) {
@@ -110,23 +110,23 @@ L.D3 = L.Class.extend({
                 .data(this.options.topojson ? this.data.geometries : this.data.features)
                 .enter().append("text")
                 .attr("class", this.options.labelClass)
-                .attr("transform", function(d) {
+                .attr("transform", function (d) {
                     var point = _this.path.centroid(d);
 
                     return "translate(" + (point[0] + 8) + "," + point[1] + ")";
                 })
                 .attr("dy", ".35em")
-                .text(function(d) {
+                .text(function (d) {
                     if (d.properties[keyname] !== undefined)
                         return d.properties[keyname];
                     else
                         return 'N/A';
                 });
     },
-    removeFeatureLabels: function() {
+    removeFeatureLabels: function () {
         this._g.selectAll("text").remove();
     },
-    onLoaded: function() {
+    onLoaded: function () {
 
         var corners = this._map.getBounds();
 
@@ -186,14 +186,14 @@ L.D3 = L.Class.extend({
                 .on('mouseout', this._mouseOutHandler);
         this._map.on('viewreset', this._reset, this);
         this._reset();
-     
+
     },
-    onRemove: function(map) {
+    onRemove: function (map) {
         // remove layer's DOM elements and listeners
         this._el.remove();
         map.off('viewreset', this._reset, this);
     },
-    _reset: function() {
+    _reset: function () {
         var _this = this;
 
         var corners = this._map.getBounds();
@@ -234,7 +234,7 @@ L.D3 = L.Class.extend({
 
         if (this.options.showLabels && this._feature_labels)
         {
-            this._feature_labels.attr("transform", function(d) {
+            this._feature_labels.attr("transform", function (d) {
                 var point = _this.path.centroid(d);
                 return "translate(" + (point[0] + 8) + "," + point[1] + ")";
             });
@@ -242,17 +242,17 @@ L.D3 = L.Class.extend({
 
 
     },
-    bindPopup: function(content) {
+    bindPopup: function (content) {
         this._popup = L.popup();
         this._popupContent = content;
         if (this._map) {
             this._bindPopup();
         }
-        this.on("added", function() {
+        this.on("added", function () {
             this._bindPopup();
         }, this);
     },
-    bringToFront: function() {
+    bringToFront: function () {
         var pane = this._map._panes.overlayPane;
         if (this._container) {
             // pane.appendChild(this._container);
@@ -261,7 +261,7 @@ L.D3 = L.Class.extend({
 
         return this;
     },
-    bringToBack: function() {
+    bringToBack: function () {
         var pane = this._map._panes.overlayPane;
         if (this._container) {
             // pane.insertBefore(this._container, pane.firstChild);
@@ -270,12 +270,12 @@ L.D3 = L.Class.extend({
 
         return this;
     },
-    _updateZIndex: function() {
+    _updateZIndex: function () {
         if (this._container && this.options.zIndex !== undefined) {
             this._container.style.zIndex = this.options.zIndex;
         }
     },
-    _setAutoZIndex: function(pane, compare) {
+    _setAutoZIndex: function (pane, compare) {
 
         var layers = pane.children,
                 edgeZIndex = -compare(Infinity, -Infinity), // -Infinity for max, Infinity for min
@@ -299,7 +299,7 @@ L.D3 = L.Class.extend({
             this.options.zIndex = this._container.style.zIndex;
         }
     },
-    _updateOpacity: function() {
+    _updateOpacity: function () {
         L.DomUtil.setOpacity(this._container, this.options.opacity);
         // stupid webkit hack to force redrawing of tiles
         var i,
@@ -312,7 +312,7 @@ L.D3 = L.Class.extend({
             }
         }
     },
-    _initContainer: function() {
+    _initContainer: function () {
         var overlayPane = this._map._panes.overlayPane;
         if (!this._container || overlayPane.empty) {
             this._container = L.DomUtil.create('div', 'leaflet-layer');
@@ -334,13 +334,13 @@ L.D3 = L.Class.extend({
             }
         }
     },
-    renderThematicMap: function(rule) {
+    renderThematicMap: function (rule) {
         var ps = this._feature[0];
         var pNameExist = false;
         var propertyName = '';
-        if(typeof rule.categories !=='object')
-            rule.categories =JSON.parse(rule.categories);
-        
+        if (typeof rule.categories !== 'object')
+            rule.categories = JSON.parse(rule.categories);
+
         if (ps.length > 0) {
             var p = d3.select(ps[0]);
             var properties = p[0][0].__data__.properties;
@@ -382,12 +382,12 @@ L.D3 = L.Class.extend({
             }
         }
     },
-    onLoadPointSLD: function() {
+    onLoadPointSLD: function () {
 
         var _this = this;
         if (_this.options.sld) {
             this._feature.attr("d", d3.svg.symbol().
-                    type(function(d) {
+                    type(function (d) {
                         var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
                         if (varFeatureTypeStyles === undefined || varFeatureTypeStyles === null)
                             return;
@@ -424,7 +424,7 @@ L.D3 = L.Class.extend({
                         }
                         return 'circle';
                     })
-                    .size(function(d) {
+                    .size(function (d) {
                         var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
                         var keys = Object.keys(varFeatureTypeStyles);
                         for (var key in keys) {
@@ -466,7 +466,7 @@ L.D3 = L.Class.extend({
                         return 8 * 8;
                     })
                     )
-                    .style("fill", function(d) {
+                    .style("fill", function (d) {
                         var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
                         var keys = Object.keys(varFeatureTypeStyles);
                         for (var key in keys) {
@@ -500,7 +500,7 @@ L.D3 = L.Class.extend({
                         }
                         return "#ccc";
                     })
-                    .style("fill-opacity", function(d) {
+                    .style("fill-opacity", function (d) {
                         var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
                         var keys = Object.keys(varFeatureTypeStyles);
                         for (var key in keys) {
@@ -541,7 +541,7 @@ L.D3 = L.Class.extend({
                         }
                         return 0.8;
                     })
-                    .style("stroke", function(d) {
+                    .style("stroke", function (d) {
                         var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
                         var keys = Object.keys(varFeatureTypeStyles);
                         for (var key in keys) {
@@ -576,7 +576,7 @@ L.D3 = L.Class.extend({
                         }
                         return "#000";
                     })
-                    .style("stroke-width", function(d) {
+                    .style("stroke-width", function (d) {
                         var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
                         var keys = Object.keys(varFeatureTypeStyles);
                         for (var key in keys) {
@@ -612,7 +612,7 @@ L.D3 = L.Class.extend({
                         }
                         return 1.0;
                     })
-                    .style("stroke-opacity", function(d) {
+                    .style("stroke-opacity", function (d) {
                         var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
                         var keys = Object.keys(varFeatureTypeStyles);
                         for (var key in keys) {
@@ -655,7 +655,7 @@ L.D3 = L.Class.extend({
                         }
                         return 1.0;
                     })
-                    .attr("transform", function(d) {
+                    .attr("transform", function (d) {
                         return "translate(" + _this.path.centroid(d) + ")";
                     });
         }
@@ -668,14 +668,14 @@ L.D3 = L.Class.extend({
                     .style("stroke", '#000')
                     .style("stroke-width", '1.0')
                     .style("stroke-opacity", '1.0')
-                    .attr("transform", function(d) {
+                    .attr("transform", function (d) {
                         return "translate(" + _this.path.centroid(d) + ")";
                     });
 
         }
 
     },
-    onLoadPolygonSLD: function() {
+    onLoadPolygonSLD: function () {
         var _this = this;
 
         if (_this.options.sld) {
@@ -697,8 +697,6 @@ L.D3 = L.Class.extend({
                             if (ps.length > 0) {
                                 var p = d3.select(ps[0]);
                                 var properties = p[0][0].__data__.properties;
-                                var geometryType = p[0][0].__data__.geometry.type;
-
                                 for (var property in properties) {
                                     if (property.toLowerCase() === rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()) {
                                         pNameExist = true;
@@ -716,60 +714,14 @@ L.D3 = L.Class.extend({
 
                                     if (properties[propertyName].toLowerCase() === rule.Filter.PropertyIsEqualTo.Literal.toLowerCase()) {
                                         p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule);
-
-//                                        if (geometryType === 'Polygon' || geometryType === 'MultiPolygon') {
-//                                            if (varFeatureTypeStyle.Rule.PolygonSymbolizer && rule.PolygonSymbolizer.Fill && rule.PolygonSymbolizer.Fill.fill)
-//                                                p.style('fill', rule.PolygonSymbolizer.Fill.fill);
-//                                            else
-//                                                p.style('fill', "#CCC");
-//                                            if (rule.PolygonSymbolizer && rule.PolygonSymbolizer.Fill && rule.PolygonSymbolizer.Fill['fill-opacity'])
-//                                                p.style('fill-opacity', rule.PolygonSymbolizer.Fill['fill-opacity']);
-//                                            else
-//                                                p.style('fill-opacity', "0.6");
-//                                            if (rule.PolygonSymbolizer && rule.PolygonSymbolizer.Stroke && rule.PolygonSymbolizer.Stroke.stroke)
-//                                                p.style('stroke', rule.PolygonSymbolizer.Stroke.stroke);
-//                                            if (rule.PolygonSymbolizer && rule.PolygonSymbolizer.Stroke && rule.PolygonSymbolizer.Stroke['stroke-opacity'])
-//                                                p.style('stroke-opacity', rule.PolygonSymbolizer.Stroke['stroke-opacity']);
-//                                            if (rule.PolygonSymbolizer && rule.PolygonSymbolizer.Stroke && rule.PolygonSymbolizer.Stroke['stroke-width'])
-//                                                p.style('stroke-width', rule.PolygonSymbolizer.Stroke['stroke-width']);
-//                                            if (rule.PolygonSymbolizer && rule.PolygonSymbolizer.Stroke && rule.PolygonSymbolizer.Stroke['stroke-linecap'])
-//                                            {
-//                                                p.style('stroke-linecap', rule.PolygonSymbolizer.Stroke['stroke-linecap']);
-//                                            }
-//                                            if (rule.PolygonSymbolizer && rule.PolygonSymbolizer.Stroke && rule.PolygonSymbolizer.Stroke['stroke-linejoin'])
-//                                            {
-//                                                p.style('stroke-linejoin', rule.PolygonSymbolizer.Stroke['stroke-linejoin']);
-//                                            }
-//                                            if (rule.PolygonSymbolizer && rule.PolygonSymbolizer.Stroke && rule.PolygonSymbolizer.Stroke['stroke-dashoffset'])
-//                                            {
-//                                                p.style('stroke-dashoffset', rule.PolygonSymbolizer.Stroke['stroke-dashoffset']);
-//                                            }
-//                                        }
-//                                        if (geometryType === 'Point') {
-//                                            if (rule.PointSymbolizer && rule.PointSymbolizer.Graphic && rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Fill && rule.PointSymbolizer.Graphic.Mark.Fill.fill)
-//                                            {
-//                                                p.style('fill', rule.PointSymbolizer.Graphic.Mark.Fill.fill);
-//                                            }
-//                                            if (rule.PointSymbolizer && rule.PointSymbolizer.Graphic && rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Fill && rule.PointSymbolizer.Graphic.Mark.Fill['fill-opacity'])
-//                                            {
-//                                                p.style('fill-opacity', rule.PointSymbolizer.Graphic.Mark.Fill['fill-opacity']);
-//                                            }
-//
-//                                        }
                                     }
                                 }
-//                                else {
-//                                    this._feature.style('fill', "#CCC");
-//                                    this._feature.style('fill-opacity', 0.6);
-//                                }
                             }
                         }
                         else if (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween) {
                             if (ps.length > 0) {
                                 var p = d3.select(ps[0]);
                                 var properties = p[0][0].__data__.properties;
-                                var geometryType = p[0][0].__data__.geometry.type;
-
                                 for (var property in properties) {
                                     if (property.toLowerCase() === rule.Filter.PropertyIsBetween.PropertyName.toLowerCase()) {
                                         pNameExist = true;
@@ -793,49 +745,6 @@ L.D3 = L.Class.extend({
                                     }
                                     if ((varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary !== undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary !== undefined) && parseFloat(properties[propertyName]) > parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary.Literal) && parseFloat(properties[propertyName]) <= parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary.Literal)) {
                                         p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule);
-
-                                        //                                        
-//                                        if (varFeatureTypeStyle.Rule.PolygonSymbolizer && varFeatureTypeStyle.Rule.PolygonSymbolizer.Fill && varFeatureTypeStyle.Rule.PolygonSymbolizer.Fill.fill)
-//                                        {
-//                                            this._feature.style('fill', varFeatureTypeStyle.Rule.PolygonSymbolizer.Fill.fill);
-//                                        }
-//                                        else
-//                                            this._feature.style('fill', "#CCC");
-//                                        if (varFeatureTypeStyle.Rule.PolygonSymbolizer && varFeatureTypeStyle.Rule.PolygonSymbolizer.Fill && varFeatureTypeStyle.Rule.PolygonSymbolizer.Fill['fill-opacity'])
-//                                        {
-//                                            this._feature.style('fill-opacity', varFeatureTypeStyle.Rule.PolygonSymbolizer.Fill['fill-opacity']);
-//                                        }
-//                                        else
-//                                            this._feature.style('fill-opacity', 0.6);
-//
-//                                        if (varFeatureTypeStyle.Rule.PolygonSymbolizer && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-opacity'])
-//                                        {
-//                                            this._feature.style('stroke-opacity', varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-opacity']);
-//                                        }
-//                                        if (varFeatureTypeStyle.Rule.PolygonSymbolizer && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-width'])
-//                                        {
-//                                            this._feature.style('stroke-width', varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-width']);
-//                                        }
-//                                        else {
-//
-//                                        }
-//                                        if (varFeatureTypeStyle.Rule.PolygonSymbolizer && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke.stroke)
-//                                        {
-//                                            this._feature.style('stroke', varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke.stroke);
-//                                        }
-//                                        if (varFeatureTypeStyle.Rule.PolygonSymbolizer && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-linecap'])
-//                                        {
-//                                            this._feature.style('stroke-linecap', varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-linecap']);
-//                                        }
-//                                        if (varFeatureTypeStyle.Rule.PolygonSymbolizer && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-linejoin'])
-//                                        {
-//                                            this._feature.style('stroke-linejoin', varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-linejoin']);
-//                                        }
-//                                        if (varFeatureTypeStyle.Rule.PolygonSymbolizer && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-dashoffset'])
-//                                        {
-//                                            this._feature.style('stroke-dashoffset', varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-dashoffset']);
-//                                        }
-
                                     }
                                     if ((varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary !== undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary === undefined) && parseFloat(properties[propertyName]) > parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary.Literal))
                                     {
@@ -853,57 +762,9 @@ L.D3 = L.Class.extend({
                     }
                     else {
                         this._feature = this.setFeatureStyle(this._feature, varFeatureTypeStyle.Rule);
-
-//
-//                        if (varFeatureTypeStyle.Rule.PolygonSymbolizer && varFeatureTypeStyle.Rule.PolygonSymbolizer.Fill && varFeatureTypeStyle.Rule.PolygonSymbolizer.Fill.fill)
-//                        {
-//                            this._feature.style('fill', varFeatureTypeStyle.Rule.PolygonSymbolizer.Fill.fill);
-//                        }
-//                        else
-//                            this._feature.style('fill', "#CCC");
-//                        if (varFeatureTypeStyle.Rule.PolygonSymbolizer && varFeatureTypeStyle.Rule.PolygonSymbolizer.Fill && varFeatureTypeStyle.Rule.PolygonSymbolizer.Fill['fill-opacity'])
-//                        {
-//                            this._feature.style('fill-opacity', varFeatureTypeStyle.Rule.PolygonSymbolizer.Fill['fill-opacity']);
-//                        }
-//                        else
-//                            this._feature.style('fill-opacity', 0.6);
-//
-//                        if (varFeatureTypeStyle.Rule.PolygonSymbolizer && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-opacity'])
-//                        {
-//                            this._feature.style('stroke-opacity', varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-opacity']);
-//                        }
-//                        if (varFeatureTypeStyle.Rule.PolygonSymbolizer && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-width'])
-//                        {
-//                            this._feature.style('stroke-width', varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-width']);
-//                        }
-//                        else {
-//
-//                        }
-//                        if (varFeatureTypeStyle.Rule.PolygonSymbolizer && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke.stroke)
-//                        {
-//                            this._feature.style('stroke', varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke.stroke);
-//                        }
-//                        if (varFeatureTypeStyle.Rule.PolygonSymbolizer && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-linecap'])
-//                        {
-//                            this._feature.style('stroke-linecap', varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-linecap']);
-//                        }
-//                        if (varFeatureTypeStyle.Rule.PolygonSymbolizer && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-linejoin'])
-//                        {
-//                            this._feature.style('stroke-linejoin', varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-linejoin']);
-//                        }
-//                        if (varFeatureTypeStyle.Rule.PolygonSymbolizer && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke && varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-dashoffset'])
-//                        {
-//                            this._feature.style('stroke-dashoffset', varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-dashoffset']);
-//                        }
                     }
                 }
             }
-
-
-//            this._feature.style('stroke-linecap', varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-linecap']);
-//            this._feature.style('stroke-linejoin', varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-linejoin']);
-//            this._feature.style('stroke-dashoffset', varFeatureTypeStyle.Rule.PolygonSymbolizer.Stroke['stroke-dashoffset']);
-
 
 
         }
@@ -916,19 +777,111 @@ L.D3 = L.Class.extend({
             this._feature.style('stroke', "#0ff");
         }
     },
-    onLoadPolylineSLD: function() {
+    onLoadPolylineSLD: function () {
 
-        this._feature.style("fill", 'none')
-                .style("fill-opacity", 0.0)
-                .style("stroke", "#000")
-                .style("stroke-width", 1.0)
-                .style("stroke-opacity", 0.8);
+
         var _this = this;
         if (_this.options.sld) {
 
+
+            var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
+
+            var keys = Object.keys(varFeatureTypeStyles);
+            for (var key in keys) {
+                var varFeatureTypeStyle = varFeatureTypeStyles[key];
+                if (varFeatureTypeStyle !== undefined && typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle.Rule !== undefined) {
+                    if (varFeatureTypeStyle.Rule.Filter !== undefined) {
+                        var rule = varFeatureTypeStyle.Rule;
+                        var ps = this._feature[0];
+                        var pNameExist = false;
+                        var propertyName = '';
+
+
+                        if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
+
+                            if (ps.length > 0) {
+                                var p = d3.select(ps[0]);
+                                var properties = p[0][0].__data__.properties;
+                                for (var property in properties) {
+                                    if (property.toLowerCase() === rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()) {
+                                        pNameExist = true;
+                                        propertyName = property;
+                                        break;
+                                    }
+                                }
+
+                            }
+                            if (pNameExist === true) {
+                                for (var k = 0; k < ps.length; k++)
+                                {
+                                    var p = d3.select(ps[k]);
+                                    var properties = p[0][0].__data__.properties;
+
+                                    if (properties[propertyName].toLowerCase() === rule.Filter.PropertyIsEqualTo.Literal.toLowerCase()) {
+                                        p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule);
+                                    }
+                                }
+                            }
+                        }
+                        else if (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween) {
+                            if (ps.length > 0) {
+                                var p = d3.select(ps[0]);
+                                var properties = p[0][0].__data__.properties;
+                                for (var property in properties) {
+                                    if (property.toLowerCase() === rule.Filter.PropertyIsBetween.PropertyName.toLowerCase()) {
+                                        pNameExist = true;
+                                        propertyName = property;
+                                        break;
+                                    }
+                                }
+
+                            }
+                            if (pNameExist === true) {
+                                for (var k = 0; k < ps.length; k++)
+                                {
+                                    var p = d3.select(ps[k]);
+                                    var properties = p[0][0].__data__.properties;
+
+
+                                    if ((varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary === undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary !== undefined) && parseFloat(properties[propertyName]) <= parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary.Literal))
+                                    {
+                                        p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule);
+
+                                    }
+                                    if ((varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary !== undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary !== undefined) && parseFloat(properties[propertyName]) > parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary.Literal) && parseFloat(properties[propertyName]) <= parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary.Literal)) {
+                                        p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule);
+                                    }
+                                    if ((varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary !== undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary === undefined) && parseFloat(properties[propertyName]) > parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary.Literal))
+                                    {
+                                        p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule);
+
+                                    }
+
+                                }
+                            }
+
+                        }
+                        else {
+                            this._feature = this.setFeatureStyle(this._feature, varFeatureTypeStyle.Rule);
+                        }
+                    }
+                    else {
+                        this._feature = this.setFeatureStyle(this._feature, varFeatureTypeStyle.Rule);
+                    }
+                }
+            }
+
         }
+        else {
+            this._feature.style("fill", 'none')
+                    .style("fill-opacity", 0.0)
+                    .style("stroke", "#000")
+                    .style("stroke-width", 1.0)
+                    .style("stroke-opacity", 0.8);
+        }
+
     },
-    setFeatureStyle: function(feature, rule) {
+    setFeatureStyle: function (feature, rule) {
         if (rule.PolygonSymbolizer && rule.PolygonSymbolizer.Fill && rule.PolygonSymbolizer.Fill.fill)
         {
             feature.style('fill', rule.PolygonSymbolizer.Fill.fill);
@@ -969,9 +922,45 @@ L.D3 = L.Class.extend({
         {
             feature.style('stroke-dashoffset', rule.PolygonSymbolizer.Stroke['stroke-dashoffset']);
         }
+
+
+
+
+
+
+
+
+        if (rule.LineSymbolizer && rule.LineSymbolizer.Stroke && rule.LineSymbolizer.Stroke['stroke-opacity'])
+        {
+            feature.style('stroke-opacity', rule.LineSymbolizer.Stroke['stroke-opacity']);
+        }
+        if (rule.LineSymbolizer && rule.LineSymbolizer.Stroke && rule.LineSymbolizer.Stroke['stroke-width'])
+        {
+            feature.style('stroke-width', rule.LineSymbolizer.Stroke['stroke-width']);
+        }
+        if (rule.LineSymbolizer && rule.LineSymbolizer.Stroke && rule.LineSymbolizer.Stroke.stroke)
+        {
+            feature.style('stroke', rule.LineSymbolizer.Stroke.stroke);
+        }
+        if (rule.LineSymbolizer && rule.LineSymbolizer.Stroke && rule.LineSymbolizer.Stroke['stroke-linecap'])
+        {
+            feature.style('stroke-linecap', rule.LineSymbolizer.Stroke['stroke-linecap']);
+        }
+        if (rule.LineSymbolizer && rule.LineSymbolizer.Stroke && rule.LineSymbolizer.Stroke['stroke-linejoin'])
+        {
+            feature.style('stroke-linejoin', rule.LineSymbolizer.Stroke['stroke-linejoin']);
+        }
+        if (rule.LineSymbolizer && rule.LineSymbolizer.Stroke && rule.LineSymbolizer.Stroke['stroke-dashoffset'])
+        {
+            feature.style('stroke-dashoffset', rule.LineSymbolizer.Stroke['stroke-dashoffset']);
+        }
+
+
+
+
         return feature;
     },
-    onLoadSLD: function(json_sld) {
+    onLoadSLD: function (json_sld) {
 
         if (this._feature && this._featureType === 'Point') {
 
@@ -986,9 +975,9 @@ L.D3 = L.Class.extend({
         }
 
     },
-    _bindPopup: function() {
+    _bindPopup: function () {
         var _this = this;
-        _this._g.on("click", function() {
+        _this._g.on("click", function () {
             var props = d3.select(d3.event.target).datum().properties;
             if (typeof _this._popupContent === "string") {
                 _this.fire("pathClicked", {cont: _this._popupContent});
@@ -997,12 +986,12 @@ L.D3 = L.Class.extend({
             }
 
         }, true);
-        _this.on("pathClicked", function(e) {
+        _this.on("pathClicked", function (e) {
             _this._popup.setContent(e.cont);
             _this._openable = true;
             ;
         });
-        _this._map.on("click", function(e) {
+        _this._map.on("click", function (e) {
             if (_this._openable) {
                 _this._openable = false;
                 _this._popup.setLatLng(e.latlng).openOn(_this._map);
@@ -1012,6 +1001,6 @@ L.D3 = L.Class.extend({
 
 
 });
-L.d3 = function(data, options) {
+L.d3 = function (data, options) {
     return new L.D3(data, options);
 };

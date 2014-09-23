@@ -355,18 +355,63 @@ div.sidebar_content div.section.overlay-layers div#move_overlayer_up{
 div.sidebar_content div.section.overlay-layers{
     margin-bottom: 10px;
 }
-div.sidebar_content div.section.overlay-layers ul > li {
+div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li {
     width: 190px;
     display: inline-block;
 }
 
-div.sidebar_content div.section.overlay-layers ul > li.selected {
+div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li.selected {
     background-color: #08C;
 }
-div.sidebar_content div.section.overlay-layers ul > li.selected > label {
+div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li.selected > label {
     color: white;
 }
 
+.layername_label {
+    width:158px;
+    cursor: pointer;
+}
+
+div.section.overlay-layers ul.overlay_ul > li.overlay_li  div.layer_legend ul > li {
+    width:160px;
+    border-top: 1px grey dotted;
+    white-space: nowrap;
+    overflow:hidden;
+
+}
+div.section.overlay-layers ul.overlay_ul > li.overlay_li  div.layer_legend ul > li:hover {
+    white-space: nowrap;
+    overflow: visible;
+}
+
+ul.overlay_ul > li.overlay_li > div.layer_legend > ul > li > img {
+    margin-right:4px;
+}
+
+ul.overlay_ul > li.overlay_li > div.layer_legend .marker-cluster {
+    background-clip: padding-box;
+    border-radius: 20px;
+}
+ul.overlay_ul > li.overlay_li > div.layer_legend .marker-cluster div {
+    width: 30px;
+    height: 30px;
+    margin-left: 5px;
+    margin-top: 5px;
+
+    text-align: center;
+    border-radius: 15px;
+    font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+ul.overlay_ul > li.overlay_li > div.layer_legend .marker-cluster span {
+    line-height: 30px;
+}
+
+.layer_legend_icon {
+    display: inline-block;
+    margin: 0 3px 0 1px;
+    color: lightblue;
+    cursor: pointer;
+}
 .layer_btn {
     display: inline-block;
     /*padding: 0px 0px;*/

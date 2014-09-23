@@ -166,7 +166,7 @@ L.MAP2U.layers = function (options) {
                     .css('border-bottom', '1px grey dotted');
         }
 
-        var list = $('<ul>')
+        var list = $('<ul class="overlay_ul">')
                 .appendTo(overlaySection);
         function addOverlay(layer, activeLayerSelect, maxArea) {
             var item = $('<li>')
@@ -351,8 +351,8 @@ L.MAP2U.layers = function (options) {
     };
     control.reorderLayers = function () {
         var layers = this._map.dataLayers;
-        var activelayer = $("div.sidebar_content div.section.overlay-layers ul > li.selected");
-        $("div.sidebar_content div.section.overlay-layers ul > li").map(function (i) {
+        var activelayer = $("div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li.selected");
+        $("div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li").map(function (i) {
 
             $(this).data('index', i);
 
@@ -2412,7 +2412,7 @@ L.MAP2U.layers = function (options) {
     control.overlayToolButtons = function () {
         var _this = this;
         $('div.sidebar_content div.section.overlay-layers div#move_overlayer_up').on('click', function () {
-            var selected = $('div.sidebar_content div.section.overlay-layers ul > li.selected');
+            var selected = $('div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li.selected');
             if (selected.prev()) {
                 selected.insertBefore(selected.prev());
                 _this.reorderLayers();
@@ -2420,7 +2420,7 @@ L.MAP2U.layers = function (options) {
 
         });
         $('div.sidebar_content div.section.overlay-layers div#move_overlayer_down').on('click', function () {
-            var selected = $('div.sidebar_content div.section.overlay-layers ul > li.selected');
+            var selected = $('div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li.selected');
             if (selected.next()) {
                 selected.insertAfter(selected.next());
                 _this.reorderLayers();
@@ -2458,7 +2458,7 @@ L.MAP2U.layers = function (options) {
 
         });
         $('div.sidebar_content div.section.overlay-layers div#overlayers_minus').on('click', function () {
-            var selected = $('div.sidebar_content div.section.overlay-layers ul > li.selected');
+            var selected = $('div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li.selected');
             if (selected.data("index") !== undefined && _this._map.dataLayers[selected.data("index")] && _this._map.dataLayers[selected.data("index")].index_id !== -1) {
                 if (confirm('Do you want to remove it from overlayers?')) {
                     if (_this._map.dataLayers[selected.data("index")] && _this._map.dataLayers[selected.data("index")].layer) {
@@ -2467,13 +2467,13 @@ L.MAP2U.layers = function (options) {
                     _this._map.dataLayers.splice(selected.data("index"), 1);
                     selected.remove();
                     _this.reorderLayers();
-                    $('div.sidebar_content div.section.overlay-layers ul').hide().fadeIn('fast');
+                    $('div.sidebar_content div.section.overlay-layers ul.overlay_ul').hide().fadeIn('fast');
 
                 }
             }
         });
         $('div.sidebar_content div.section.overlay-layers div#overlayers_zoom_to_layer').on('click', function () {
-            var selected = $('div.sidebar_content div.section.overlay-layers ul > li.selected');
+            var selected = $('div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li.selected');
             if (selected.data("index") !== undefined && _this._map.dataLayers[selected.data("index")] && _this._map.dataLayers[selected.data("index")].bounds) {
                 //  alert("zoom to level");
                 var bound = _this._map.dataLayers[selected.data("index")].bounds;
@@ -2488,28 +2488,51 @@ L.MAP2U.layers = function (options) {
         });
         // save current layers status to server
         $('div.sidebar_content div.section.overlay-layers div#overlayers_selectall').on('click', function () {
-            $('div.sidebar_content div.section.overlay-layers ul > li').map(function () {
+            $('div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li').map(function () {
                 $(this).find("input[type=checkbox]").prop('checked', true)
                         .trigger('change');
             });
         });
         $('div.sidebar_content div.section.overlay-layers div#overlayers_unselectall').on('click', function () {
-            $('div.sidebar_content div.section.overlay-layers ul > li').map(function () {
+            $('div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li').map(function () {
                 $(this).find("input[type=checkbox]").prop('checked', false)
                         .trigger('change');
             });
         });
 
-        $('div.sidebar_content div.section.overlay-layers ul > li').click(function (e) {
+        $('div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li div.layer_legend_icon').click(function (e) {
+
+            if ($(this).find("i").hasClass("fa-plus")) {
+                $(this).find("i").removeClass("fa-plus");
+                $(this).find("i").addClass("fa-minus");
+                if ($(this).parent().find(".layer_legend").hasClass('hidden')) {
+                    $(this).parent().find(".layer_legend").removeClass('hidden');
+                }
+
+
+            }
+            else {
+                $(this).find("i").removeClass("fa-minus");
+                $(this).find("i").addClass("fa-plus");
+                $(this).parent().find(".layer_legend").addClass('hidden');
+            }
+
+//            $('div.sidebar_content div.section.overlay-layers ul > li .layername_label').map(function () {
+//                if (_that !== this) {
+//                    $(this).parent().removeClass("selected");
+//                }
+//            });
+        });
+        $('div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li .layername_label').click(function (e) {
             var _that = this;
-            $('div.sidebar_content div.section.overlay-layers ul > li').map(function () {
+            $('div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li .layername_label').map(function () {
                 if (_that !== this) {
-                    $(this).removeClass("selected");
+                    $(this).parent().removeClass("selected");
                 }
             });
-            if ($(this).hasClass("selected"))
+            if ($(this).parent().hasClass("selected"))
             {
-                $(this).removeClass("selected");
+                $(this).parent().removeClass("selected");
                 $('div.sidebar_content div.section.overlay-layers div#overlayers_zoom_to_layer').addClass('disabled');
                 $('div.sidebar_content div.section.overlay-layers div#overlayers_minus').addClass('disabled');
                 $('div.sidebar_content div.section.overlay-layers div#move_overlayer_up').addClass('disabled');
@@ -2518,7 +2541,7 @@ L.MAP2U.layers = function (options) {
             }
             else
             {
-                $(this).addClass("selected");
+                $(this).parent().addClass("selected");
                 $('div.sidebar_content div.section.overlay-layers div#overlayers_zoom_to_layer').removeClass('disabled');
                 $('div.sidebar_content div.section.overlay-layers div#overlayers_minus').removeClass('disabled');
                 $('div.sidebar_content div.section.overlay-layers div#move_overlayer_up').removeClass('disabled');
@@ -2604,22 +2627,29 @@ L.MAP2U.layers = function (options) {
         });
 
     };
-    control.addOverlayItem = function (layer, i, opt) {
-        var overlay_layers_ul = $(".leaflet-control-container .section.overlay-layers > ul");
+    control.addOverlayItem = function (layer, i, opt, bRefeshButton) {
+        var overlay_layers_ul = $(".leaflet-control-container .section.overlay-layers > ul.overlay_ul");
         var _this = this;
-        var item = $('<li>')
+        var item = $('<li class="overlay_li">')
                 .tooltip({
                     placement: 'top'
                 })
                 .appendTo(overlay_layers_ul);
         item.data('index', i);
         item.css('border-bottom', '1px grey dotted');
-        var label = $('<label>');
+
+        var label_div = $("<div>").addClass("layername_label");
+        var label = $('<label>')
+                .appendTo(label_div);
+
         var checked = _this._map.hasLayer(layer.layer);
         var input = $('<input>')
                 .attr('type', 'checkbox')
                 .prop('checked', checked)
                 .appendTo(item);
+
+        var legend_icon = $("<div class='layer_legend_icon'><i class='fa fa-plus blue'></i></div>").appendTo(item);
+
         var legend_label = I18n.t('javascripts.map.layers.' + layer.name);
         if (legend_label.indexOf('missing ') === 1)
         {
@@ -2635,9 +2665,39 @@ L.MAP2U.layers = function (options) {
             else
                 label.append(legend_label);
         }
-        label.appendTo(item);
-        label.css('display', 'inline-block');
+        label_div.appendTo(item);
+        label_div.css('display', 'inline-block');
+        switch (layer.layerType) {
+            case 'clustermap':
+                var legend = _this.createClusterLegend();
+                if (legend !== null)
+                    legend.appendTo(item);
+                break;
+            case 'heatmap':
+                var legend = _this.createHeatmapLegend(layer.sld);
+                if (legend !== null)
+                    legend.appendTo(item);
+                break;
+            case 'thematicmap':
+                var legend = _this.createThematicmapLegend(layer.sld);
+                if (legend !== null)
+                    legend.appendTo(item);
+                break;
+            case 'wms':
+                var legend =_this.createWMSLegend(layer);
+                if (legend !== null)
+                    legend.appendTo(item);
+               
+                break;
 
+            default:
+                if (layer.sld) {
+                    var legend = _this.createLegend(layer.sld);
+                    if (legend !== null)
+                        legend.appendTo(item);
+                }
+                break;
+        }
         input.on('change', function () {
             checked = input.is(':checked');
             if (checked) {
@@ -2663,221 +2723,306 @@ L.MAP2U.layers = function (options) {
             $(input).prop('checked', true)
                     .trigger('change');
         }
-        _this.overlayToolButtons();
+        if (bRefeshButton === true)
+            _this.overlayToolButtons();
+    };
+    control.createWMSLegend = function (layer) {
+
+        if (layer.hostName === undefined || layer.name === undefined)
+            return null;
+        var legend = $("<div class='layer_legend hidden'>");
+        var ul = $("<ul>").appendTo(legend);
+        ul.append('<li><img src="' + "http://" + layer.hostName + "?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=" + layer.name + '"></li>');
+        return legend;
+    };
+    control.createHeatmapLegend = function (sld) {
+        var legend = $("<div class='layer_legend hidden'>");
+        var ul = $("<ul>").appendTo(legend);
+        if (typeof sld !== 'object')
+            sld = JSON.parse(sld);
+        if (sld.gradient === undefined)
+            return null;
+        if (typeof sld.gradient !== 'object')
+            sld.gradient = JSON.parse(unescape(sld.gradient));
+        var array = [];
+        for (var key in sld.gradient) {
+            array.push([key, sld.gradient[key]]);
+        }
+        array.sort();
+
+
+        for (var i = 0; i < array.length; i++)
+        {
+            ul.append('<li><div tabindex="0" style="display:inline-block; margin: 2px 6px 2px 2px; width: 20px; height: 15px; background-color: ' + array[i][1] + '" ></div>' + array[i][0] + '</li>');
+        }
+        return legend;
+    };
+    control.createThematicmapLegend = function (sld) {
+        var legend = $("<div class='layer_legend hidden'>");
+        var ul = $("<ul>").appendTo(legend);
+
+        if (typeof sld !== 'object')
+            sld = JSON.parse(sld);
+        if (sld.categories === undefined)
+            return null;
+
+        if (typeof sld.categories !== 'object')
+            sld.categories = JSON.parse(sld.categories);
+        if (typeof sld.category !== 'object')
+            sld.category = JSON.parse(sld.category);
+
+        var keys = Object.keys(sld.categories);
+        for (var key in keys) {
+
+            ul.append('<li><div tabindex="0" style="display:inline-block; margin: 2px 6px 2px 2px; width: 20px; height: 15px;background-color:' + sld.categories[key].fill + ';border: ' + Math.round(sld.category.width) + 'px solid ' + sld.categories[key].boundary + ';" ></div>' + sld.categories[key].from + " - " + sld.categories[key].to + '</li>');
+        }
+        return legend;
+    };
+    control.createClusterLegend = function () {
+        var legend = $("<div class='layer_legend hidden'>");
+        var ul = $("<ul>").appendTo(legend);
+        ul.append('<li><div tabindex="0" style="display:inline-block; margin: 2px 6px 2px 2px; width: 40px; height: 40px; " class="marker-cluster marker-cluster-small"><div><span>5</span></div></div>< 10</li>');
+        ul.append('<li><div tabindex="0" style="display:inline-block;margin: 2px 6px 2px 2px;  width: 40px; height: 40px;" class="marker-cluster marker-cluster-medium"><div><span>15</span></div></div>10 - 100 </li>');
+        ul.append('<li><div tabindex="0" style="display:inline-block;margin: 2px 6px 2px 2px;  width: 40px; height: 40px;" class="marker-cluster marker-cluster-large"><div><span>150</span></div></div>> 100</li>');
+
+        return legend;
+    };
+    control.createLegend = function (sld) {
+        if (typeof sld !== 'object')
+            sld = JSON.parse(sld);
+
+
+        if (sld === undefined || sld.FeatureTypeStyle === undefined || sld.FeatureTypeStyle === null)
+            return null;
+        var legend = $("<div class='layer_legend hidden'>");
+        var ul = $("<ul>").appendTo(legend);
+        var keys = Object.keys(sld.FeatureTypeStyle);
+
+        for (var key in keys) {
+
+            var varFeatureTypeStyle = sld.FeatureTypeStyle[key];
+
+            if (typeof varFeatureTypeStyle !== 'object' && varFeatureTypeStyle !== undefined)
+                varFeatureTypeStyle = JSON.parse(varFeatureTypeStyle);
+
+            if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle !== undefined && varFeatureTypeStyle.Rule !== undefined) {
+                var rule = varFeatureTypeStyle.Rule;
+                var legendCanvas = document.createElement('canvas');
+                legendCanvas.width = 20;
+                legendCanvas.height = 15;
+                var centerX = legendCanvas.width / 2;
+                var centerY = legendCanvas.height / 2;
+                var legendCtx = legendCanvas.getContext('2d');
+                var rule_name = '';
+                if (rule.Filter !== undefined) {
+                    if (rule.Filter.PropertyIsEqualTo) {
+                        rule_name = rule.Filter.PropertyIsEqualTo.Literal;
+                        if (rule.PointSymbolizer && rule.PointSymbolizer.Graphic && rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.WellKnownName) {
+
+                            switch (rule.PointSymbolizer.Graphic.Mark.WellKnownName) {
+                                case 'square':
+                                    legendCtx.beginPath();
+                                    legendCtx.rect((legendCanvas.width - rule.PointSymbolizer.Graphic.Size) / 2, (legendCanvas.height - rule.PointSymbolizer.Graphic.Size) / 2, rule.PointSymbolizer.Graphic.Size, rule.PointSymbolizer.Graphic.Size);
+                                    break;
+                                case 'star':
+                                    legendCtx.moveTo(centerX, centerY - rule.PointSymbolizer.Graphic.Size / 1.6);
+                                    legendCtx.lineTo(centerX + rule.PointSymbolizer.Graphic.Size / 2.0, centerY);
+                                    legendCtx.lineTo(centerX, centerY + rule.PointSymbolizer.Graphic.Size / 1.6);
+                                    legendCtx.lineTo(centerX - rule.PointSymbolizer.Graphic.Size / 2.0, centerY);
+                                    legendCtx.closePath();
+                                    break;
+                                case 'circle':
+                                    var radius = rule.PointSymbolizer.Graphic.Size / 2.0;
+                                    legendCtx.beginPath();
+                                    legendCtx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+                                    break;
+                                case 'triangle':
+                                    legendCtx.beginPath();
+                                    legendCtx.moveTo(centerX, centerY - rule.PointSymbolizer.Graphic.Size / 2.0);
+                                    legendCtx.lineTo(centerX + rule.PointSymbolizer.Graphic.Size / 2.0, centerY + rule.PointSymbolizer.Graphic.Size / 2.0);
+                                    legendCtx.lineTo(centerX - rule.PointSymbolizer.Graphic.Size / 2.0, centerY + rule.PointSymbolizer.Graphic.Size / 2.0);
+                                    legendCtx.closePath();
+                                    break;
+                                default:
+                                    var centerX = legendCanvas.width / 2;
+                                    var centerY = legendCanvas.height / 2;
+                                    var radius = rule.PointSymbolizer.Graphic.Size / 2.0;
+                                    legendCtx.beginPath();
+                                    legendCtx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+                                    break;
+                            }
+                            if (rule.PointSymbolizer.Graphic.Mark.Fill && rule.PointSymbolizer.Graphic.Mark.Fill.fill)
+                                legendCtx.fillStyle = rule.PointSymbolizer.Graphic.Mark.Fill.fill.trim();
+                            else
+                                legendCtx.fillStyle = "#ccc";
+                            legendCtx.fill();
+                            if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Stroke && rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-width'])
+                                legendCtx.lineWidth = rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-width'].trim();
+                            else
+                                legendCtx.lineWidth = 0.5;
+                            legendCtx.strokeStyle = '#003300';
+                            legendCtx.stroke();
+                        }
+                        if (rule.PolygonSymbolizer) {
+                            legendCtx.beginPath();
+                            legendCtx.rect(0, 0, 20, 15);
+                            if (rule.PolygonSymbolizer.Fill && rule.PolygonSymbolizer.Fill.fill)
+                                legendCtx.fillStyle = rule.PolygonSymbolizer.Fill.fill.trim();
+                            else
+                                legendCtx.fillStyle = '#ccc';
+                            legendCtx.fill();
+                            if (rule.PolygonSymbolizer.Stroke && rule.PolygonSymbolizer.Stroke['stroke-width'])
+                                legendCtx.lineWidth = rule.PolygonSymbolizer.Stroke['stroke-width'].trim();
+                            else
+                                legendCtx.lineWidth = 0.5;
+                            if (rule.PolygonSymbolizer.Stroke && rule.PolygonSymbolizer.Stroke.stroke)
+                                legendCtx.strokeStyle = rule.PolygonSymbolizer.Stroke.stroke.trim();
+                            else
+                                legendCtx.strokeStyle = 'black';
+                            legendCtx.stroke();
+                        }
+                    }
+                    else if (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween) {
+
+                        if (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary && varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary.Literal)
+                            rule_name = Math.round(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary.Literal);
+
+                        if (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary && varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary.Literal)
+                            rule_name = rule_name + " - " + Math.round(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary.Literal);
+                        legendCtx.beginPath();
+                        legendCtx.rect(0, 0, 20, 15);
+                        if (rule.PolygonSymbolizer.Fill && rule.PolygonSymbolizer.Fill.fill)
+                            legendCtx.fillStyle = rule.PolygonSymbolizer.Fill.fill.trim();
+                        else
+                            legendCtx.fillStyle = '#ccc';
+                        legendCtx.fill();
+                        if (rule.PolygonSymbolizer.Stroke && rule.PolygonSymbolizer.Stroke['stroke-width'])
+                            legendCtx.lineWidth = rule.PolygonSymbolizer.Stroke['stroke-width'].trim();
+                        else
+                            legendCtx.lineWidth = 0.5;
+                        if (rule.PolygonSymbolizer.Stroke && rule.PolygonSymbolizer.Stroke.stroke)
+                            legendCtx.strokeStyle = rule.PolygonSymbolizer.Stroke.stroke.trim();
+                        else
+                            legendCtx.strokeStyle = 'black';
+                        legendCtx.stroke();
+                    }
+
+                }
+                else
+                {
+                    if (rule.PointSymbolizer) {
+
+                        if (rule.PointSymbolizer && rule.PointSymbolizer.Graphic && rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.WellKnownName) {
+
+                            switch (rule.PointSymbolizer.Graphic.Mark.WellKnownName) {
+                                case 'square':
+                                    legendCtx.beginPath();
+                                    legendCtx.rect((legendCanvas.width - rule.PointSymbolizer.Graphic.Size) / 2, (legendCanvas.height - rule.PointSymbolizer.Graphic.Size) / 2, rule.PointSymbolizer.Graphic.Size, rule.PointSymbolizer.Graphic.Size);
+                                    break;
+                                case 'star':
+                                    legendCtx.moveTo(centerX, centerY - rule.PointSymbolizer.Graphic.Size / 1.6);
+                                    legendCtx.lineTo(centerX + rule.PointSymbolizer.Graphic.Size / 2.0, centerY);
+                                    legendCtx.lineTo(centerX, centerY + rule.PointSymbolizer.Graphic.Size / 1.6);
+                                    legendCtx.lineTo(centerX - rule.PointSymbolizer.Graphic.Size / 2.0, centerY);
+                                    legendCtx.closePath();
+                                    break;
+                                case 'circle':
+                                    var radius = rule.PointSymbolizer.Graphic.Size / 2.0;
+                                    legendCtx.beginPath();
+                                    legendCtx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+                                    break;
+                                case 'triangle':
+                                    legendCtx.beginPath();
+                                    legendCtx.moveTo(centerX, centerY - rule.PointSymbolizer.Graphic.Size / 2.0);
+                                    legendCtx.lineTo(centerX + rule.PointSymbolizer.Graphic.Size / 2.0, centerY + rule.PointSymbolizer.Graphic.Size / 2.0);
+                                    legendCtx.lineTo(centerX - rule.PointSymbolizer.Graphic.Size / 2.0, centerY + rule.PointSymbolizer.Graphic.Size / 2.0);
+                                    legendCtx.closePath();
+                                    break;
+                                default:
+                                    var centerX = legendCanvas.width / 2;
+                                    var centerY = legendCanvas.height / 2;
+                                    var radius = rule.PointSymbolizer.Graphic.Size / 2.0;
+                                    legendCtx.beginPath();
+                                    legendCtx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+                                    break;
+                            }
+                            if (rule.PointSymbolizer.Graphic.Mark.Fill && rule.PointSymbolizer.Graphic.Mark.Fill.fill)
+                                legendCtx.fillStyle = rule.PointSymbolizer.Graphic.Mark.Fill.fill.trim();
+                            else
+                                legendCtx.fillStyle = "#ccc";
+                            legendCtx.fill();
+                            if (rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Stroke && rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-width'])
+                                legendCtx.lineWidth = rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-width'].trim();
+                            else
+                                legendCtx.lineWidth = 0.5;
+                            legendCtx.strokeStyle = '#003300';
+                            legendCtx.stroke();
+                        }
+
+                    }
+                    if (rule.LineSymbolizer) {
+                        legendCtx.beginPath();
+                        legendCtx.moveTo(centerX - legendCanvas.width / 3, centerY);
+                        legendCtx.lineTo(centerX + legendCanvas.width / 3, centerY);
+                        if (rule.LineSymbolizer.Fill && rule.LineSymbolizer.Fill.fill)
+                            legendCtx.fillStyle = rule.LineSymbolizer.Fill.fill.trim();
+                        else
+                            legendCtx.fillStyle = '#ccc';
+                        legendCtx.fill();
+                        if (rule.LineSymbolizer.Stroke && rule.LineSymbolizer.Stroke['stroke-width'])
+                            legendCtx.lineWidth = rule.LineSymbolizer.Stroke['stroke-width'].trim();
+                        else
+                            legendCtx.lineWidth = 0.5;
+                        if (rule.LineSymbolizer.Stroke && rule.LineSymbolizer.Stroke.stroke)
+                            legendCtx.strokeStyle = rule.LineSymbolizer.Stroke.stroke.trim();
+                        else
+                            legendCtx.strokeStyle = 'black';
+                        legendCtx.stroke();
+                    }
+                    if (rule.PolygonSymbolizer) {
+                        legendCtx.beginPath();
+                        if (rule.PolygonSymbolizer.Stroke && rule.PolygonSymbolizer.Stroke['stroke-width'])
+                        {
+                            legendCtx.lineWidth = rule.PolygonSymbolizer.Stroke['stroke-width'].trim();
+//                            legendCtx.lineWidth = legendCtx.lineWidth + 0.1;
+//                            alert("legendCtx.lineWidth="+legendCtx.lineWidth);
+                        }
+                        else
+                            legendCtx.lineWidth = 0.5;
+                        legendCtx.rect(legendCtx.lineWidth / 2.0, legendCtx.lineWidth / 2.0, 20 - legendCtx.lineWidth, 15 - legendCtx.lineWidth);
+                        if (rule.PolygonSymbolizer.Fill && rule.PolygonSymbolizer.Fill.fill)
+                            legendCtx.fillStyle = rule.PolygonSymbolizer.Fill.fill.trim();
+                        else
+                            legendCtx.fillStyle = '#ccc';
+                        legendCtx.fill();
+
+
+
+                        if (rule.PolygonSymbolizer.Stroke && rule.PolygonSymbolizer.Stroke.stroke)
+                            legendCtx.strokeStyle = rule.PolygonSymbolizer.Stroke.stroke.trim();
+                        else
+                            legendCtx.strokeStyle = 'black';
+
+
+                        legendCtx.stroke();
+                    }
+
+                }
+                var li = $("<li><img src='" + legendCanvas.toDataURL() + "'/>" + rule_name + "</li>");
+                li.appendTo(ul);
+            }
+        }
+        return legend;
     };
     control.refreshOverlays = function () {
-
-
         var _this = this;
-        var overlay_layers_ul = $(".leaflet-control-container .section.overlay-layers > ul");
+        var overlay_layers_ul = $(".leaflet-control-container .section.overlay-layers > ul.overlay_ul");
         overlay_layers_ul.html('');
         $("select#activelayer_id.layers-ui").empty();
         _this._map.dataLayers.forEach(function (layer, i) {
-
-
-
-            //          addOverlay(layer, activeLayerSelect,OSM.MAX_NOTE_REQUEST_AREA);
-
-            var item = $('<li>')
-                    .tooltip({
-                        placement: 'top'
-                    })
-                    .appendTo(overlay_layers_ul);
-            item.data('index', i);
-            item.css('border-bottom', '1px grey dotted');
-            var label = $('<label>');
-            //           .appendTo(item);
-            var checked = _this._map.hasLayer(layer.layer);
-            var input = $('<input>')
-                    .attr('type', 'checkbox')
-                    .prop('checked', checked)
-                    .appendTo(item);
-            //     .appendTo(label);
-            var legend_label = I18n.t('javascripts.map.layers.' + layer.name);
-            if (legend_label.indexOf('missing ') === 1)
-            {
-                if (layer.name.length > 25)
-                    //  $(layer.name.substr(0, 22) + "...").appendTo(item);
-                    label.append(layer.name.substr(0, 22) + "...");
-                else
-                    //  $(layer.name).appendTo(item);
-                    label.append(layer.name);
-
-                //   $("select#activelayer_id.layers-ui").append("<option value='" + layer.index_id + "'>" + layer.name + "</option>");
-            }
-            else
-            {
-                if (legend_label.length > 25)
-                    //  $(legend_label.substr(0, 22) + "...").appendTo(item);
-                    label.append(legend_label.substr(0, 22) + "...");
-                else
-                    //   $(legend_label).appendTo(item);
-                    label.append(legend_label);
-                //   $("select#activelayer_id.layers-ui").append("<option value='" + layer.index_id + "'>" + legend_label + "</option>");
-            }
-            label.appendTo(item);
-            label.css('display', 'inline-block');
-
-            input.on('change', function () {
-                checked = input.is(':checked');
-                if (checked) {
-                    if (!layer.layer)
-                    {
-                        control.loadLayer(layer);
-//                        if (layer.layerType === 'leafletcluster') {
-//
-//                            control.loadClusterLayer(layer);
-//                        }
-//                        else {
-//
-////                        control.loadGeoJSONLayer(layer);
-//                            control.loadTopoJSONLayer(layer);
-//                        }
-                    }
-                    else
-                    {
-//                        if (layer.type === 'geojson' || layer.name === 'My draw geometries') {
-//                            //                           control.loadGeoJSONLayer(layer);
-//                            control.loadTopoJSONLayer(layer);
-//                        }
-                        if (layer.layer)
-                            _this._map.addLayer(layer.layer);
-                    }
-                } else {
-//                    if (layer.type === 'shapefile_topojson') {
-//
-//
-//                    }
-//                    if (layer.type === 'geojson' || layer.name === 'My draw geometries') {
-//
-//                    }
-                    if (layer.layer)
-                        _this._map.removeLayer(layer.layer);
-                }
-                if (layer.layer)
-                    _this._map.fire('overlaylayerchange', {layer: layer.layer});
-            });
-
-//            var layer_moveup = '<i class="move_layer_up fa fa-chevron-up"></i>';
-//            $(layer_moveup).appendTo(item);
-//            var layer_movedown = '<i class="move_layer_down fa fa-chevron-down"></i>';
-//            $(layer_movedown).appendTo(item);
-
-            if (layer.type === 'shapefile_topojson')
-            {
-                var ul = $('<ul>');
-                var li_showlabel = $('<li>');
-
-                ul.append(li_showlabel);
-                //   label.append("<br>");
-                item.append(ul);
-                var showlabel = $('<label>')
-                        .appendTo(li_showlabel);
-                var showlabel_input = $('<input>')
-                        .attr('type', 'checkbox')
-                        .prop('checked', checked)
-                        .appendTo(showlabel);
-                showlabel.append("Labels");
-                showlabel_input.on('change', function () {
-                    checked = showlabel_input.is(':checked');
-                    if (layer.layer)
-                    {
-                        layer.layer.options.showLabels = checked;
-                        if (checked) {
-                            var kename = '';
-                            var field_kename = [];
-                            var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function () {
-                                return  this.text;
-                            });
-                            // only current map is the same with shapefile list selected file name
-                            if (shapefilename === '' || shapefilename[0] === undefined || layer.layer.options.name === shapefilename[0].toLowerCase())
-                            {
-                                field_kename = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function () {
-                                    return  this.text;
-                                });
-                            }
-                            if (field_kename.length === 0 && layer.layer.options.label_field !== '' && layer.layer.options.label_field !== null) {
-                                kename = layer.layer.options.label_field;
-                            }
-                            else
-                            {
-                                if (field_kename[0] === '' || field_kename[0] === null)
-                                    kename = undefined;
-                                else
-                                    kename = field_kename[0];
-                            }
-                            layer.layer.showFeatureLabels(kename);
-                        } else {
-                            layer.layer.removeFeatureLabels();
-                        }
-                    }
-                });
-            }
-            if (layer.defaultShowOnMap === true)
-            {
-                $(input).prop('checked', true)
-                        .trigger('change');
-            }
-            _this._map.on('zoomend', function () {
-                // alert(map.getBounds().toBBoxString());
-                // alert(maxArea);
-                return;
-                var zoom = this.getZoom();
-                var mindisplayed = false;
-                var maxdisplayed = false;
-                var displayed = false;
-                if (isNaN(layer.minZoom) || layer.minZoom === undefined || layer.minZoom === null || layer.minZoom === '')
-                {
-                    mindisplayed = true;
-                } else {
-                    if (zoom > layer.minZoom)
-                        mindisplayed = true;
-                }
-                if (isNaN(layer.maxZoom) || layer.maxZoom === undefined || layer.maxZoom === null || layer.maxZoom === '')
-                {
-                    maxdisplayed = true;
-                } else {
-                    if (zoom < layer.maxZoom)
-                        maxdisplayed = true;
-                }
-                if (maxdisplayed && mindisplayed)
-                    displayed = true;
-                if ($(input).is(':checked') && displayed === true)
-                    displayed = true;
-                else
-                    displayed = false;
-                if (layer.layer) {
-                    if (displayed === false) {
-                        if (_this._map.hasLayer(layer.layer))
-                            _this._map.removeLayer(layer.layer);
-                    } else {
-                        if (!_this._map.hasLayer(layer.layer))
-                            _this._map.addLayer(layer.layer);
-                    }
-
-                    //       $(input).prop('checked', checked);
-
-                    if (displayed && !$(input).is(':checked') && layer.layer) {
-                        $(input).prop('checked', displayed)
-                                .trigger('change');
-                    } else if (!displayed && $(input).is(':checked')) {
-                        $(input).prop('checked', displayed)
-                                .trigger('change');
-                    }
-                }
-                else
-                {
-                    $(input).prop('checked', false);
-                }
-//                $(item).attr('class', disabled ? 'disabled' : '');
-//                item.attr('data-original-title', disabled ?
-//                        I18n.t('javascripts.site.map_' + layer.name + '_zoom_in_tooltip') : '');
-            });
+            _this.addOverlayItem(layer, i, null, false);
         });
-
         _this.overlayToolButtons();
-
-
         $("select#activelayer_id.layers-ui").trigger('change');
     };
 

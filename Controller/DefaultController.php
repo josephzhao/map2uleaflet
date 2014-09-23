@@ -46,18 +46,33 @@ class DefaultController extends Controller {
         $em = $this->getDoctrine()->getManager();
 
         if ($this->getUser()) {
-            $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UploadfileLayer p where p.userId=' . $this->getUser()->getId() . ' or p.published = true ORDER BY p.seq ASC')
+            $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UploadfileLayer p where p.userId=' . $this->getUser()->getId() . ' or (p.published = true and p.public = true ) ORDER BY p.seq ASC')
                     ->getResult();
         } else {
-            $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UploadfileLayer p where  p.published = true ORDER BY p.seq ASC')
+            $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UploadfileLayer p where  p.published = true and p.public = true ORDER BY p.seq ASC')
                     ->getResult();
         }
 
         if ($this->getUser()) {
-            $cluster_layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:LeafletClusterLayer p where p.userId=' . $this->getUser()->getId() . ' or p.published = true ORDER BY p.seq ASC')
+            $cluster_layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:LeafletClusterLayer p where p.userId=' . $this->getUser()->getId() . ' or ( p.published = true and p.public = true ) ORDER BY p.seq ASC')
                     ->getResult();
         } else {
-            $cluster_layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:LeafletClusterLayer p where  p.published = true ORDER BY p.seq ASC')
+            $cluster_layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:LeafletClusterLayer p where  p.published = true and p.public = true ORDER BY p.seq ASC')
+                    ->getResult();
+        }
+
+        if ($this->getUser()) {
+            $heatmap_layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:LeafletHeatmapLayer p where p.userId=' . $this->getUser()->getId() . ' or ( p.published = true and p.public = true ) ORDER BY p.seq ASC')
+                    ->getResult();
+        } else {
+            $heatmap_layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:LeafletHeatmapLayer p where  p.published = true and p.public = true ORDER BY p.seq ASC')
+                    ->getResult();
+        }
+        if ($this->getUser()) {
+            $thematicmap_layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:ThematicMap p where p.userId=' . $this->getUser()->getId() . ' or ( p.published = true and p.public = true) ORDER BY p.seq ASC')
+                    ->getResult();
+        } else {
+            $thematicmap_layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:ThematicMap p where  p.published = true and p.public = true ORDER BY p.seq ASC')
                     ->getResult();
         }
 
@@ -90,48 +105,97 @@ class DefaultController extends Controller {
                 $layerData['layerShowInSwitcher'] = $layer->isLayerShowInSwitcher();
                 $layerData['defaultShowOnMap'] = $layer->isDefaultShowOnMap();
                 $layerData['filename'] = $layer->getUseruploadfile()->getFileName();
+                if ($layer->getDefaultSldName()) {
+                    $layerData['sld'] = $this->getSldContent($layer->getDefaultSldName());
+                } else {
+                    if ($layer->getUseruploadfile()->getSldfileName()) {
+                        $layerData['sld'] = $this->getSldContent($layer->getUseruploadfile()->getSldfileName());
+                    }
+                }
+
                 array_push($layersData, $layerData);
             }
-            if ($cluster_layers) {
-                foreach ($cluster_layers as $layer) {
-                    $layerData = array();
-                    $layerData['id'] = $layer->getId();
-                    $layerData['datasource'] = $layer->getUseruploadfile()->getId();
-                    $layerData['layerTitle'] = $layer->getLayerTitle();
-                    $layerData['layerName'] = $layer->getLayerName();
-                    $layerData['layerType'] = 'leafletcluster';
-                    $layerData['seq'] = $layer->getSeq();
-                    $layerData['minZoom'] = $layer->getMinZoom();
-                    $layerData['maxZoom'] = $layer->getMaxZoom();
-                    $layerData['clusterLayer'] = true;
-                    $layerData['layerShowInSwitcher'] = $layer->isLayerShowInSwitcher();
-                    $layerData['defaultShowOnMap'] = $layer->isDefaultShowOnMap();
-                    $layerData['filename'] = $layer->getUseruploadfile()->getFileName();
-                    array_push($layersData, $layerData);
-                }
-            }
-            if ($wmslayers) {
-                foreach ($wmslayers as $layer) {
-                    $layerData = array();
-                    $layerData['id'] = $layer->getId();
-                    $layerData['datasource'] = -1;
-                    $layerData['layerTitle'] = $layer->getLayerTitle();
-                    $layerData['layerName'] = $layer->getLayerName();
-                    $layerData['layerType'] = $layer->getLayerType();
-                    $layerData['seq'] = $layer->getSeq();
-                    $layerData['minZoom'] = $layer->getMinZoom();
-                    $layerData['maxZoom'] = $layer->getMaxZoom();
-                    $layerData['clusterLayer'] = $layer->isClusterMap();
-                    $layerData['layerShowInSwitcher'] = $layer->isLayerShowInSwitcher();
-                    $layerData['defaultShowOnMap'] = $layer->isDefaultShowOnMap();
-                    $layerData['filename'] = "wms-" . $layer->getLayerName();
-                    $layerData['hostName'] = $layer->getHostName();
-                    array_push($layersData, $layerData);
-                }
-            }
-            return new Response(\json_encode(array('success' => $success, 'message' => $message, 'layers' => $layersData)));
         }
-        return new Response(\json_encode(array('success' => true, 'message' => 'User draw name  not exist')));
+        if ($cluster_layers) {
+            foreach ($cluster_layers as $layer) {
+                $layerData = array();
+                $layerData['id'] = $layer->getId();
+                $layerData['datasource'] = $layer->getUseruploadfile()->getId();
+                $layerData['layerTitle'] = $layer->getLayerTitle();
+                $layerData['layerName'] = $layer->getLayerName();
+                $layerData['layerType'] = 'clustermap';
+                $layerData['seq'] = $layer->getSeq();
+                $layerData['minZoom'] = $layer->getMinZoom();
+                $layerData['maxZoom'] = $layer->getMaxZoom();
+                $layerData['clusterLayer'] = true;
+                $layerData['layerShowInSwitcher'] = $layer->isLayerShowInSwitcher();
+                $layerData['defaultShowOnMap'] = $layer->isDefaultShowOnMap();
+                $layerData['filename'] = $layer->getUseruploadfile()->getFileName();
+                array_push($layersData, $layerData);
+            }
+        }
+        if ($heatmap_layers) {
+            foreach ($heatmap_layers as $layer) {
+                $layerData = array();
+                $layerData['id'] = $layer->getId();
+                $layerData['datasource'] = $layer->getDatasourceId();
+                $layerData['layerTitle'] = $layer->getLayerTitle();
+                $layerData['layerName'] = $layer->getLayerName();
+                $layerData['layerType'] = 'heatmap';
+                $layerData['seq'] = $layer->getSeq();
+                $layerData['minZoom'] = $layer->getMinZoom();
+                $layerData['maxZoom'] = $layer->getMaxZoom();
+                $layerData['clusterLayer'] = false;
+                $layerData['layerShowInSwitcher'] = true;
+                $layerData['sld']['gradient'] = $layer->getGradient();
+
+                $layerData['defaultShowOnMap'] = $layer->getDefaultShowOnMap();
+                //   $layerData['filename'] = $layer->getUseruploadfile()->getFileName();
+                array_push($layersData, $layerData);
+            }
+        }
+        if ($thematicmap_layers) {
+            foreach ($thematicmap_layers as $layer) {
+                $layerData = array();
+                $layerData['id'] = $layer->getId();
+                $layerData['datasource'] = $layer->getDatasourceId();
+                $layerData['layerTitle'] = $layer->getLayerTitle();
+                $layerData['layerName'] = $layer->getLayerName();
+                $layerData['layerType'] = 'thematicmap';
+                $layerData['seq'] = $layer->getSeq();
+                $layerData['minZoom'] = $layer->getMinZoom();
+                $layerData['maxZoom'] = $layer->getMaxZoom();
+                $layerData['clusterLayer'] = false;
+                $layerData['layerShowInSwitcher'] = true;
+                $layerData['sld']['categories'] = unserialize($layer->getCategories());
+                $layerData['sld']['category'] = unserialize($layer->getCategory());
+                $layerData['defaultShowOnMap'] = $layer->getDefaultShowOnMap();
+                //   $layerData['filename'] = $layer->getUseruploadfile()->getFileName();
+                array_push($layersData, $layerData);
+            }
+        }
+        if ($wmslayers) {
+            foreach ($wmslayers as $layer) {
+                $layerData = array();
+                $layerData['id'] = $layer->getId();
+                $layerData['datasource'] = $layer->getId();
+                $layerData['layerTitle'] = $layer->getLayerTitle();
+                $layerData['layerName'] = $layer->getLayerName();
+                $layerData['layerType'] = $layer->getLayerType();
+                $layerData['seq'] = $layer->getSeq();
+                $layerData['minZoom'] = $layer->getMinZoom();
+                $layerData['maxZoom'] = $layer->getMaxZoom();
+                $layerData['clusterLayer'] = $layer->isClusterMap();
+                $layerData['layerShowInSwitcher'] = $layer->isLayerShowInSwitcher();
+                $layerData['defaultShowOnMap'] = $layer->isDefaultShowOnMap();
+                $layerData['filename'] = "wms-" . $layer->getLayerName();
+                $layerData['hostName'] = $layer->getHostName();
+                array_push($layersData, $layerData);
+            }
+        }
+        return new Response(\json_encode(array('success' => $success, 'message' => $message, 'layers' => $layersData)));
+
+        // return new Response(\json_encode(array('success' => true, 'message' => 'User draw name  not exist')));
     }
 
     /**
@@ -619,7 +683,7 @@ class DefaultController extends Controller {
                 ->getResult();
         $layerData = array();
         $layerOpt = array();
-     
+
         if ($layers) {
             $layerData['id'] = $layers[0]->getId();
             $layerData['layerTitle'] = $layers[0]->getLayerTitle();
@@ -800,7 +864,7 @@ class DefaultController extends Controller {
         }
         $layerData['layerType'] = 'thematicmap';
         $geom = $this->getGeomJsonData($layer->getUserId(), true, $layer->getDatasourceId(), $datafilesPath);
-        $sld_json = null;//$this->getSldContent($layer->getDefaultSldName());
+        $sld_json = null; //$this->getSldContent($layer->getDefaultSldName());
         return new Response(\json_encode(array('success' => $success, 'datatype' => $geom['datatype'], 'message' => $message, 'layer' => $layerData, 'sld' => $sld_json, 'geomdata' => $geom)));
     }
 
