@@ -87,9 +87,9 @@ class DefaultController extends Controller {
         }
 
         $layersData = array();
+        $message = '';
+        $success = false;
         if ($layers) {
-
-            $message = '';
             $success = true;
             foreach ($layers as $layer) {
                 $layerData = array();
