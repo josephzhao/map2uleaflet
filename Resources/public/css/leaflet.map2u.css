@@ -382,6 +382,9 @@ div.section.overlay-layers ul.overlay_ul > li.overlay_li  div.layer_legend ul > 
 div.section.overlay-layers ul.overlay_ul > li.overlay_li  div.layer_legend ul > li:hover {
     white-space: nowrap;
     overflow: visible;
+    margin-left: -50px;
+    background-color: rgba(153,255,255, 0.25);
+    
 }
 
 ul.overlay_ul > li.overlay_li > div.layer_legend > ul > li > img {

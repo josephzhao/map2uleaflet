@@ -419,9 +419,7 @@ window.onload = function() {
                 }
                 map.dataLayers[map.dataLayers.length] = {'map': map, 'layerType': 'userdraw', 'layer': null, 'index_id': -1, 'layerId': -1, title: "My draw geometries", 'name': 'My draw geometries', type: 'geojson'};
                 layersControl.refreshOverlays();
-
-
-            }
+           }
         }
     });
 
