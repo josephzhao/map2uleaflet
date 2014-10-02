@@ -967,7 +967,7 @@ class DefaultController extends Controller {
             return null;
         }
         $conn = $this->get('database_connection');
-        $tsql = "select a.id as ogc_fid,a.id as ogc_id, a.name as keyname , a.geom_type , a.radius , a.buffer ,st_asgeojson(b.the_geom) as feature from userdrawgeometries a, userdrawgeometries_geom b where a.user_id=" . $user->getId() . " and a.id=b.userdrawgeometries_id";
+        $tsql = "select a.id as ogc_fid,a.id as ogc_id, a.name as keyname , a.geom_type , a.radius , a.buffer ,st_asgeojson(b.the_geom) as feature from userdrawgeometries a, userdrawgeometries_geom b where (a.b_public=true or a.user_id=" . $user->getId() . ") and a.id=b.userdrawgeometries_id";
         $stmt = $conn->fetchAll($tsql);
         return $stmt;
     }

@@ -83,7 +83,7 @@ L.MAP2U.layers = function (options) {
                     .attr('type', 'radio')
                     .prop('checked', map.hasLayer(layer.layer))
                     .appendTo(label);
-            label.append(layer.title);
+            label.append(layer.name);
             item.on('click', function () {
                 layers.forEach(function (other) {
                     if (other.layer === layer.layer) {
