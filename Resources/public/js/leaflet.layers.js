@@ -83,7 +83,7 @@ L.MAP2U.layers = function (options) {
                     .attr('type', 'radio')
                     .prop('checked', map.hasLayer(layer.layer))
                     .appendTo(label);
-            label.append(layer.name);
+            label.append(layer.title);
             item.on('click', function () {
                 layers.forEach(function (other) {
                     if (other.layer === layer.layer) {
@@ -190,11 +190,11 @@ L.MAP2U.layers = function (options) {
 
             //       label.append(I18n.t('javascripts.map.layers.' + name));
 
-            var label_name = I18n.t('javascripts.map.layers.' + layer.name);
+            var label_name = I18n.t('javascripts.map.layers.' + layer.title);
             if (label_name.indexOf('missing ') === 1)
             {
-                label.append(layer.name);
-                activeLayerSelect.append("<option value='" + layer.layerId + "'>" + layer.name + "</option>");
+                label.append(layer.title);
+                activeLayerSelect.append("<option value='" + layer.layerId + "'>" + layer.title + "</option>");
             }
             else
             {
@@ -2650,13 +2650,13 @@ L.MAP2U.layers = function (options) {
 
         var legend_icon = $("<div class='layer_legend_icon'><i class='fa fa-plus blue'></i></div>").appendTo(item);
 
-        var legend_label = I18n.t('javascripts.map.layers.' + layer.name);
+        var legend_label = I18n.t('javascripts.map.layers.' + layer.title);
         if (legend_label.indexOf('missing ') === 1)
         {
-            if (layer.name.length > 25)
-                label.append(layer.name.substr(0, 22) + "...");
+            if (layer.title.length > 25)
+                label.append(layer.title.substr(0, 22) + "...");
             else
-                label.append(layer.name);
+                label.append(layer.title);
         }
         else
         {
