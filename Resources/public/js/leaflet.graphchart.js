@@ -67,7 +67,7 @@ L.MAP2U.graphchart = function (options) {
                 control.disabled = true;
             else
             {
-                $(control.category).append($(".graphchart-ui .sidebar_content div.section"));
+                $(control.category).appendTo($(".graphchart-ui .sidebar_content div.section"));
                 alert(control.category);
                 control.disabled = false;
             }
