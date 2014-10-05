@@ -54,6 +54,9 @@ I18n.translations = {'zh': {
                     'title': 'Show Map Legend'
                 }
                 ,
+                'graphchart': {
+                    'title': '显示图表'
+                },
                 'legend': {
                     'title': '显示图例'
                 }
@@ -66,6 +69,11 @@ I18n.translations = {'zh': {
                 'title': 'Legend',
                 'tooltip_disabled': 'Map Legend Disabled',
                 'tooltip': 'Show Map Legend'
+            },
+            'graphchart': {
+                'title': '图表',
+                'tooltip_disabled': '图表信息禁用',
+                'tooltip': '显示图表信息'
             },
             'shapefile-upload': {
                 'title': '上载Shapefile文件'
@@ -111,6 +119,8 @@ I18n.translations = {'zh': {
                 'shapefile_list_tooltip': 'Shapefile List',
                 'uploadfile_disabled_tooltip': '上载空间信息文件禁用',
                 'uploadfile_tooltip': '上载空间信息文件',
+                'graphchart_disabled_tooltip': '图表信息禁用',
+                'graphchart_tooltip': '图表信息',
                 'uploadfile_list_disabled_tooltip': '空间信息文件列表禁用',
                 'uploadfile_list_tooltip': '空间信息文件列表',
                 'createnote_disabled_tooltip': 'Create Note Disabled',

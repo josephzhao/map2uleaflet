@@ -23,7 +23,7 @@ L.MAP2U.uploadfile_list = function(options) {
                         .text(I18n.t('javascripts.uploadfile-list.title')));
         var barContent = $('<div>')
                 .attr('class', 'sidebar_content')
-                .appendTo($ui)
+                .appendTo($ui);
 
         var $section = $('<div>')
                 .attr('class', 'section')

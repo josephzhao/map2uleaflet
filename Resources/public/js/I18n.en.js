@@ -58,6 +58,10 @@ I18n.translations = {'en': {
                     'title': 'Show Map Legend'
                 }
                 ,
+                'graphchart': {
+                    'title': 'Show Graph and Chart'
+                }
+                ,
                 'note': {
                     'title': 'Create Note'
                 }
@@ -66,6 +70,11 @@ I18n.translations = {'en': {
                 'title': 'Legend',
                 'tooltip_disabled': 'Map Legend Disabled',
                 'tooltip': 'Show Map Legend'
+            },
+            'graphchart': {
+                'title': 'Graph and Chart',
+                'tooltip_disabled': 'Graph and Chart Disabled',
+                'tooltip': 'Show Graph and Chart'
             },
             'shapefile-upload': {
                 'title': 'Upload Shapefile'
@@ -109,6 +118,8 @@ I18n.translations = {'en': {
                 'shapefile_upload_tooltip': 'Upload Shapefile',
                 'shapefile_list_disabled_tooltip': 'Shapefile List Disabled',
                 'shapefile_list_tooltip': 'Shapefile List',
+                'graphchart_disabled_tooltip': 'Graph and Chart Disabled',
+                'graphchart_tooltip': 'Graph and Chart',
                 'uploadfile_disabled_tooltip': 'Upload Spatial File Disabled',
                 'uploadfile_tooltip': 'Upload Spatial File',
                 'uploadfile_list_disabled_tooltip': 'Upload File List Disabled',

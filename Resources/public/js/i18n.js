@@ -65,7 +65,7 @@ I18n.fallbackRules = {
 
 I18n.pluralizationRules = {
   en: function (n) {
-    return n == 0 ? ["zero", "none", "other"] : n == 1 ? "one" : "other";
+    return n === 0 ? ["zero", "none", "other"] : n === 1 ? "one" : "other";
   }
 };
 
@@ -84,9 +84,8 @@ I18n.getFallbacks = function(locale) {
 
     I18n.fallbackRules[locale] = rules;
   }
-
   return I18n.fallbackRules[locale];
-}
+};
 
 I18n.isValidNode = function(obj, node, undefined) {
   return obj[node] !== null && obj[node] !== undefined;
@@ -102,7 +101,7 @@ I18n.lookup = function(scope, options) {
     , currentScope
   ;
 
-  if (typeof(scope) == "object") {
+  if (typeof(scope) === "object") {
     scope = scope.join(this.defaultSeparator);
   }
 
@@ -177,7 +176,8 @@ I18n.interpolate = function(message, options) {
     return message;
   }
 
-  for (var i = 0; placeholder = matches[i]; i++) {
+  for (var i = 0; placeholder === matches[i]; i++) {
+      
     name = placeholder.replace(this.PLACEHOLDER, "$1");
 
     value = options[name];
@@ -198,8 +198,8 @@ I18n.translate = function(scope, options) {
   var translation = this.lookup(scope, options);
 
   try {
-    if (typeof(translation) == "object") {
-      if (typeof(options.count) == "number") {
+    if (typeof(translation) === "object") {
+      if (typeof(options.count) === "number") {
         return this.pluralize(options.count, scope, options);
       } else {
         return translation;
@@ -234,7 +234,7 @@ I18n.parseDate = function(date) {
   var matches, convertedDate;
 
   // we have a date, so just return it.
-  if (typeof(date) == "object") {
+  if (typeof(date) === "object") {
     return date;
   };
 
@@ -260,14 +260,14 @@ I18n.parseDate = function(date) {
     } else {
       convertedDate = new Date(matches[1], matches[2], matches[3], matches[4], matches[5], matches[6]);
     }
-  } else if (typeof(date) == "number") {
+  } else if (typeof(date) === "number") {
     // UNIX timestamp
     convertedDate = new Date();
     convertedDate.setTime(date);
   } else if (date.match(/\d+ \d+:\d+:\d+ [+-]\d+ \d+/)) {
     // a valid javascript format with timezone info
     convertedDate = new Date();
-    convertedDate.setTime(Date.parse(date))
+    convertedDate.setTime(Date.parse(date));
   } else {
     // an arbitrary javascript string
     convertedDate = new Date();
@@ -499,10 +499,10 @@ I18n.pluralize = function(count, scope, options) {
 
   pluralizer = this.pluralizer(this.currentLocale());
   key = pluralizer(Math.abs(count));
-  keys = ((typeof key == "object") && (key instanceof Array)) ? key : [key];
+  keys = ((typeof key === "object") && (key instanceof Array)) ? key : [key];
 
   message = this.findAndTranslateValidNode(keys, translation);
-  if (message == null) message = this.missingTranslation(scope, keys[0]);
+  if (message === null) message = this.missingTranslation(scope, keys[0]);
 
   return this.interpolate(message, options);
 };

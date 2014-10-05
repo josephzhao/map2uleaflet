@@ -8,7 +8,7 @@
 
 
 
-window.onload = function() {
+window.onload = function () {
     var map;
     var leafletmap_tooltip;
     var layersControl;
@@ -22,7 +22,7 @@ window.onload = function() {
 //    var context;
 //    var path;
 
-    $(".navbar.navbar-fixed-top").resize(function() {
+    $(".navbar.navbar-fixed-top").resize(function () {
         // alert("qqq=" + $(".navbar.navbar-fixed-top").height());
         $("body.sonata-bc").css('top', $(".navbar.navbar-fixed-top").height());
     });
@@ -33,13 +33,13 @@ window.onload = function() {
 
 
 
-    $(window).resize(function() { /* do something */
+    $(window).resize(function () { /* do something */
 
         $('#leafmap').height($(window).height() - 126);
 //        $('#leafmap').css('height',$('#leafmap').height());
 //        $('#leafmap').css('width',$('#leafmap').width());
         $('#map-ui').height($(window).height() - 126);
-       // $('.leaflet-sidebar #sidebar-left').height($(window).height() - 146);
+        // $('.leaflet-sidebar #sidebar-left').height($(window).height() - 146);
     });
     map = new L.MAP2U.Map('leafmap', {
         'zoomControl': false
@@ -202,13 +202,13 @@ window.onload = function() {
             position: 'topleft'
 
         },
-        onAdd: function(map) {
+        onAdd: function (map) {
             // create the control container with a particular class name
             var container = L.DomUtil.create('div', 'leftsidebar-control');
             L.DomEvent
                     .addListener(container, 'click', L.DomEvent.stopPropagation)
                     .addListener(container, 'click', L.DomEvent.preventDefault)
-                    .addListener(container, 'click', function() {
+                    .addListener(container, 'click', function () {
                         ShowLeftSideBar(leftSidebar);
                     });
             var controlUI = L.DomUtil.create('div', 'leftsidebar-close-control hidden noprint', container);
@@ -346,9 +346,10 @@ window.onload = function() {
         'short': true
     }).addTo(map);
 
-    L.MAP2U.legend({
+    L.MAP2U.graphchart({
         position: position,
-        sidebar: rightSidebar
+        sidebar: rightSidebar,
+        'short': true
     }).addTo(map);
     L.MAP2U.share({
         position: position,
@@ -363,12 +364,12 @@ window.onload = function() {
     }).addTo(map);
 
 
-    setTimeout(function() {
+    setTimeout(function () {
         leftSidebar.toggle();
     }, 500);
 
 // if close left sidebar, then show sidebar controller icon
-    $(".sonata-bc div.leaflet-sidebar.left a.close").click(function() {
+    $(".sonata-bc div.leaflet-sidebar.left a.close").click(function () {
         if ($(".leaflet-sidebar.left").css('left') === 0 || $(".leaflet-sidebar.left").css('left') === '0px') {
             $(".sonata-bc .leftsidebar-close-control").removeClass("hidden");
             $(".sonata-bc .leftsidebar-close-control").show();
@@ -383,16 +384,16 @@ window.onload = function() {
     $.ajax({
         url: Routing.generate('leaflet_userlayers'),
         method: 'GET',
-        beforeSend: function() {
+        beforeSend: function () {
             map.spin(true);
         },
-        complete: function() {
+        complete: function () {
             map.spin(false);
         },
-        error: function() {
+        error: function () {
             map.spin(false);
         },
-        success: function(response) {
+        success: function (response) {
             var result;
             if (typeof response !== 'object')
                 result = JSON.parse(response);
@@ -405,7 +406,7 @@ window.onload = function() {
                 //    alert(JSON.stringify(result.layers));
                 // alert(result.layers.length);
 
-                var keys = Object.keys(result.layers).map(function(k) {
+                var keys = Object.keys(result.layers).map(function (k) {
 
                     return k;
                 });
@@ -415,11 +416,11 @@ window.onload = function() {
                 for (var k = 0; k < keys.length; k++)
                 {
                     var layer = result.layers[keys[k]];
-                    map.dataLayers[map.dataLayers.length] = {'map': map, 'layerType': layer.layerType, 'clusterLayer': layer.clusterLayer, 'defaultShowOnMap': layer.defaultShowOnMap, 'layer': null, 'minZoom': layer.minZoom, 'maxZoom': layer.maxZoom, 'index_id': k, 'layerId': layer.id, title: layer.layerTitle, 'datasource':layer.datasource,'sld':layer.sld,'filename': layer.filename, 'name': layer.layerName, 'hostName': layer.hostName};
+                    map.dataLayers[map.dataLayers.length] = {'map': map, 'layerType': layer.layerType, 'clusterLayer': layer.clusterLayer, 'defaultShowOnMap': layer.defaultShowOnMap, 'layer': null, 'minZoom': layer.minZoom, 'maxZoom': layer.maxZoom, 'index_id': k, 'layerId': layer.id, title: layer.layerTitle, 'datasource': layer.datasource, 'sld': layer.sld, 'filename': layer.filename, 'name': layer.layerName, 'hostName': layer.hostName};
                 }
                 map.dataLayers[map.dataLayers.length] = {'map': map, 'layerType': 'userdraw', 'layer': null, 'index_id': -1, 'layerId': -1, title: "My draw geometries", 'name': 'My draw geometries', type: 'geojson'};
                 layersControl.refreshOverlays();
-           }
+            }
         }
     });
 
@@ -443,14 +444,14 @@ window.onload = function() {
 //        }
 //    });
     //   layersControl.createHeatMapLayer();
-    $(".search_form").on("submit", function(e) {
+    $(".search_form").on("submit", function (e) {
         e.preventDefault();
 //    $("header").addClass("closed");
         var query = $(this).find("input[name=query]").val();
         if (query !== undefined && query.trim() !== '') {
 
             var geocoder = new google.maps.Geocoder();
-            geocoder.geocode({'address': query}, function(results, status) {
+            geocoder.geocode({'address': query}, function (results, status) {
 
 
                 if (status === google.maps.GeocoderStatus.OK)
@@ -470,7 +471,7 @@ window.onload = function() {
                     feature.index = map.drawnItems.getLayers().length;
                     feature.type = 'marker';
                     feature.source = 'searchbox_query';
-                    feature.on('click', function(e) {
+                    feature.on('click', function (e) {
 
                         if (map.drawControl._toolbars.edit._activeMode === null) {
 
@@ -490,7 +491,7 @@ window.onload = function() {
                                     radius: radius,
                                     index: e.target.index
                                 },
-                                success: function(response) {
+                                success: function (response) {
                                     if ($('body.sonata-bc #ajax-dialog').length === 0) {
                                         $('<div class="modal fade" id="ajax-dialog" role="dialog"></div>').appendTo('body');
                                     } else {
@@ -523,7 +524,7 @@ window.onload = function() {
 //      OSM.router.route("/" + OSM.formatHash(map));
         }
     });
-    $(".sonata-bc .describe_location").on("click", function(e) {
+    $(".sonata-bc .describe_location").on("click", function (e) {
 
         e.preventDefault();
 //            alert(" map center=" + map.getCenter().lat + "  " + map.getCenter().lng);
@@ -543,7 +544,7 @@ window.onload = function() {
 //                  maxlon: map.getBounds().getEast(),
 //                  maxlat: map.getBounds().getNorth()
 //                },
-            success: function(html) {
+            success: function (html) {
                 alert(html[0].display_name)
                 //  alert(JSON.stringify(html));
             }
@@ -582,13 +583,13 @@ function ShowLeftSideBar(leftSidebar) {
     if ($(".leaflet-sidebar.left").css('left') === 0 || $(".leaflet-sidebar.left").css('left') === '0px') {
 
         $(".sonata-bc .leftsidebar-close-control").show();
-        setTimeout(function() {
+        setTimeout(function () {
             leftSidebar.hide();
         }, 500);
     } else {
 
         $(".sonata-bc .leftsidebar-close-control").hide();
-        setTimeout(function() {
+        setTimeout(function () {
             leftSidebar.show();
         }, 500);
     }
