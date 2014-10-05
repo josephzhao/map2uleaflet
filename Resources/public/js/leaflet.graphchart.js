@@ -62,14 +62,20 @@ L.MAP2U.graphchart = function (options) {
         }
 
         function update() {
-//            var layer = map.getMapBaseLayerId(),
-//                    zoom = map.getZoom();
-
-            control.disabled = true;
+            $(".graphchart-ui .sidebar_content div.section").empty();       
+            if(control.category===undefined || control.category===null||control.category==='')
+                control.disabled = true;
+            else
+            {
+                $(control.category).append($(".graphchart-ui .sidebar_content div.section"));
+                
+                control.disabled = false;
+            }
             button.toggleClass('disabled', control.disabled)
                     .attr('data-original-title', I18n.t(control.disabled ?
                             'javascripts.graphchart.tooltip_disabled' :
                             'javascripts.graphchart.tooltip'));
+                    
         }
 //      $('.mapkey-table-entry').each(function () {
 //        var data = $(this).data();
