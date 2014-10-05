@@ -11,7 +11,7 @@ L.MAP2U.graphchart = function (options) {
                 .html('<span class="icon graphchart"></span>')
                 .on('click', toggle)
                 .appendTo($container);
-
+        this.button=button;
         var $ui = $('<div>')
                 .attr('class', 'graphchart-ui');
 
@@ -77,6 +77,7 @@ L.MAP2U.graphchart = function (options) {
                             'javascripts.graphchart.tooltip'));
                     
         }
+        control.update=update;
 //      $('.mapkey-table-entry').each(function () {
 //        var data = $(this).data();
 //        if (layer == data.layer && zoom >= data.zoomMin && zoom <= data.zoomMax) {

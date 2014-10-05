@@ -316,7 +316,7 @@ window.onload = function () {
     });
     map.addControl(rightSidebar);
 
-
+    this.rightSidebar = rightSidebar;
 
     layersControl = L.MAP2U.layers({
         position: position,
