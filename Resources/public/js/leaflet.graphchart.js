@@ -67,8 +67,8 @@ L.MAP2U.graphchart = function (options) {
                 control.disabled = true;
             else
             {
-                $(control.category).appendTo($(".graphchart-ui .sidebar_content div.section"));
-                alert(control.category);
+                $("<h5>"+control.category+"</h5>").appendTo($(".graphchart-ui .sidebar_content div.section"));
+                
                 control.disabled = false;
             }
             button.toggleClass('disabled', control.disabled)
