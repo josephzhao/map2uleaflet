@@ -2649,14 +2649,18 @@ L.MAP2U.layers = function (options) {
                 .appendTo(item);
 
         var legend_icon = $("<div class='layer_legend_icon'><i class='fa fa-plus blue'></i></div>").appendTo(item);
-
-        var legend_label = I18n.t('javascripts.map.layers.' + layer.title);
+        var title = '';
+        if (layer.title)
+            title = layer.title;
+        else
+            title = layer.name;
+        var legend_label = I18n.t('javascripts.map.layers.' + title);
         if (legend_label.indexOf('missing ') === 1)
         {
-            if (layer.title.length > 25)
-                label.append(layer.title.substr(0, 22) + "...");
+            if (title.length > 25)
+                label.append(title.substr(0, 22) + "...");
             else
-                label.append(layer.title);
+                label.append(title);
         }
         else
         {
@@ -2665,6 +2669,7 @@ L.MAP2U.layers = function (options) {
             else
                 label.append(legend_label);
         }
+
         label_div.appendTo(item);
         label_div.css('display', 'inline-block');
         switch (layer.layerType) {
@@ -2684,10 +2689,10 @@ L.MAP2U.layers = function (options) {
                     legend.appendTo(item);
                 break;
             case 'wms':
-                var legend =_this.createWMSLegend(layer);
+                var legend = _this.createWMSLegend(layer);
                 if (legend !== null)
                     legend.appendTo(item);
-               
+
                 break;
 
             default:
