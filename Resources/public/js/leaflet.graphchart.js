@@ -89,9 +89,8 @@ L.MAP2U.graphchart = function (options) {
 
         control.activate=function() {
             var $ui = $('.graphchart-ui');
-            options.sidebar.togglePane($ui, this.button);
-            alert(options.sidebar.isVisible());
-            options.sidebar.show();
+            if(options.sidebar.isVisible()===false)
+                options.sidebar.togglePane($ui, this.button);
         };
         return $container[0];
     };
