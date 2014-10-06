@@ -618,7 +618,7 @@ L.MAP2U.layers = function (options) {
                     var layers = options.layers;
                     layers.forEach(function (layer) {
                         // if this file already exist, delete it first
-                        if (layer.filename === result.uploadfile.filename) {
+                        if (result.uploadfile && layer.filename === result.uploadfile.filename) {
 
                         }
                     });
