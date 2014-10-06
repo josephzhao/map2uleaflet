@@ -88,10 +88,10 @@ L.MAP2U.graphchart = function (options) {
 //        }
 //      });
 
-        control.activate=function() {
+        control.activate=function(e) {
             var $ui = $('.graphchart-ui');
             if(options.sidebar.isVisible()===false||options.sidebar._currentButton!==this.button)
-                control.toggle();
+                control.toggle(e);
         };
         return $container[0];
     };
