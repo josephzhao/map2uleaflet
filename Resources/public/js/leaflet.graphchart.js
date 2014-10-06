@@ -87,7 +87,12 @@ L.MAP2U.graphchart = function (options) {
 //        }
 //      });
 
-
+        control.activate=function() {
+            var $ui = $('.graphchart-ui');
+            options.sidebar.togglePane($ui, this.button);
+            alert(options.sidebar.isVisible());
+            options.sidebar.show();
+        };
         return $container[0];
     };
 
