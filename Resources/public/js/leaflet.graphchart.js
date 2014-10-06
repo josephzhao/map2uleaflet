@@ -78,6 +78,7 @@ L.MAP2U.graphchart = function (options) {
                     
         }
         control.update=update;
+        control.toggle=toggle;
 //      $('.mapkey-table-entry').each(function () {
 //        var data = $(this).data();
 //        if (layer == data.layer && zoom >= data.zoomMin && zoom <= data.zoomMax) {
@@ -90,7 +91,7 @@ L.MAP2U.graphchart = function (options) {
         control.activate=function() {
             var $ui = $('.graphchart-ui');
             if(options.sidebar.isVisible()===false||options.sidebar._currentButton!==this.button)
-                options.sidebar.togglePane($ui, this.button);
+                control.toggle();
         };
         return $container[0];
     };
