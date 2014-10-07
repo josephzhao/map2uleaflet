@@ -892,8 +892,8 @@ class DefaultController extends Controller {
         $geom['datatype'] = 'geojson';
         $layerData = array();
         $layerData['id'] = -1;
-        $layerData['layerTitle'] = "Userdraw";
-        $layerData['layerName'] = "Userdraw";
+        $layerData['layerTitle'] = "My draw geometries";
+        $layerData['layerName'] = "My draw geometries";
         $layerData['tip_field'] = '';
         $layerData['label_field'] = '';
         $layerData['layerType'] = 'userdraw';

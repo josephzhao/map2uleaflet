@@ -624,15 +624,16 @@ L.MAP2U.layers = function (options) {
                     });
                     var fileExist = false;
                     _this._map.dataLayers.forEach(function (layer) {
-                        if (layer.filename === result.uploadfile.filename) {
+                        if (result.uploadfile && layer.layerType === result.uploadfile.layerType && layer.filename === result.uploadfile.filename) {
                             fileExist = true;
                             maplayer = layer;
                         }
                     });
-                    if (fileExist === false) {
-                        _this._map.dataLayers[_this._map.dataLayers.length] = {'defaultShowOnMap': true, 'layerType': 'uploadfile', 'layer': null, 'minZoom': null, 'maxZoom': null, 'index_id': _this._map.dataLayers.length + 1, 'layerId': result.uploadfile.id, 'title': result.uploadfile.filename, 'datasource': result.uploadfile.datasource, 'filename': result.uploadfile.filename, 'name': result.uploadfile.filename, type: 'topojson'};
-                        maplayer = _this._map.dataLayers[_this._map.dataLayers.length - 1];
-                        _this.addOverlayItem(maplayer, _this._map.dataLayers.length - 1, opt);
+                    if (fileExist === false && result.uploadfile) {
+                        if (result.uploadfile.layerType !== 'userdraw') {
+                            _this._map.dataLayers[_this._map.dataLayers.length] = {'defaultShowOnMap': true, 'layerType': 'uploadfile', 'layer': null, 'minZoom': null, 'maxZoom': null, 'index_id': _this._map.dataLayers.length + 1, 'layerId': result.uploadfile.id, 'title': result.uploadfile.filename, 'datasource': result.uploadfile.datasource, 'filename': result.uploadfile.filename, 'name': result.uploadfile.filename, type: 'topojson'};
+                            maplayer = _this._map.dataLayers[_this._map.dataLayers.length - 1];
+                            _this.addOverlayItem(maplayer, _this._map.dataLayers.length - 1, opt);
 
 //                        if (maplayer.type === 'shapefile_topojson')
 //                        {
@@ -686,9 +687,12 @@ L.MAP2U.layers = function (options) {
 
 
 
-                        _this.overlayToolButtons();
-                    }
+                            _this.overlayToolButtons();
+                        }
+                        else {
 
+                        }
+                    }
                 }
 
 //                if (callback && maplayer) {
