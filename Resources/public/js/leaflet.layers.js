@@ -693,6 +693,17 @@ L.MAP2U.layers = function (options) {
 
                         }
                     }
+                    else {
+                        if (!maplayer.layer)
+                        {
+                            control.loadLayer(maplayer, opt);
+                        }
+                        else
+                        {
+                            if (maplayer.layer && ! _this._map.hasLayer(maplayer.layer))
+                                _this._map.addLayer(maplayer.layer);
+                        }
+                    }
                 }
 
 //                if (callback && maplayer) {
