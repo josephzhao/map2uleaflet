@@ -700,8 +700,10 @@ L.MAP2U.layers = function (options) {
                         }
                         else
                         {
-                            if (maplayer.layer && ! _this._map.hasLayer(maplayer.layer))
+                            if (maplayer.layer && !_this._map.hasLayer(maplayer.layer)) {
                                 _this._map.addLayer(maplayer.layer);
+
+                            }
                         }
                     }
                 }
@@ -908,14 +910,6 @@ L.MAP2U.layers = function (options) {
                             if (selectedfeature.type !== 'marker')
                                 selectedfeature.setStyle(highlight);
                             selectedfeature.selected = true;
-                            if (document.getElementById('geometries_selected')) {
-
-
-                                var selectBoxOption = document.createElement("option"); //create new option 
-                                selectBoxOption.value = selectedfeature.id; //set option value 
-                                selectBoxOption.text = selectedfeature.name; //set option display text 
-                                document.getElementById('geometries_selected').add(selectBoxOption, null);
-                            }
                         }
                         else
                         {
@@ -926,36 +920,71 @@ L.MAP2U.layers = function (options) {
                                     'opacity': 0.6
                                 });
                             selectedfeature.selected = false;
-                            $("#geometries_selected option[value='" + selectedfeature.id + "']").each(function () {
-                                $(this).remove();
-                            });
+
                         }
 
-                        $.ajax({
-                            url: Routing.generate('draw_content'),
-                            method: 'GET',
-                            beforeSend: function () {
-
-                                _this._map.spin(true);
-                            },
-                            complete: function () {
-                                _this._map.spin(false);
-                            },
-                            error: function () {
-                                _this._map.spin(false);
-                            },
-                            data: {
-                                id: e.target.id
-                            },
-                            success: function (response) {
-
-                                $('#sidebar-left #sidebar_content').html('');
-                                $('#sidebar-left #sidebar_content').html(response);
-
-                                //                            $('#usergeometriesCarousel').carousel({pause: "hover",wrap: true});
-
-                            }
+                        var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function () {
+                            return  this.text;
                         });
+                        if (shapefilename !== null && shapefilename !== '' && shapefilename !== undefined && shapefilename.length > 0)
+                        {
+
+                            if ($('#geometries_selected').length > 0 && 'user draw trade area' === shapefilename[0].toLowerCase())
+                            {
+                                var bExist = false;
+                                $("#geometries_selected > option").each(function () {
+
+                                    if (parseInt(this.value) === parseInt(e.data.properties['id'])) {
+                                        bExist = true;
+                                    }
+                                });
+                                if (bExist === false)
+                                {
+                                    var p = e.data.properties['name'];
+
+                                    if (document.getElementById('geometries_selected')) {
+                                        var selectBoxOption = document.createElement("option"); //create new option 
+                                        selectBoxOption.value = e.data.properties['id']; //set option value 
+                                        selectBoxOption.text = p; //set option display text 
+                                        document.getElementById('geometries_selected').add(selectBoxOption, null);
+                                        //    alert(properties_key[0]+ ':'+ e.data.properties[properties_key[0]] + "\n" + properties_key[1] +':' + e.data.properties[properties_key[1]]);
+                                    }
+                                }
+                                else
+                                {
+                                    $("#geometries_selected option[value='" + selectedfeature.id + "']").each(function () {
+                                        $(this).remove();
+                                    });
+                                }
+                            }
+                        }
+                        else {
+                            $.ajax({
+                                url: Routing.generate('draw_content'),
+                                method: 'GET',
+                                beforeSend: function () {
+
+                                    _this._map.spin(true);
+                                },
+                                complete: function () {
+                                    _this._map.spin(false);
+                                },
+                                error: function () {
+                                    _this._map.spin(false);
+                                },
+                                data: {
+                                    id: e.target.id
+                                },
+                                success: function (response) {
+
+                                    $('#sidebar-left #sidebar_content').html('');
+                                    $('#sidebar-left #sidebar_content').html(response);
+
+                                    //                            $('#usergeometriesCarousel').carousel({pause: "hover",wrap: true});
+
+                                }
+                            });
+                        }
                     }
                     else if (_this._map.drawControl._toolbars.edit._activeMode && _this._map.drawControl._toolbars.edit._activeMode.handler.type === 'edit') {
 
