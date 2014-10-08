@@ -934,17 +934,17 @@ L.MAP2U.layers = function (options) {
                                 var bExist = false;
                                 $("#geometries_selected > option").each(function () {
 
-                                    if (parseInt(this.value) === parseInt(e.data.properties['id'])) {
+                                    if (parseInt(this.value) === parseInt(selectedfeature.id)) {
                                         bExist = true;
                                     }
                                 });
                                 if (bExist === false)
                                 {
-                                    var p = e.data.properties['name'];
+                                    var p = selectedfeature.name;
 
                                     if (document.getElementById('geometries_selected')) {
                                         var selectBoxOption = document.createElement("option"); //create new option 
-                                        selectBoxOption.value = e.data.properties['id']; //set option value 
+                                        selectBoxOption.value = selectedfeature.id; //set option value 
                                         selectBoxOption.text = p; //set option display text 
                                         document.getElementById('geometries_selected').add(selectBoxOption, null);
                                         //    alert(properties_key[0]+ ':'+ e.data.properties[properties_key[0]] + "\n" + properties_key[1] +':' + e.data.properties[properties_key[1]]);
