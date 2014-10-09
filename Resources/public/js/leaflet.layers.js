@@ -493,7 +493,7 @@ L.MAP2U.layers = function (options) {
                 if (typeof result.layer === 'string')
                     result.layer = JSON.parse(result.layer);
 
-                var layer = {'defaultShowOnMap': true, 'layerType': result.layer.layerType, 'layer': null, 'minZoom': null, 'maxZoom': null, 'index_id': _this._map.dataLayers.length + 1, 'layerId': result.layer.id, 'title': result.layer.layerTitle, 'datasource': result.layer.datasource, 'filename': result.layer.fileName, 'name': result.layer.layerName, type: result.layer.datatype};
+                var layer = {'defaultShowOnMap': true, 'layerType': result.layer.layerType, 'layer': null, 'minZoom': null, 'maxZoom': null, 'index_id': _this._map.dataLayers.length + 1, 'srs': result.layer.srs, 'layerId': result.layer.id, 'title': result.layer.layerTitle, 'datasource': result.layer.datasource, 'filename': result.layer.fileName, 'name': result.layer.layerName, type: result.layer.datatype};
                 if (result.layer.opt !== undefined && typeof result.layer.opt !== 'object')
                     result.layer.opt = JSON.parse(result.layer.opt);
 
@@ -631,7 +631,7 @@ L.MAP2U.layers = function (options) {
                     });
                     if (fileExist === false && result.uploadfile) {
                         if (result.uploadfile.layerType !== 'userdraw') {
-                            _this._map.dataLayers[_this._map.dataLayers.length] = {'defaultShowOnMap': true, 'layerType': 'uploadfile', 'layer': null, 'minZoom': null, 'maxZoom': null, 'index_id': _this._map.dataLayers.length + 1, 'layerId': result.uploadfile.id, 'title': result.uploadfile.filename, 'datasource': result.uploadfile.datasource, 'filename': result.uploadfile.filename, 'name': result.uploadfile.filename, type: 'topojson'};
+                            _this._map.dataLayers[_this._map.dataLayers.length] = {'defaultShowOnMap': true, 'layerType': 'uploadfile', 'layer': null, 'minZoom': null, 'maxZoom': null, 'index_id': _this._map.dataLayers.length + 1, 'srs': result.uploadfile.srs, 'layerId': result.uploadfile.id, 'title': result.uploadfile.filename, 'datasource': result.uploadfile.datasource, 'filename': result.uploadfile.filename, 'name': result.uploadfile.filename, type: 'topojson'};
                             maplayer = _this._map.dataLayers[_this._map.dataLayers.length - 1];
                             _this.addOverlayItem(maplayer, _this._map.dataLayers.length - 1, opt);
 
@@ -727,13 +727,15 @@ L.MAP2U.layers = function (options) {
     control.renderWMSLayer = function (layer) {
         if ((layer.layer === undefined || layer.layer === null) && layer.hostName !== undefined && layer.name !== undefined)
         {
-            layer.layer = new L.TileLayer.WMS("http://" + layer.hostName,
-                    {
-                        layers: layer.name,
-                        format: 'image/png',
-                        transparent: true,
-                        attribution: ""
-                    });
+            var option = {
+                layers: layer.name,
+                format: 'image/png',
+                transparent: true,
+                attribution: ""
+            };
+            if (layer.srs !== undefined && layer.srs !== null)
+                option['srs'] = layer.srs;
+            layer.layer = new L.TileLayer.WMS("http://" + layer.hostName, option);
             layer.map.addLayer(layer.layer);
         }
     };

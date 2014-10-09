@@ -190,6 +190,7 @@ class DefaultController extends Controller {
                 $layerData['defaultShowOnMap'] = $layer->isDefaultShowOnMap();
                 $layerData['filename'] = "wms-" . $layer->getLayerName();
                 $layerData['hostName'] = $layer->getHostName();
+                $layerData['srs'] = $layer->getSrs();
                 array_push($layersData, $layerData);
             }
         }
