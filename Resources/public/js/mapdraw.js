@@ -47,7 +47,7 @@ function initMapDraw(map) {
     map.drawControl = drawControl;
     map.addControl(drawControl);
 
-    map.on('draw:created', function(e) {
+    map.on('draw:created', function (e) {
         var type = e.layerType,
                 layer = e.layer;
         layer.id = 0;
@@ -62,8 +62,8 @@ function initMapDraw(map) {
         }
 
         //   alert(JSON.stringify(layer.toGeoJSON()));
-        layer.on('click', function(e) {
-      alert(this.id);
+        layer.on('click', function (e) {
+            alert(this.id);
             var feature = e.target;
             if (map.drawControl._toolbars.edit._activeMode === null) {
                 var highlight = {
@@ -90,22 +90,22 @@ function initMapDraw(map) {
                         'opacity': 0.6
                     });
                     feature.selected = false;
-                    $("#geometries_selected option[value='" + feature.id + "']").each(function() {
+                    $("#geometries_selected option[value='" + feature.id + "']").each(function () {
                         $(this).remove();
                     });
                 }
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
+
+
+
+
+
+
+
+
+
+
+
+
 
             }
             else if (map.drawControl._toolbars.edit._activeMode && map.drawControl._toolbars.edit._activeMode.handler.type === 'edit') {
@@ -124,7 +124,7 @@ function initMapDraw(map) {
                         radius: radius,
                         index: e.target.index
                     },
-                    success: function(response) {
+                    success: function (response) {
                         if ($('body.sonata-bc #ajax-dialog').length === 0) {
                             $('<div class="modal fade" id="ajax-dialog" role="dialog"></div>').appendTo('body');
                         } else {
@@ -159,7 +159,7 @@ function initMapDraw(map) {
                 radius: radius,
                 index: layer.index
             },
-            success: function(response) {
+            success: function (response) {
                 $(response).appendTo($('body.sonata-bc #ajax-dialog'));
 
                 $('#ajax-dialog').modal({show: true});
@@ -168,7 +168,7 @@ function initMapDraw(map) {
             }
         });
 
-        $('#ajax-dialog').on('hidden.bs.modal', function(e) {
+        $('#ajax-dialog').on('hidden.bs.modal', function (e) {
             // do something...
             //   alert(drawnItems.getLayers()[drawnItems.getLayers().length - 1].id);
 
@@ -180,7 +180,7 @@ function initMapDraw(map) {
         });
 
 
-        $('#ajax-dialog').on('hide.bs.modal', function(e) {
+        $('#ajax-dialog').on('hide.bs.modal', function (e) {
 
         });
         if (type === 'marker') {
@@ -199,10 +199,10 @@ function initMapDraw(map) {
     });
 
 
-    map.on('draw:edited', function(e) {
+    map.on('draw:edited', function (e) {
         var layers = e.layers;
 
-        layers.eachLayer(function(layer) {
+        layers.eachLayer(function (layer) {
             if (confirm("Modify my draw geometry id:" + layer.id + ",name:" + layer.name + "?"))
             {
 
@@ -220,7 +220,7 @@ function initMapDraw(map) {
                         type: layer.type,
                         radius: radius
                     },
-                    success: function(response) {
+                    success: function (response) {
                         var results = JSON.parse(response);
                         if (results.success === false)
                             alert(results.message);
@@ -233,34 +233,38 @@ function initMapDraw(map) {
         });
     });
 
-    map.on('draw:deleted', function(e) {
+    map.on('draw:deleted', function (e) {
         var layers = e.layers;
-        layers.eachLayer(function(layer) {
-            if (confirm("Delete my draw item id:" + layer.id + ",name:" + layer.name + "?"))
-            {
+        layers.eachLayer(function (layer) {
+            if (layer.name === 'Searched Icon' && layer.id === 0 && layer.source === 'searchbox_query') {
+                drawnItems.removeLayer(layer);
+            } else {
+                if (confirm("Delete my draw item id:" + layer.id + ",name:" + layer.name + "?"))
+                {
 
-                $.ajax({
-                    url: Routing.generate('draw_delete'),
-                    method: 'POST',
-                    data: {
-                        id: layer.id
-                    },
-                    success: function(response) {
-                        var result = JSON.parse(response);
-                        if (result.success === true) {
+                    $.ajax({
+                        url: Routing.generate('draw_delete'),
+                        method: 'POST',
+                        data: {
+                            id: layer.id
+                        },
+                        success: function (response) {
+                            var result = JSON.parse(response);
+                            if (result.success === true) {
 
-                            $("#geometries_select option[value='" + layer.id + "']").each(function() {
-                                $(this).remove();
-                            });
-                            $("#geometries_selected option[value='" + layer.id + "']").each(function() {
-                                $(this).remove();
-                            });
+                                $("#geometries_select option[value='" + layer.id + "']").each(function () {
+                                    $(this).remove();
+                                });
+                                $("#geometries_selected option[value='" + layer.id + "']").each(function () {
+                                    $(this).remove();
+                                });
+                            }
+                            else
+                                alert(result.message);
+                            //  alert(JSON.stringify(html));
                         }
-                        else
-                            alert(result.message);
-                        //  alert(JSON.stringify(html));
-                    }
-                });
+                    });
+                }
             }
         });
 
