@@ -416,9 +416,9 @@ window.onload = function () {
                 for (var k = 0; k < keys.length; k++)
                 {
                     var layer = result.layers[keys[k]];
-                    map.dataLayers[map.dataLayers.length] = {'map': map, 'layerType': layer.layerType, 'clusterLayer': layer.clusterLayer, 'defaultShowOnMap': layer.defaultShowOnMap, 'layer': null, 'minZoom': layer.minZoom, 'maxZoom': layer.maxZoom, 'index_id': k, 'srs':layer.srs,'layerId': layer.id, title: layer.layerTitle, 'datasource': layer.datasource, 'sld': layer.sld, 'filename': layer.filename, 'name': layer.layerName, 'hostName': layer.hostName};
+                    map.dataLayers[map.dataLayers.length] = {'map': map, 'layerType': layer.layerType, 'clusterLayer': layer.clusterLayer, 'defaultShowOnMap': layer.defaultShowOnMap, 'layer': null, 'minZoom': layer.minZoom, 'maxZoom': layer.maxZoom, 'index_id': k, 'srs': layer.srs, 'layerId': layer.id, title: layer.layerTitle, 'datasource': layer.datasource, 'sld': layer.sld, 'filename': layer.filename, 'name': layer.layerName, 'hostName': layer.hostName};
                 }
-                map.dataLayers[map.dataLayers.length] = {'map': map, 'layerType': 'userdraw', 'layer': null, 'index_id': -1, 'layerId': -1, title: "My draw geometries",'filename':'userdraw', 'name': 'My draw geometries', type: 'geojson'};
+                map.dataLayers[map.dataLayers.length] = {'map': map, 'layerType': 'userdraw', 'layer': null, 'index_id': -1, 'layerId': -1, title: "My draw geometries", 'filename': 'userdraw', 'name': 'My draw geometries', type: 'geojson'};
                 layersControl.refreshOverlays();
             }
         }
@@ -449,7 +449,13 @@ window.onload = function () {
 //    $("header").addClass("closed");
         var query = $(this).find("input[name=query]").val();
         if (query !== undefined && query.trim() !== '') {
+            var coordinate = query.split(",");
 
+            if (coordinate.length === 2 && $.isNumeric(coordinate[0]) && $.isNumeric(coordinate[1]))
+            {
+                createSearchIcon(map, {lat: coordinate[0], lng: coordinate[1]});
+                return;
+            }
             var geocoder = new google.maps.Geocoder();
             geocoder.geocode({'address': query}, function (results, status) {
 
@@ -568,6 +574,60 @@ window.onload = function () {
 
 };
 
+function createSearchIcon(map, opt) {
+
+    var layers = map.drawnItems.getLayers();
+    for (var i = layers.length - 1; i >= 0; i--) {
+        if (layers[i].source !== undefined && layers[i].source === 'searchbox_query') {
+            map.drawnItems.removeLayer(layers[i]);
+        }
+    }
+
+    var feature = L.marker([opt.lat, opt.lng]);
+    feature.bindLabel(opt.lat + "," + opt.lng);
+    feature.id = 0;
+    feature.name = "Searched Icon";
+    feature.index = map.drawnItems.getLayers().length;
+    feature.type = 'marker';
+    feature.source = 'searchbox_query';
+    feature.on('click', function (e) {
+        if (map.drawControl._toolbars.edit._activeMode === null) {
+
+
+
+        }
+        else if (map.drawControl._toolbars.edit._activeMode && map.drawControl._toolbars.edit._activeMode.handler.type === 'edit') {
+
+            var radius = 0;
+
+            $.ajax({
+                url: Routing.generate('draw_' + e.target.type),
+                method: 'GET',
+                data: {
+                    id: e.target.id,
+                    name: e.target.name,
+                    radius: radius,
+                    index: e.target.index
+                },
+                success: function (response) {
+                    if ($('body.sonata-bc #ajax-dialog').length === 0) {
+                        $('<div class="modal fade" id="ajax-dialog" role="dialog"></div>').appendTo('body');
+                    } else {
+                        $('body.sonata-bc #ajax-dialog').html('');
+                    }
+                    $(response).appendTo($('body.sonata-bc #ajax-dialog'));
+                    $('#ajax-dialog').modal({show: true});
+                    $('#ajax-dialog').draggable();
+                    //  alert(JSON.stringify(html));
+                }
+            });
+        }
+        ;
+    });
+
+    map.drawnItems.addLayer(feature);
+
+}
 
 function saveuserdraw() {
     for (var i = 0; i < map.drawlayer._originalPoints.length; i++) {

@@ -81,11 +81,8 @@ L.D3 = L.Class.extend({
             return [point.x, point.y];
         };
         this._initContainer();
-
         this._el = d3.select(this._container).append("svg");
-
         this._g = this._el.append("g").attr("class", this.options.svgClass ? this.options.svgClass + " leaflet-zoom-hide" : "leaflet-zoom-hide");
-
         if (this._loaded) {
             this.onLoaded();
         } else {
@@ -112,7 +109,6 @@ L.D3 = L.Class.extend({
                 .attr("class", this.options.labelClass)
                 .attr("transform", function (d) {
                     var point = _this.path.centroid(d);
-
                     return "translate(" + (point[0] + 8) + "," + point[1] + ")";
                 })
                 .attr("dy", ".35em")
@@ -127,15 +123,13 @@ L.D3 = L.Class.extend({
         this._g.selectAll("text").remove();
     },
     onLoaded: function () {
-
+        var _this = this;
         var corners = this._map.getBounds();
-
         // Extracting boundary points
         var northEast = corners.getNorthEast();
         var southWest = corners.getSouthWest();
         this.bounds = d3.geo.bounds(this.data);
         this.bounds = [[Math.min(southWest.lng, this.bounds[0][0]), Math.min(southWest.lat, this.bounds[0][1])], [Math.max(northEast.lng, this.bounds[1][0]), Math.max(northEast.lat, this.bounds[1][1])]];
-
         this.path = d3.geo.path().projection(this._project).pointRadius(8);
         this._symbols = {
             star: "diamond",
@@ -145,7 +139,6 @@ L.D3 = L.Class.extend({
             triangle: "triangle-up",
             diamond: "diamond"
         };
-
         if (this.options.before) {
             this.options.before.call(this, this.data);
         }
@@ -156,7 +149,45 @@ L.D3 = L.Class.extend({
                 .enter()
                 .append("path");
 
+        if (this.options.sld==='xxxxxxx') {
+            var drawtext = false;
+            var varFeatureTypeStyles = this.options.sld.FeatureTypeStyle;
+            if (varFeatureTypeStyles) {
 
+                var keys = Object.keys(varFeatureTypeStyles);
+                for (var key in keys) {
+                    var varFeatureTypeStyle = varFeatureTypeStyles[key];
+                    if (typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle.Rule !== undefined) {
+                        if (varFeatureTypeStyle.Rule.Filter !== undefined) {
+                            var rule = varFeatureTypeStyle.Rule;
+                            if (rule.Filter && rule.Filter.PropertyIsEqualTo && rule.TextSymbolizer && rule.TextSymbolizer.Label) {
+                                this.options.showLabels = true;
+                                if (drawtext === false) {
+                                    this._feature_labels = this._g.selectAll("." + this.options.labelClass)
+                                            .data(this.options.topojson ? this.data.geometries : this.data.features)
+                                            .enter()
+                                            .append("text")
+//                                            .filter(function (d) {
+//                                                return false;
+//                                                //return d.properties[rule.Filter.PropertyIsEqualTo.PropertyName] === rule.Filter.PropertyIsEqualTo.Literal;
+//                                            })
+                                            .attr("class", this.options.labelClass)
+                                            .attr("transform", function (d) {
+                                                return "translate(" + _this.path.centroid(d) + ")";
+                                            })
+                                            .attr("dy", ".35em")
+                                            .text(function (d) {
+                                                return d.properties[rule.TextSymbolizer.Label.PropertyName];
+                                            });
+                                    drawtext = true;
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
 //        if (this.options.showLabels)
 //        {
 //            var data = this.options.topojson ? this.data.geometries : this.data.features;
@@ -186,7 +217,6 @@ L.D3 = L.Class.extend({
                 .on('mouseout', this._mouseOutHandler);
         this._map.on('viewreset', this._reset, this);
         this._reset();
-
     },
     onRemove: function (map) {
         // remove layer's DOM elements and listeners
@@ -195,16 +225,12 @@ L.D3 = L.Class.extend({
     },
     _reset: function () {
         var _this = this;
-
         var corners = this._map.getBounds();
-
         // Extracting boundary points
         var northEast = corners.getNorthEast();
         var southWest = corners.getSouthWest();
         this.bounds = d3.geo.bounds(this.data);
         this.bounds = [[Math.min(southWest.lng, this.bounds[0][0]), Math.min(southWest.lat, this.bounds[0][1])], [Math.max(northEast.lng, this.bounds[1][0]), Math.max(northEast.lat, this.bounds[1][1])]];
-
-
         var bottomLeft = this._project(this.bounds[0]),
                 topRight = this._project(this.bounds[1]);
         this._el.attr("width", topRight[0] - bottomLeft[0])
@@ -212,7 +238,6 @@ L.D3 = L.Class.extend({
                 .style("margin-left", bottomLeft[0] + "px")
                 .style("margin-top", topRight[1] + "px");
         this._g.attr("transform", "translate(" + -bottomLeft[0] + "," + -topRight[1] + ")");
-
         if (_this._featureType === 'Point' && this._feature) {
             this.onLoadPointSLD();
         }
@@ -239,8 +264,6 @@ L.D3 = L.Class.extend({
                 return "translate(" + (point[0] + 8) + "," + point[1] + ")";
             });
         }
-
-
     },
     bindPopup: function (content) {
         this._popup = L.popup();
@@ -340,7 +363,6 @@ L.D3 = L.Class.extend({
         var propertyName = '';
         if (typeof rule.categories !== 'object')
             rule.categories = JSON.parse(rule.categories);
-
         if (ps.length > 0) {
             var p = d3.select(ps[0]);
             var properties = p[0][0].__data__.properties;
@@ -400,7 +422,7 @@ L.D3 = L.Class.extend({
                                     if (rule.Filter.PropertyIsEqualTo) {
                                         if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] !== undefined)
                                         {
-                                            if ( d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] === rule.Filter.PropertyIsEqualTo.Literal)
+                                            if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] === rule.Filter.PropertyIsEqualTo.Literal)
                                             {
 
                                                 var marktype = 'circle';
@@ -436,10 +458,9 @@ L.D3 = L.Class.extend({
                                     if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
                                         if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] !== undefined)
                                         {
-                                            if ( d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] === rule.Filter.PropertyIsEqualTo.Literal)
+                                            if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] === rule.Filter.PropertyIsEqualTo.Literal)
                                             {
                                                 var marksize = 6 * 6;
-
                                                 if (rule.PointSymbolizer && rule.PointSymbolizer.Graphic && rule.PointSymbolizer.Graphic.Size && typeof rule.PointSymbolizer.Graphic.Size !== 'object')
                                                     marksize = rule.PointSymbolizer.Graphic.Size * rule.PointSymbolizer.Graphic.Size;
                                                 else {
@@ -481,7 +502,6 @@ L.D3 = L.Class.extend({
                                             if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] === rule.Filter.PropertyIsEqualTo.Literal)
                                             {
                                                 var fill_color = "#ccc";
-
                                                 if (rule.PointSymbolizer && rule.PointSymbolizer.Graphic && rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Fill && rule.PointSymbolizer.Graphic.Mark.Fill.fill)
                                                     fill_color = rule.PointSymbolizer.Graphic.Mark.Fill.fill.trim();
                                                 return fill_color;
@@ -491,7 +511,6 @@ L.D3 = L.Class.extend({
                                 }
                                 else { // if no condition set
                                     var fill_color = "#ccc";
-
                                     if (rule.PointSymbolizer && rule.PointSymbolizer.Graphic && rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Fill && rule.PointSymbolizer.Graphic.Mark.Fill.fill)
                                         fill_color = rule.PointSymbolizer.Graphic.Mark.Fill.fill.trim();
                                     return fill_color;
@@ -515,7 +534,6 @@ L.D3 = L.Class.extend({
                                             if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] === rule.Filter.PropertyIsEqualTo.Literal)
                                             {
                                                 var fill_opacity = "0.8";
-
                                                 if (rule.PointSymbolizer && rule.PointSymbolizer.Graphic && rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Fill && rule.PointSymbolizer.Graphic.Mark.Fill['fill-opacity'])
                                                     fill_opacity = rule.PointSymbolizer.Graphic.Mark.Fill['fill-opacity'];
                                                 else {
@@ -556,7 +574,6 @@ L.D3 = L.Class.extend({
                                             if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] === rule.Filter.PropertyIsEqualTo.Literal)
                                             {
                                                 var stroke = "#000";
-
                                                 if (rule.PointSymbolizer && rule.PointSymbolizer.Graphic && rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Stroke && rule.PointSymbolizer.Graphic.Mark.Stroke.stroke)
                                                     stroke = rule.PointSymbolizer.Graphic.Mark.Stroke.stroke.trim();
                                                 return stroke;
@@ -566,11 +583,9 @@ L.D3 = L.Class.extend({
                                 }
                                 else { // if no condition set
                                     var stroke = "#000";
-
                                     if (rule.PointSymbolizer && rule.PointSymbolizer.Graphic && rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Stroke && rule.PointSymbolizer.Graphic.Mark.Stroke.stroke)
                                         stroke = rule.PointSymbolizer.Graphic.Mark.Stroke.stroke.trim();
                                     return stroke;
-
                                 }
                             }
                         }
@@ -591,10 +606,8 @@ L.D3 = L.Class.extend({
                                             if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] === rule.Filter.PropertyIsEqualTo.Literal)
                                             {
                                                 var stroke_width = 1.0;
-
                                                 if (rule.PointSymbolizer && rule.PointSymbolizer.Graphic && rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Stroke && rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-width'])
                                                     stroke_width = rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-width'].trim();
-
                                                 return stroke_width;
                                             }
                                         }
@@ -602,11 +615,9 @@ L.D3 = L.Class.extend({
                                 }
                                 else { // if no condition set
                                     var stroke_width = 1.0;
-
                                     if (rule.PointSymbolizer && rule.PointSymbolizer.Graphic && rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Stroke && rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-width'])
                                         stroke_width = rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-width'].trim();
                                     return stroke_width;
-
                                 }
                             }
                         }
@@ -627,7 +638,6 @@ L.D3 = L.Class.extend({
                                             if (d.properties[rule.Filter.PropertyIsEqualTo.PropertyName.toLowerCase()] === rule.Filter.PropertyIsEqualTo.Literal)
                                             {
                                                 var stroke_opacity = 1.0;
-
                                                 if (rule.PointSymbolizer && rule.PointSymbolizer.Graphic && rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Stroke && rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-opacity'])
                                                     stroke_opacity = rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-opacity'];
                                                 else {
@@ -641,7 +651,6 @@ L.D3 = L.Class.extend({
                                 }
                                 else { // if no condition set
                                     var stroke_opacity = 1.0;
-
                                     if (rule.PointSymbolizer && rule.PointSymbolizer.Graphic && rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.Stroke && rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-opacity'])
                                         stroke_opacity = rule.PointSymbolizer.Graphic.Mark.Stroke['stroke-opacity'];
                                     else {
@@ -649,7 +658,6 @@ L.D3 = L.Class.extend({
                                             stroke_opacity = rule.PointSymbolizer.Graphic.Opacity.Literal.trim();
                                     }
                                     return stroke_opacity;
-
                                 }
                             }
                         }
@@ -671,16 +679,13 @@ L.D3 = L.Class.extend({
                     .attr("transform", function (d) {
                         return "translate(" + _this.path.centroid(d) + ")";
                     });
-
         }
 
     },
     onLoadPolygonSLD: function () {
         var _this = this;
-
         if (_this.options.sld) {
             var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
-
             var keys = Object.keys(varFeatureTypeStyles);
             for (var key in keys) {
                 var varFeatureTypeStyle = varFeatureTypeStyles[key];
@@ -690,8 +695,6 @@ L.D3 = L.Class.extend({
                         var ps = this._feature[0];
                         var pNameExist = false;
                         var propertyName = '';
-
-
                         if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
 
                             if (ps.length > 0) {
@@ -711,7 +714,6 @@ L.D3 = L.Class.extend({
                                 {
                                     var p = d3.select(ps[k]);
                                     var properties = p[0][0].__data__.properties;
-
                                     if (properties[propertyName].toLowerCase() === rule.Filter.PropertyIsEqualTo.Literal.toLowerCase()) {
                                         p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule);
                                     }
@@ -736,12 +738,9 @@ L.D3 = L.Class.extend({
                                 {
                                     var p = d3.select(ps[k]);
                                     var properties = p[0][0].__data__.properties;
-
-
                                     if ((varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary === undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary !== undefined) && parseFloat(properties[propertyName]) <= parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary.Literal))
                                     {
                                         p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule);
-
                                     }
                                     if ((varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary !== undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary !== undefined) && parseFloat(properties[propertyName]) > parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary.Literal) && parseFloat(properties[propertyName]) <= parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary.Literal)) {
                                         p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule);
@@ -749,7 +748,6 @@ L.D3 = L.Class.extend({
                                     if ((varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary !== undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary === undefined) && parseFloat(properties[propertyName]) > parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary.Literal))
                                     {
                                         p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule);
-
                                     }
 
                                 }
@@ -785,7 +783,6 @@ L.D3 = L.Class.extend({
 
 
             var varFeatureTypeStyles = _this.options.sld.FeatureTypeStyle;
-
             var keys = Object.keys(varFeatureTypeStyles);
             for (var key in keys) {
                 var varFeatureTypeStyle = varFeatureTypeStyles[key];
@@ -795,8 +792,6 @@ L.D3 = L.Class.extend({
                         var ps = this._feature[0];
                         var pNameExist = false;
                         var propertyName = '';
-
-
                         if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
 
                             if (ps.length > 0) {
@@ -816,7 +811,6 @@ L.D3 = L.Class.extend({
                                 {
                                     var p = d3.select(ps[k]);
                                     var properties = p[0][0].__data__.properties;
-
                                     if (properties[propertyName].toLowerCase() === rule.Filter.PropertyIsEqualTo.Literal.toLowerCase()) {
                                         p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule);
                                     }
@@ -841,12 +835,9 @@ L.D3 = L.Class.extend({
                                 {
                                     var p = d3.select(ps[k]);
                                     var properties = p[0][0].__data__.properties;
-
-
                                     if ((varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary === undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary !== undefined) && parseFloat(properties[propertyName]) <= parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary.Literal))
                                     {
                                         p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule);
-
                                     }
                                     if ((varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary !== undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary !== undefined) && parseFloat(properties[propertyName]) > parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary.Literal) && parseFloat(properties[propertyName]) <= parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary.Literal)) {
                                         p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule);
@@ -854,7 +845,6 @@ L.D3 = L.Class.extend({
                                     if ((varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary !== undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary === undefined) && parseFloat(properties[propertyName]) > parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary.Literal))
                                     {
                                         p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule);
-
                                     }
 
                                 }
@@ -894,7 +884,6 @@ L.D3 = L.Class.extend({
         }
         else
             feature.style('fill-opacity', 0.6);
-
         if (rule.PolygonSymbolizer && rule.PolygonSymbolizer.Stroke && rule.PolygonSymbolizer.Stroke['stroke-opacity'])
         {
             feature.style('stroke-opacity', rule.PolygonSymbolizer.Stroke['stroke-opacity']);
@@ -954,7 +943,9 @@ L.D3 = L.Class.extend({
         {
             feature.style('stroke-dashoffset', rule.LineSymbolizer.Stroke['stroke-dashoffset']);
         }
+        if (rule.TextSymbolizer && rule.TextSymbolizer.Label) {
 
+        }
 
 
 
