@@ -624,7 +624,7 @@ L.MAP2U.layers = function (options) {
                     });
                     var fileExist = false;
                     _this._map.dataLayers.forEach(function (layer) {
-                        if (result.uploadfile && layer.layerType === result.uploadfile.layerType && layer.filename === result.uploadfile.filename) {
+                        if (result.uploadfile && layer.layerId === result.uploadfile.id && layer.layerType === result.uploadfile.layerType && layer.filename === result.uploadfile.filename) {
                             fileExist = true;
                             maplayer = layer;
                         }
