@@ -83,7 +83,7 @@ L.MAP2U.layers = function (options) {
                     .attr('type', 'radio')
                     .prop('checked', map.hasLayer(layer.layer))
                     .appendTo(label);
-            label.append(layer.name);
+            label.append(layer.layerName);
             item.on('click', function () {
                 layers.forEach(function (other) {
                     if (other.layer === layer.layer) {
@@ -190,11 +190,11 @@ L.MAP2U.layers = function (options) {
 
             //       label.append(I18n.t('javascripts.map.layers.' + name));
 
-            var label_name = I18n.t('javascripts.map.layers.' + layer.title);
+            var label_name = I18n.t('javascripts.map.layers.' + layer.layerTitle);
             if (label_name.indexOf('missing ') === 1)
             {
-                label.append(layer.title);
-                activeLayerSelect.append("<option value='" + layer.layerId + "'>" + layer.title + "</option>");
+                label.append(layer.layerTitle);
+                activeLayerSelect.append("<option value='" + layer.layerId + "'>" + layer.layerTitle + "</option>");
             }
             else
             {
@@ -327,7 +327,7 @@ L.MAP2U.layers = function (options) {
 
                 $(item).attr('class', disabled ? 'disabled' : '');
                 item.attr('data-original-title', disabled ?
-                        I18n.t('javascripts.site.map_' + layer.name + '_zoom_in_tooltip') : '');
+                        I18n.t('javascripts.site.map_' + layer.layerName + '_zoom_in_tooltip') : '');
             });
         }
         map.dataLayers.forEach(function (layer) {
@@ -493,7 +493,7 @@ L.MAP2U.layers = function (options) {
                 if (typeof result.layer === 'string')
                     result.layer = JSON.parse(result.layer);
 
-                var layer = {'defaultShowOnMap': true, 'layerType': result.layer.layerType, 'layer': null, 'minZoom': null, 'maxZoom': null, 'index_id': _this._map.dataLayers.length + 1, 'srs': result.layer.srs, 'layerId': result.layer.id, 'title': result.layer.layerTitle, 'datasource': result.layer.datasource, 'filename': result.layer.fileName, 'name': result.layer.layerName, type: result.layer.datatype};
+                var layer = {'defaultShowOnMap': true, 'layerType': result.layer.layerType, 'layer': null, 'minZoom': null, 'maxZoom': null, 'index_id': _this._map.dataLayers.length + 1, 'srs': result.layer.srs, 'layerId': result.layer.id, 'layerTitle': result.layer.layerTitle, 'datasource': result.layer.datasource, 'filename': result.layer.fileName, 'layerName': result.layer.layerName, type: result.layer.datatype};
                 if (result.layer.opt !== undefined && typeof result.layer.opt !== 'object')
                     result.layer.opt = JSON.parse(result.layer.opt);
 
@@ -631,7 +631,7 @@ L.MAP2U.layers = function (options) {
                     });
                     if (fileExist === false && result.uploadfile) {
                         if (result.uploadfile.layerType !== 'userdraw') {
-                            _this._map.dataLayers[_this._map.dataLayers.length] = {'defaultShowOnMap': true, 'layerType': 'uploadfile', 'layer': null, 'minZoom': null, 'maxZoom': null, 'index_id': _this._map.dataLayers.length + 1, 'srs': result.uploadfile.srs, 'layerId': result.uploadfile.id, 'title': result.uploadfile.filename, 'datasource': result.uploadfile.datasource, 'filename': result.uploadfile.filename, 'name': result.uploadfile.filename, type: 'topojson'};
+                            _this._map.dataLayers[_this._map.dataLayers.length] = {'defaultShowOnMap': true, 'layerType': 'uploadfile', 'layer': null, 'minZoom': null, 'maxZoom': null, 'index_id': _this._map.dataLayers.length + 1, 'srs': result.uploadfile.srs, 'layerId': result.uploadfile.id, 'layerTitle': result.uploadfile.filename, 'datasource': result.uploadfile.datasource, 'filename': result.uploadfile.filename, 'layerName': result.uploadfile.filename, type: 'topojson'};
                             maplayer = _this._map.dataLayers[_this._map.dataLayers.length - 1];
                             _this.addOverlayItem(maplayer, _this._map.dataLayers.length - 1, opt);
 
@@ -725,10 +725,10 @@ L.MAP2U.layers = function (options) {
         });
     };
     control.renderWMSLayer = function (layer) {
-        if ((layer.layer === undefined || layer.layer === null) && layer.hostName !== undefined && layer.name !== undefined)
+        if ((layer.layer === undefined || layer.layer === null) && layer.hostName !== undefined && layer.layerName !== undefined)
         {
             var option = {
-                layers: layer.name,
+                layers: layer.layerName,
                 format: 'image/png',
                 transparent: true,
                 attribution: ""
@@ -743,7 +743,7 @@ L.MAP2U.layers = function (options) {
         var _this = this;
         if (layer.layer === undefined || layer.layer === null) {
 
-            var geoJsonUrl = "http://" + layer.hostName + "&typeName=" + layer.name + "&maxFeatures=5000&srsName=EPSG:4326&outputFormat=json";
+            var geoJsonUrl = "http://" + layer.hostName + "&typeName=" + layer.layerName + "&maxFeatures=5000&srsName=EPSG:4326&outputFormat=json";
             $.ajax({
                 url: Routing.generate('default_geoserver_wfs'),
                 type: 'POST',
@@ -1245,7 +1245,7 @@ L.MAP2U.layers = function (options) {
 
                         layer.layer = new L.TileLayer.WMS("http://" + layer.hostName,
                                 {
-                                    layers: layer.name,
+                                    layers: layer.layerName,
                                     format: 'image/png',
                                     transparent: true,
                                     attribution: ""
@@ -1259,7 +1259,7 @@ L.MAP2U.layers = function (options) {
 
                     if (layer.layer === undefined || layer.layer === null) {
 
-                        var geoJsonUrl = "http://" + layer.hostName + "&typeName=" + layer.name + "&maxFeatures=5000&srsName=EPSG:4326&outputFormat=json";
+                        var geoJsonUrl = "http://" + layer.hostName + "&typeName=" + layer.layerName + "&maxFeatures=5000&srsName=EPSG:4326&outputFormat=json";
                         $.ajax({
                             url: Routing.generate('default_geoserver_wfs'),
                             type: 'POST',
@@ -2811,10 +2811,10 @@ L.MAP2U.layers = function (options) {
 
         var legend_icon = $("<div class='layer_legend_icon'><i class='fa fa-plus blue'></i></div>").appendTo(item);
         var title = '';
-        if (layer.title)
-            title = layer.title;
+        if (layer.layerTitle)
+            title = layer.layerTitle;
         else
-            title = layer.name;
+            title = layer.layerName;
         var legend_label = I18n.t('javascripts.map.layers.' + title);
         if (legend_label.indexOf('missing ') === 1)
         {
@@ -2894,11 +2894,11 @@ L.MAP2U.layers = function (options) {
     };
     control.createWMSLegend = function (layer) {
 
-        if (layer.hostName === undefined || layer.name === undefined)
+        if (layer.hostName === undefined || layer.layerName === undefined)
             return null;
         var legend = $("<div class='layer_legend hidden'>");
         var ul = $("<ul>").appendTo(legend);
-        ul.append('<li><img src="' + "http://" + layer.hostName + "?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=" + layer.name + '"></li>');
+        ul.append('<li><img src="' + "http://" + layer.hostName + "?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&LAYER=" + layer.layerName + '"></li>');
         return legend;
     };
     control.createHeatmapLegend = function (sld) {
