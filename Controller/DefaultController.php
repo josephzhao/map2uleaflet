@@ -910,10 +910,32 @@ class DefaultController extends Controller {
         $geom = array();
 
         $geom['datatype'] = "geojson";
+        
+        $sql = "SELECT column_name FROM information_schema.columns WHERE table_name='useruploadfile_geoms_" . $uploadfile_id . "'";
+                    $stmt = $conn->fetchAll($sql);
+
+                    $rowCount = count($stmt);
+                    $column_name_array = array();
+                  
+                    for ($i = $rowCount-1; $i >=0 ; $i--) {
+                        if ($stmt[$i]['column_name'] === 'the_geom' || $stmt[$i]['column_name'] === 'geom' || $stmt[$i]['column_name'] === 'the_geom4326') {
+                            unset($stmt[$i]);
+                        } else {
+                            array_push($column_name_array, $stmt[$i]['column_name']);
+                         }
+                        //   return new Response(\json_encode(array('success' => false, 'data' => 'label Field:' . strtolower($data['boundary_name_field2']) . ' not exist')));
+                    }
+
+                    
+
+                    $column_names = implode(',', $column_name_array);
+
+        
+        
         $sql = "SELECT row_to_json(fc) as geom FROM ( SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features FROM (SELECT 'Feature' As type, ST_AsGeoJSON(lg.the_geom)::json As geometry
     , row_to_json(lp) As properties
    FROM useruploadfile_geoms_" . $uploadfile_id . " As lg 
-         INNER JOIN (SELECT ogc_fid FROM useruploadfile_geoms_" . $uploadfile_id . ") As lp 
+         INNER JOIN (SELECT ".$column_names." FROM useruploadfile_geoms_" . $uploadfile_id . ") As lp 
        ON lg.ogc_fid = lp.ogc_fid  ) As f )  As fc";
         if ($topojson_type === true) {
             if (file_exists($datafilesPath . '/uploads/' . $userid . '/topojson/usershapefile-' . $uploadfile_id . '.json')) {

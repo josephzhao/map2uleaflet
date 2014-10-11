@@ -418,10 +418,10 @@ window.onload = function () {
                     var layer = result.layers[keys[k]];
                     map.dataLayers[map.dataLayers.length] = {'map': map, 'layerType': layer.layerType, 'clusterLayer': layer.clusterLayer, 'defaultShowOnMap': layer.defaultShowOnMap, 'layer': null, 'minZoom': layer.minZoom, 'maxZoom': layer.maxZoom, 'index_id': k, 'srs': layer.srs, 'layerId': layer.id, layerTitle: layer.layerTitle, 'datasource': layer.datasource, 'sld': layer.sld, 'filename': layer.filename, 'layerName': layer.layerName, 'hostName': layer.hostName};
                 }
-                map.dataLayers[map.dataLayers.length] = {'map': map, 'layerType': 'userdraw', 'layer': null, 'index_id': -1, 'layerId': -1, layerTitle: "My draw geometries", 'filename': 'userdraw', 'layerName': 'My draw geometries', type: 'geojson'};
+                map.dataLayers[map.dataLayers.length] = {'map': map, 'layerType': 'userdraw', 'layer': null, 'index_id': -1, 'layerId': -1, layerTitle: "My draw geometries", 'filename': 'userdraw', 'layerName': 'My draw geometries', 'filename':'userdraw' ,type: 'geojson'};
             }
             else
-                map.dataLayers[map.dataLayers.length] = {'map': map, 'layerType': 'userdraw', 'layer': null, 'index_id': -1, 'layerId': -1, layerTitle: "My draw geometries", 'filename': 'userdraw', 'layerName': 'My draw geometries', type: 'geojson'};
+                map.dataLayers[map.dataLayers.length] = {'map': map, 'layerType': 'userdraw', 'layer': null, 'index_id': -1, 'layerId': -1, layerTitle: "My draw geometries", 'filename': 'userdraw', 'layerName': 'My draw geometries', 'filename':'userdraw' , type: 'geojson'};
             layersControl.refreshOverlays();
         }
     });
