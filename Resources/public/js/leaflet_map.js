@@ -131,13 +131,13 @@ window.onload = function () {
     //   map.addLayer(subwatersheds);
 
     map.baseLayers = [
-        {'layer': mapnik, 'name': 'Open Street Map'},
-        {'layer': Thunderforest_Transport, 'name': 'Thunderforest_Transport'},
+        {'layer': mapnik, 'layerName': 'Open Street Map'},
+        {'layer': Thunderforest_Transport, 'layerName': 'Thunderforest_Transport'},
         //       {'layer': bing, 'name': 'Bing'},
-        {'layer': googleLayer_roadmap, 'name': 'Google Road Map'},
-        {'layer': new L.Google('SATELLITE'), 'name': 'Google Satellite'},
-        {'layer': new L.Google('HYBRID'), 'name': 'Google Hybrid'},
-        {'layer': new L.Google('TERRAIN'), 'name': 'Google Terrain'}
+        {'layer': googleLayer_roadmap, 'layerName': 'Google Road Map'},
+        {'layer': new L.Google('SATELLITE'), 'layerName': 'Google Satellite'},
+        {'layer': new L.Google('HYBRID'), 'layerName': 'Google Hybrid'},
+        {'layer': new L.Google('TERRAIN'), 'layerName': 'Google Terrain'}
 
     ];
     map.noteLayer = new L.FeatureGroup();
@@ -418,10 +418,10 @@ window.onload = function () {
                     var layer = result.layers[keys[k]];
                     map.dataLayers[map.dataLayers.length] = {'map': map, 'layerType': layer.layerType, 'clusterLayer': layer.clusterLayer, 'defaultShowOnMap': layer.defaultShowOnMap, 'layer': null, 'minZoom': layer.minZoom, 'maxZoom': layer.maxZoom, 'index_id': k, 'srs': layer.srs, 'layerId': layer.id, layerTitle: layer.layerTitle, 'datasource': layer.datasource, 'sld': layer.sld, 'filename': layer.filename, 'layerName': layer.layerName, 'hostName': layer.hostName};
                 }
-                map.dataLayers[map.dataLayers.length] = {'map': map, 'layerType': 'userdraw', 'layer': null, 'index_id': -1, 'layerId': -1, layerTitle: "My draw geometries", 'filename': 'userdraw', 'layerName': 'My draw geometries', 'filename':'userdraw' ,type: 'geojson'};
+                map.dataLayers[map.dataLayers.length] = {'map': map, 'layerType': 'userdraw', 'layer': null, 'index_id': -1, 'layerId': -1, layerTitle: "My draw geometries", 'filename': 'userdraw', 'layerName': 'My draw geometries', 'filename':'userdraw', type: 'geojson'};
             }
             else
-                map.dataLayers[map.dataLayers.length] = {'map': map, 'layerType': 'userdraw', 'layer': null, 'index_id': -1, 'layerId': -1, layerTitle: "My draw geometries", 'filename': 'userdraw', 'layerName': 'My draw geometries', 'filename':'userdraw' , type: 'geojson'};
+                map.dataLayers[map.dataLayers.length] = {'map': map, 'layerType': 'userdraw', 'layer': null, 'index_id': -1, 'layerId': -1, layerTitle: "My draw geometries", 'filename': 'userdraw', 'layerName': 'My draw geometries', 'filename':'userdraw', type: 'geojson'};
             layersControl.refreshOverlays();
         }
     });
@@ -652,6 +652,7 @@ function ShowLeftSideBar(leftSidebar) {
 
         $(".sonata-bc .leftsidebar-close-control").hide();
         setTimeout(function () {
+            $('#sidebar-left #sidebar_content').css('visibility', 'visible');
             leftSidebar.show();
         }, 500);
     }

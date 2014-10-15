@@ -989,6 +989,7 @@ L.MAP2U.layers = function (options) {
                         }
 
                         if (window.leftSidebar && window.leftSidebar.isVisible() === false) {
+                            $('#sidebar-left #sidebar_content').css('visibility', 'visible');
                             window.leftSidebar.show();
                         }
                     }
@@ -1487,8 +1488,9 @@ L.MAP2U.layers = function (options) {
                                                     }
                                                     $('div.sidebar_feature_content').html('');
                                                     $('div.sidebar_feature_content').html(html);
-                                                    if (window.leftSidebar) {
-                                                        alert(window.leftSidebar.isVisible());
+                                                    if (window.leftSidebar && window.leftSidebar.isVisible() === false) {
+                                                        $('#sidebar-left #sidebar_content').css('visibility', 'visible');
+                                                        window.leftSidebar.show();
                                                     }
                                                 });
                                             })(layer, feature.properties);
@@ -1812,6 +1814,7 @@ L.MAP2U.layers = function (options) {
                                             });
                                         }
                                         if (window.leftSidebar && window.leftSidebar.isVisible() === false) {
+                                            $('#sidebar-left #sidebar_content').css('visibility', 'visible');
                                             window.leftSidebar.show();
                                         }
                                     }
@@ -1978,6 +1981,7 @@ L.MAP2U.layers = function (options) {
                                     $('div.sidebar_feature_content').html(html);
                                 }
                                 if (window.leftSidebar && window.leftSidebar.isVisible() === false) {
+                                    $('#sidebar-left #sidebar_content').css('visibility', 'visible');
                                     window.leftSidebar.show();
                                 }
 
@@ -2234,6 +2238,7 @@ L.MAP2U.layers = function (options) {
 
 
             if (window.leftSidebar && window.leftSidebar.isVisible() === false) {
+                $('#sidebar-left #sidebar_content').css('visibility', 'visible');
                 window.leftSidebar.show();
             }
 
@@ -2396,6 +2401,7 @@ L.MAP2U.layers = function (options) {
                         $('#sidebar-left #sidebar_content').html('');
                         $('#sidebar-left #sidebar_content').html(html);
                         if (window.leftSidebar && window.leftSidebar.isVisible() === false) {
+                            $('#sidebar-left #sidebar_content').css('visibility', 'visible');
                             window.leftSidebar.show();
                         }
                     });
