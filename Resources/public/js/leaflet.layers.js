@@ -365,18 +365,12 @@ L.MAP2U.layers = function (options) {
                         }
                     }
                     else {
-                        if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true)
-                        {
-                            //  alert(map.dataLayers[i].layer._el);
-                            var clusterlayers = layers[$(this).data('index')].layer._featureGroup._layers;
-                            var keys = Object.keys(clusterlayers).map(function (k) {
-                                return  k;
-                            });
-                            if (clusterlayers[keys[0]] && clusterlayers[keys[0]]._container)
-                                $(clusterlayers[keys[0]]._container).parent().css("z-index", 901);
-                        }
-                        else {
-                            if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true) {
+                        if (layers[$(this).data('index')].layer !== null && layers[$(this).data('index')].layer !== undefined) {
+
+
+                            if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true)
+                            {
+                                //  alert(map.dataLayers[i].layer._el);
                                 var clusterlayers = layers[$(this).data('index')].layer._featureGroup._layers;
                                 var keys = Object.keys(clusterlayers).map(function (k) {
                                     return  k;
@@ -385,8 +379,18 @@ L.MAP2U.layers = function (options) {
                                     $(clusterlayers[keys[0]]._container).parent().css("z-index", 901);
                             }
                             else {
-                                if (layers[$(this).data('index')].layer && layers[$(this).data('index')].layer._container) {
-                                    $(layers[$(this).data('index')].layer._container).css("z-index", 901);
+                                if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true) {
+                                    var clusterlayers = layers[$(this).data('index')].layer._featureGroup._layers;
+                                    var keys = Object.keys(clusterlayers).map(function (k) {
+                                        return  k;
+                                    });
+                                    if (clusterlayers[keys[0]] && clusterlayers[keys[0]]._container)
+                                        $(clusterlayers[keys[0]]._container).parent().css("z-index", 901);
+                                }
+                                else {
+                                    if (layers[$(this).data('index')].layer && layers[$(this).data('index')].layer._container) {
+                                        $(layers[$(this).data('index')].layer._container).css("z-index", 901);
+                                    }
                                 }
                             }
                         }
@@ -400,18 +404,11 @@ L.MAP2U.layers = function (options) {
                         }
                     }
                     else {
-                        if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true)
+                        if (layers[$(this).data('index')].layer !== null && layers[$(this).data('index')].layer !== undefined)
                         {
-                            //  alert(map.dataLayers[i].layer._el);
-                            var clusterlayers = layers[$(this).data('index')].layer._featureGroup._layers;
-                            var keys = Object.keys(clusterlayers).map(function (k) {
-                                return  k;
-                            });
-                            if (clusterlayers[keys[0]] && clusterlayers[keys[0]]._container)
-                                $(clusterlayers[keys[0]]._container).parent().css("z-index", 300 - i);
-                        }
-                        else {
-                            if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true) {
+                            if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true)
+                            {
+                                //  alert(map.dataLayers[i].layer._el);
                                 var clusterlayers = layers[$(this).data('index')].layer._featureGroup._layers;
                                 var keys = Object.keys(clusterlayers).map(function (k) {
                                     return  k;
@@ -420,8 +417,18 @@ L.MAP2U.layers = function (options) {
                                     $(clusterlayers[keys[0]]._container).parent().css("z-index", 300 - i);
                             }
                             else {
-                                if (layers[$(this).data('index')].layer && layers[$(this).data('index')].layer._container) {
-                                    $(layers[$(this).data('index')].layer._container).css("z-index", 300 - i);
+                                if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true) {
+                                    var clusterlayers = layers[$(this).data('index')].layer._featureGroup._layers;
+                                    var keys = Object.keys(clusterlayers).map(function (k) {
+                                        return  k;
+                                    });
+                                    if (clusterlayers[keys[0]] && clusterlayers[keys[0]]._container)
+                                        $(clusterlayers[keys[0]]._container).parent().css("z-index", 300 - i);
+                                }
+                                else {
+                                    if (layers[$(this).data('index')].layer && layers[$(this).data('index')].layer._container) {
+                                        $(layers[$(this).data('index')].layer._container).css("z-index", 300 - i);
+                                    }
                                 }
                             }
                         }
