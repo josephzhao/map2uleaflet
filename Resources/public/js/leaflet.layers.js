@@ -996,9 +996,11 @@ L.MAP2U.layers = function (options) {
                         }
 
                         if (window.leftSidebar && window.leftSidebar.isVisible() === false) {
-                            $('#sidebar-left #sidebar_content').css('visibility', 'visible');
+
                             window.leftSidebar.show();
                         }
+                        $(".sonata-bc .leftsidebar-close-control").hide();
+                        $('#sidebar-left #sidebar_content').css('visibility', 'visible');
                     }
                     else if (_this._map.drawControl._toolbars.edit._activeMode && _this._map.drawControl._toolbars.edit._activeMode.handler.type === 'edit') {
 
@@ -1496,9 +1498,11 @@ L.MAP2U.layers = function (options) {
                                                     $('div.sidebar_feature_content').html('');
                                                     $('div.sidebar_feature_content').html(html);
                                                     if (window.leftSidebar && window.leftSidebar.isVisible() === false) {
-                                                        $('#sidebar-left #sidebar_content').css('visibility', 'visible');
+
                                                         window.leftSidebar.show();
                                                     }
+                                                    $(".sonata-bc .leftsidebar-close-control").hide();
+                                                    $('#sidebar-left #sidebar_content').css('visibility', 'visible');
                                                 });
                                             })(layer, feature.properties);
                                             //layer.bindPopup(feature.properties.Name);
@@ -1821,9 +1825,11 @@ L.MAP2U.layers = function (options) {
                                             });
                                         }
                                         if (window.leftSidebar && window.leftSidebar.isVisible() === false) {
-                                            $('#sidebar-left #sidebar_content').css('visibility', 'visible');
+
                                             window.leftSidebar.show();
                                         }
+                                        $(".sonata-bc .leftsidebar-close-control").hide();
+                                        $('#sidebar-left #sidebar_content').css('visibility', 'visible');
                                     }
 
                                     else if (_this._map.drawControl._toolbars.edit._activeMode && _this._map.drawControl._toolbars.edit._activeMode.handler.type === 'edit') {
@@ -1988,9 +1994,11 @@ L.MAP2U.layers = function (options) {
                                     $('div.sidebar_feature_content').html(html);
                                 }
                                 if (window.leftSidebar && window.leftSidebar.isVisible() === false) {
-                                    $('#sidebar-left #sidebar_content').css('visibility', 'visible');
+
                                     window.leftSidebar.show();
                                 }
+                                $(".sonata-bc .leftsidebar-close-control").hide();
+                                $('#sidebar-left #sidebar_content').css('visibility', 'visible');
 
                             });
                             geojson_shapefile.on("mouseover", function (e) {
@@ -2245,10 +2253,11 @@ L.MAP2U.layers = function (options) {
 
 
             if (window.leftSidebar && window.leftSidebar.isVisible() === false) {
-                $('#sidebar-left #sidebar_content').css('visibility', 'visible');
+
                 window.leftSidebar.show();
             }
-
+            $(".sonata-bc .leftsidebar-close-control").hide();
+            $('#sidebar-left #sidebar_content').css('visibility', 'visible');
 
         });
         d3_layer.on("mouseover", function (e) {
@@ -2408,9 +2417,11 @@ L.MAP2U.layers = function (options) {
                         $('#sidebar-left #sidebar_content').html('');
                         $('#sidebar-left #sidebar_content').html(html);
                         if (window.leftSidebar && window.leftSidebar.isVisible() === false) {
-                            $('#sidebar-left #sidebar_content').css('visibility', 'visible');
+
                             window.leftSidebar.show();
                         }
+                        $(".sonata-bc .leftsidebar-close-control").hide();
+                        $('#sidebar-left #sidebar_content').css('visibility', 'visible');
                     });
                 })(layer, feature.properties);
                 //layer.bindPopup(feature.properties.Name);
