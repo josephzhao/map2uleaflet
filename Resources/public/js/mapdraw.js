@@ -72,7 +72,8 @@ function initMapDraw(map) {
                     'opacity': 1
                 };
                 if (feature.selected === false || feature.selected === undefined) {
-                    feature.setStyle(highlight);
+                    if (feature.setStyle)
+                        feature.setStyle(highlight);
                     feature.selected = true;
                     if (document.getElementById('geometries_selected')) {
                         var selectBoxOption = document.createElement("option");//create new option 
@@ -83,12 +84,8 @@ function initMapDraw(map) {
                 }
                 else
                 {
-
-                    feature.setStyle({
-                        'color': "blue",
-                        'weight': 5,
-                        'opacity': 0.6
-                    });
+                    if (feature.setStyle)
+                        feature.setStyle({'color': "blue", 'weight': 5, 'opacity': 0.6});
                     feature.selected = false;
                     $("#geometries_selected option[value='" + feature.id + "']").each(function () {
                         $(this).remove();

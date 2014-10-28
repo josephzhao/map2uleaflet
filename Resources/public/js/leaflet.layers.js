@@ -2840,7 +2840,7 @@ L.MAP2U.layers = function (options) {
         else
             title = layer.layerName;
         var legend_label = I18n.t('javascripts.map.layers.' + title);
-        if (legend_label.indexOf('missing ') === 1)
+        if (legend_label === undefined || legend_label === null || legend_label.indexOf('missing ') === 1)
         {
             if (title.length > 25)
                 label.append(title.substr(0, 22) + "...");
