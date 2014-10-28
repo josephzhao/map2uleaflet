@@ -821,7 +821,7 @@ L.MAP2U.layers = function (options) {
 
         }
         else {
-            if (layer.layerType === 'userdraw'|| layer.layerType === 'userdrawlayer')
+            if (layer.layerType === 'userdraw' || layer.layerType === 'userdrawlayer')
                 control.renderUserdrawLayer(json_data, layer, opt);
             else {
 
@@ -846,13 +846,17 @@ L.MAP2U.layers = function (options) {
             }
         }
     };
-    control.renderUserdrawLayer = function (data, layer) {
+    control.renderUserdrawLayer = function (data, layer, opt) {
         var _this = this;
         if (data === null || data === undefined)
             return;
+        if (layer.layerType === 'userdrawlayer')
+        {
 
-        _this._map.drawnItems.clearLayers();
-        layer.layer = undefined;
+        } else {
+            _this._map.drawnItems.clearLayers();
+            layer.layer = undefined;
+        }
         $.each(data, function (i) {
             var feature;
             if (data[i] !== null && data[i].feature !== null) {
@@ -1044,9 +1048,18 @@ L.MAP2U.layers = function (options) {
                     }
                     ;
                 });
-                if (layer.layer === undefined)
-                    layer.layer = _this._map.drawnItems;
-                _this._map.drawnItems.addLayer(feature);
+                if (layer.layerType === 'userdrawlayer')
+                {
+                    if (layer.layer === undefined || layer.layer === null)
+                        layer.layer = new L.FeatureGroup();
+                    layer.layer.addLayer(feature);
+                    if(!_this._map.hasLayer(layer.layer))
+                        _this._map.addLayer(layer.layer)
+                } else {
+                    if (layer.layer === undefined || layer.layer === null)
+                        layer.layer = _this._map.drawnItems;
+                    _this._map.drawnItems.addLayer(feature);
+                }
             }
         });
         return;
