@@ -76,10 +76,10 @@ class DefaultController extends Controller {
                     ->getResult();
         }
         if ($this->getUser()) {
-            $userdraw_layers = $em->createQuery("SELECT p FROM Map2uCoreBundle:UserdrawLayer p  ORDER BY p.name ASC")
+            $userdraw_layers = $em->createQuery("SELECT p FROM Map2uCoreBundle:UserDrawLayer p  ORDER BY p.name ASC")
                     ->getResult();
         } else {
-            $userdraw_layers = $em->createQuery("SELECT p FROM Map2uCoreBundle:UserdrawLayer p where  p.published = true and lower(p.name) != 'private only' and lower(p.name) != 'private' ORDER BY p.name ASC")
+            $userdraw_layers = $em->createQuery("SELECT p FROM Map2uCoreBundle:UserDrawLayer p where  p.published = true and lower(p.name) != 'private only' and lower(p.name) != 'private' ORDER BY p.name ASC")
                     ->getResult();
         }
         if ($this->getUser()) {
@@ -683,7 +683,7 @@ class DefaultController extends Controller {
 
     private function getUserdrawlayerInfo($id) {
         $em = $this->getDoctrine()->getManager();
-        $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:Userdrawlayer p where p.id=' . $id)
+        $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UserDrawLayer p where p.id=' . $id)
                 ->getResult();
         $layerData = array();
         if ($layers) {
@@ -953,7 +953,7 @@ class DefaultController extends Controller {
     private function getUserdrawLayerDataFromID($datafilesPath, $id) {
 
         $em = $this->getDoctrine()->getManager();
-        $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UserdrawLayer p where p.id=' . $id)->getResult();
+        $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UserDrawLayer p where p.id=' . $id)->getResult();
         if (!$layers) {
             return new Response(\json_encode(array('success' => true, 'message' => "User draw layer id:$id not exist")));
         }
