@@ -637,7 +637,7 @@ L.MAP2U.layers = function (options) {
                         }
                     });
                     if (fileExist === false && result.uploadfile) {
-                        if (result.uploadfile.layerType !== 'userdraw') {
+                        if (result.uploadfile.layerType !== 'userdraw' && result.uploadfile.layerType !== 'userdrawlayer') {
                             _this._map.dataLayers[_this._map.dataLayers.length] = {'defaultShowOnMap': true, 'layerType': 'uploadfile', 'layer': null, 'minZoom': null, 'maxZoom': null, 'index_id': _this._map.dataLayers.length + 1, 'srs': result.uploadfile.srs, 'layerId': result.uploadfile.id, 'layerTitle': result.uploadfile.filename, 'datasource': result.uploadfile.datasource, 'filename': result.uploadfile.filename, 'layerName': result.uploadfile.filename, type: 'topojson'};
                             maplayer = _this._map.dataLayers[_this._map.dataLayers.length - 1];
                             _this.addOverlayItem(maplayer, _this._map.dataLayers.length - 1, opt);
@@ -821,7 +821,7 @@ L.MAP2U.layers = function (options) {
 
         }
         else {
-            if (layer.layerType === 'userdraw')
+            if (layer.layerType === 'userdraw'|| layer.layerType === 'userdrawlayer')
                 control.renderUserdrawLayer(json_data, layer, opt);
             else {
 

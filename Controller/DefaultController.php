@@ -75,7 +75,13 @@ class DefaultController extends Controller {
             $thematicmap_layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:ThematicMap p where  p.published = true and p.public = true ORDER BY p.seq ASC')
                     ->getResult();
         }
-
+        if ($this->getUser()) {
+            $userdraw_layers = $em->createQuery("SELECT p FROM Map2uCoreBundle:UserdrawLayer p  ORDER BY p.name ASC")
+                    ->getResult();
+        } else {
+            $userdraw_layers = $em->createQuery("SELECT p FROM Map2uCoreBundle:UserdrawLayer p where  p.published = true and lower(p.name) != 'private only' and lower(p.name) != 'private' ORDER BY p.name ASC")
+                    ->getResult();
+        }
         if ($this->getUser()) {
 
             $wmslayers = $em->createQuery('SELECT u FROM Map2uCoreBundle:GeoServerLayer u WHERE  (u.public=true and u.published=true)  or u.userId=' . $this->getUser()->getId() . '  order by u.seq')
@@ -194,6 +200,21 @@ class DefaultController extends Controller {
                 array_push($layersData, $layerData);
             }
         }
+        if ($userdraw_layers) {
+            foreach ($userdraw_layers as $layer) {
+                $layerData = array();
+                $layerData['id'] = $layer->getId();
+                $layerData['datasource'] = $layer->getId();
+                $layerData['layerTitle'] = $layer->getName();
+                $layerData['layerName'] = $layer->getName();
+                $layerData['layerType'] = "userdrawlayer";
+                $layerData['clusterLayer'] = false;
+                $layerData['layerShowInSwitcher'] = true;
+                $layerData['defaultShowOnMap'] = $layer->getDefaultShowOnMap();
+                $layerData['filename'] = "userdrawlayer-" . $layer->getName();
+                array_push($layersData, $layerData);
+            }
+        }
         return new Response(\json_encode(array('success' => $success, 'message' => $message, 'layers' => $layersData)));
 
         // return new Response(\json_encode(array('success' => true, 'message' => 'User draw name  not exist')));
@@ -298,6 +319,9 @@ class DefaultController extends Controller {
             case 'heatmap':
                 $data = $this->getHeatmapInfo($id);
                 break;
+            case 'userdrawlayer':
+                $data = $this->getUserdrawlayerInfo($id);
+                break;
             case 'thematicmap':
                 $data = $this->getThematicmapInfo($id);
                 break;
@@ -354,6 +378,9 @@ class DefaultController extends Controller {
                 break;
             case 'userdraw':
                 $data = $this->getUserdrawLayerData($datafilesPath);
+                break;
+            case 'userdrawlayer':
+                $data = $this->getUserdrawLayerDataFromID($datafilesPath, $id);
 
                 break;
         }
@@ -654,6 +681,24 @@ class DefaultController extends Controller {
         return $layerData;
     }
 
+    private function getUserdrawlayerInfo($id) {
+        $em = $this->getDoctrine()->getManager();
+        $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:Userdrawlayer p where p.id=' . $id)
+                ->getResult();
+        $layerData = array();
+        if ($layers) {
+            $layerData['id'] = $layers[0]->getId();
+            $layerData['layerTitle'] = $layers[0]->getName();
+            $layerData['layerName'] = $layers[0]->getName();
+            $layerData['datasource'] = $layers[0]->getId();
+            $layerData['layerType'] = 'userdrawlayer';
+            $layerData['layerShowInSwitcher'] = $layers[0]->getDefaultShowOnMap();
+            $layerData['fileName'] = $layers[0]->getName();
+            $layerData['fileType'] = "userdrawlayer";
+        }
+        return $layerData;
+    }
+
     private function getHeatmapInfo($id) {
         $em = $this->getDoctrine()->getManager();
         $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:LeafletHeatmapLayer p where p.id=' . $id)
@@ -905,37 +950,62 @@ class DefaultController extends Controller {
         return new Response(\json_encode(array('success' => true, 'datatype' => $geom['datatype'], 'message' => 'User draw geometries', 'layer' => $layerData, 'sld' => null, 'geomdata' => $geom)));
     }
 
+    private function getUserdrawLayerDataFromID($datafilesPath, $id) {
+
+        $em = $this->getDoctrine()->getManager();
+        $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UserdrawLayer p where p.id=' . $id)->getResult();
+        if (!$layers) {
+            return new Response(\json_encode(array('success' => true, 'message' => "User draw layer id:$id not exist")));
+        }
+        $geom['geom'] = $this->getUserDrawLayerGeometries($id);
+
+        $geom['datatype'] = 'geojson';
+        $layerData = array();
+        $layerData['id'] = $layers[0]->getId();
+        $layerData['layerTitle'] = $layers[0]->getName();
+        $layerData['layerName'] = $layers[0]->getName();
+        $layerData['tip_field'] = '';
+        $layerData['label_field'] = '';
+        $layerData['datasource'] = $layers[0]->getId();
+        $layerData['layerType'] = 'userdrawlayer';
+        $layerData['clusterLayer'] = false;
+        $layerData['layerShowInSwitcher'] = $layers[0]->getDefaultShowOnMap();
+        $layerData['fileName'] = $layers[0]->getName();
+        $layerData['fileType'] = 'userdrawlayer';
+        return new Response(\json_encode(array('success' => true, 'datatype' => $geom['datatype'], 'message' => 'User draw geometries', 'layer' => $layerData, 'sld' => null, 'geomdata' => $geom)));
+    }
+
     private function getGeomJsonData($userid, $topojson_type, $uploadfile_id, $datafilesPath) {
         $conn = $this->get('database_connection');
         $geom = array();
 
         $geom['datatype'] = "geojson";
-        
+
         $sql = "SELECT column_name FROM information_schema.columns WHERE table_name='useruploadfile_geoms_" . $uploadfile_id . "'";
-                    $stmt = $conn->fetchAll($sql);
+        $stmt = $conn->fetchAll($sql);
 
-                    $rowCount = count($stmt);
-                    $column_name_array = array();
-                  
-                    for ($i = $rowCount-1; $i >=0 ; $i--) {
-                        if ($stmt[$i]['column_name'] === 'the_geom' || $stmt[$i]['column_name'] === 'geom' || $stmt[$i]['column_name'] === 'the_geom4326') {
-                            unset($stmt[$i]);
-                        } else {
-                            array_push($column_name_array, $stmt[$i]['column_name']);
-                         }
-                        //   return new Response(\json_encode(array('success' => false, 'data' => 'label Field:' . strtolower($data['boundary_name_field2']) . ' not exist')));
-                    }
+        $rowCount = count($stmt);
+        $column_name_array = array();
 
-                    
+        for ($i = $rowCount - 1; $i >= 0; $i--) {
+            if ($stmt[$i]['column_name'] === 'the_geom' || $stmt[$i]['column_name'] === 'geom' || $stmt[$i]['column_name'] === 'the_geom4326') {
+                unset($stmt[$i]);
+            } else {
+                array_push($column_name_array, $stmt[$i]['column_name']);
+            }
+            //   return new Response(\json_encode(array('success' => false, 'data' => 'label Field:' . strtolower($data['boundary_name_field2']) . ' not exist')));
+        }
 
-                    $column_names = implode(',', $column_name_array);
 
-        
-        
+
+        $column_names = implode(',', $column_name_array);
+
+
+
         $sql = "SELECT row_to_json(fc) as geom FROM ( SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features FROM (SELECT 'Feature' As type, ST_AsGeoJSON(lg.the_geom)::json As geometry
     , row_to_json(lp) As properties
    FROM useruploadfile_geoms_" . $uploadfile_id . " As lg 
-         INNER JOIN (SELECT ".$column_names." FROM useruploadfile_geoms_" . $uploadfile_id . ") As lp 
+         INNER JOIN (SELECT " . $column_names . " FROM useruploadfile_geoms_" . $uploadfile_id . ") As lp 
        ON lg.ogc_fid = lp.ogc_fid  ) As f )  As fc";
         if ($topojson_type === true) {
             if (file_exists($datafilesPath . '/uploads/' . $userid . '/topojson/usershapefile-' . $uploadfile_id . '.json')) {
@@ -991,6 +1061,18 @@ class DefaultController extends Controller {
         }
         $conn = $this->get('database_connection');
         $tsql = "select a.id as ogc_fid,a.id as ogc_id, a.name as keyname , a.geom_type , a.radius , a.buffer ,st_asgeojson(b.the_geom) as feature from userdrawgeometries a, userdrawgeometries_geom b where (a.b_public=true or a.user_id=" . $user->getId() . ") and a.id=b.userdrawgeometries_id";
+        $stmt = $conn->fetchAll($tsql);
+        return $stmt;
+    }
+
+    private function getUserDrawLayerGeometries($id) {
+        $user = $this->getUser();
+        $conn = $this->get('database_connection');
+        if (!$user) {
+            $tsql = "select a.id as ogc_fid,a.id as ogc_id, a.name as keyname , a.geom_type , a.radius , a.buffer ,st_asgeojson(b.the_geom) as feature from userdrawgeometries a, userdrawgeometries_geom b where a.userdrawlayer_id=" . $id . " and a.b_public=true  and a.id=b.userdrawgeometries_id";
+        } else {
+            $tsql = "select a.id as ogc_fid,a.id as ogc_id, a.name as keyname , a.geom_type , a.radius , a.buffer ,st_asgeojson(b.the_geom) as feature from userdrawgeometries a, userdrawgeometries_geom b where (a.b_public=true or a.user_id=" . $user->getId() . ") and a.userdrawlayer_id=" . $id . " and a.id=b.userdrawgeometries_id";
+        }
         $stmt = $conn->fetchAll($tsql);
         return $stmt;
     }
