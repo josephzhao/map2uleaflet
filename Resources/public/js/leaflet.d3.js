@@ -41,6 +41,7 @@ L.D3 = L.Class.extend({
                 _this.data = data;
             }
             _this._featureType = data.features[0].geometry.type;
+
             _this._loaded = true;
             _this.fire("dataLoaded");
         }
@@ -239,15 +240,21 @@ L.D3 = L.Class.extend({
                 .style("margin-top", topRight[1] + "px");
         this._g.attr("transform", "translate(" + -bottomLeft[0] + "," + -topRight[1] + ")");
         if (_this._featureType === 'Point' && this._feature) {
+
             this.onLoadPointSLD();
         }
         else {
             if (this._feature) {
-                this._feature.attr("d", this.path);
+
                 if (this._feature && (this._featureType === 'LineString' || this._featureType === 'MultiLineString' || this._featureType === 'Polyline' || this._featureType === 'MultiPolyline')) {
+                    this._feature
+                            .attr("d", this.path)
+                            .attr("fill", "none")
+                            .attr("fill-opacity", 0.0);
                     this.onLoadPolylineSLD();
                 }
                 if (this._feature && (this._featureType === 'Polygon' || this._featureType === 'MultiPolygon')) {
+                    this._feature.attr("d", this.path);
                     this.onLoadPolygonSLD();
                 }
             }
@@ -742,10 +749,10 @@ L.D3 = L.Class.extend({
                                     {
                                         p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule);
                                     }
-                                    if (properties[propertyName] !== null &&(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary !== undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary !== undefined) && parseFloat(properties[propertyName]) > parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary.Literal) && parseFloat(properties[propertyName]) <= parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary.Literal)) {
+                                    if (properties[propertyName] !== null && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary !== undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary !== undefined) && parseFloat(properties[propertyName]) > parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary.Literal) && parseFloat(properties[propertyName]) <= parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary.Literal)) {
                                         p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule);
                                     }
-                                    if (properties[propertyName] !== null &&(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary !== undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary === undefined) && parseFloat(properties[propertyName]) > parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary.Literal))
+                                    if (properties[propertyName] !== null && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary !== undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary === undefined) && parseFloat(properties[propertyName]) > parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary.Literal))
                                     {
                                         p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule);
                                     }
@@ -812,6 +819,7 @@ L.D3 = L.Class.extend({
                                     var p = d3.select(ps[k]);
                                     var properties = p[0][0].__data__.properties;
                                     if (properties[propertyName] !== null && rule.Filter.PropertyIsEqualTo.Literal !== undefined && rule.Filter.PropertyIsEqualTo.Literal !== null && properties[propertyName].toLowerCase() === rule.Filter.PropertyIsEqualTo.Literal.toLowerCase()) {
+
                                         p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule, false);
                                     }
                                 }
@@ -835,15 +843,18 @@ L.D3 = L.Class.extend({
                                 {
                                     var p = d3.select(ps[k]);
                                     var properties = p[0][0].__data__.properties;
-                                    if (properties[propertyName] !== null &&(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary === undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary !== undefined) && parseFloat(properties[propertyName]) <= parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary.Literal))
+                                    if (properties[propertyName] !== null && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary === undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary !== undefined) && parseFloat(properties[propertyName]) <= parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary.Literal))
                                     {
-                                        p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule,false);
+
+                                        p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule, false);
                                     }
-                                    if (properties[propertyName] !== null &&(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary !== undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary !== undefined) && parseFloat(properties[propertyName]) > parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary.Literal) && parseFloat(properties[propertyName]) <= parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary.Literal)) {
-                                        p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule,false);
+                                    if (properties[propertyName] !== null && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary !== undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary !== undefined) && parseFloat(properties[propertyName]) > parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary.Literal) && parseFloat(properties[propertyName]) <= parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary.Literal)) {
+
+                                        p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule, false);
                                     }
-                                    if (properties[propertyName] !== null &&(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary !== undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary === undefined) && parseFloat(properties[propertyName]) > parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary.Literal))
+                                    if (properties[propertyName] !== null && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary !== undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary === undefined) && parseFloat(properties[propertyName]) > parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary.Literal))
                                     {
+
                                         p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule, false);
                                     }
 
@@ -852,17 +863,20 @@ L.D3 = L.Class.extend({
 
                         }
                         else {
-                            this._feature = this.setFeatureStyle(this._feature, varFeatureTypeStyle.Rule,false);
+
+                            this._feature = this.setFeatureStyle(this._feature, varFeatureTypeStyle.Rule, false);
                         }
                     }
                     else {
-                        this._feature = this.setFeatureStyle(this._feature, varFeatureTypeStyle.Rule,false);
+
+                        this._feature = this.setFeatureStyle(this._feature, varFeatureTypeStyle.Rule, false);
                     }
                 }
             }
 
         }
         else {
+
             this._feature.style("fill", 'none')
                     .style("fill-opacity", 0.0)
                     .style("stroke", "#000")
@@ -872,17 +886,18 @@ L.D3 = L.Class.extend({
 
     },
     setFeatureStyle: function (feature, rule, fill) {
+
         if (rule.PolygonSymbolizer && rule.PolygonSymbolizer.Fill && rule.PolygonSymbolizer.Fill.fill)
         {
             if (fill === false)
-                feature.style('fill', null);
+                feature.style('fill', 'none');
             else
                 feature.style('fill', rule.PolygonSymbolizer.Fill.fill);
         }
         else
         {
             if (fill === false)
-                feature.style('fill', null);
+                feature.style('fill', 'none');
             else
                 feature.style('fill', "#CCC");
         }

@@ -1053,7 +1053,7 @@ L.MAP2U.layers = function (options) {
                     if (layer.layer === undefined || layer.layer === null)
                         layer.layer = new L.FeatureGroup();
                     layer.layer.addLayer(feature);
-                    if(!_this._map.hasLayer(layer.layer))
+                    if (!_this._map.hasLayer(layer.layer))
                         _this._map.addLayer(layer.layer)
                 } else {
                     if (layer.layer === undefined || layer.layer === null)
@@ -1197,7 +1197,12 @@ L.MAP2U.layers = function (options) {
         });
         geojson_shapefile.on("mouseover", function (e) {
             e.element.fill = $(e.element).css('fill');
-            d3.select(e.element).style({'fill': 'red', 'fill-opacity': '0.8'});
+            e.element.fill_opacity = $(e.element).css('fill-opacity');
+            if (e.element.fill !== 'none' || e.element.fill_opacity !== '0')
+            {
+                d3.select(e.element).style({'fill': 'red', 'fill-opacity': '0.8'});
+            }
+
             d3.select(e.element).style('cursor', 'pointer');
         });
         geojson_shapefile.on('mousemove', function (e) {
@@ -2275,7 +2280,13 @@ L.MAP2U.layers = function (options) {
         });
         d3_layer.on("mouseover", function (e) {
             e.element.fill = $(e.element).css('fill');
-            d3.select(e.element).style({'fill': 'red', 'fill-opacity': '0.8'});
+
+            e.element.fill_opacity = $(e.element).css('fill-opacity');
+            
+            if (e.element.fill !== 'none' || e.element.fill_opacity !== '0')
+            {
+                d3.select(e.element).style({'fill': 'red', 'fill-opacity': '0.8'});
+            }
             d3.select(e.element).style('cursor', 'pointer');
         });
         d3_layer.on('mousemove', function (e) {
@@ -2310,7 +2321,7 @@ L.MAP2U.layers = function (options) {
         });
         d3_layer.on('mouseout', function (e) {
             options.map_tooltip.classed("hidden", true);
-            d3.select(e.element).style({'fill': e.element.fill});
+            d3.select(e.element).style({'fill': e.element.fill,'fill-opacity': e.element.fill_opacity});
             d3.select(e.element).style('cursor', 'default');
         });
         if (opt.thematicmap && opt.thematicmap.thematicmap === true) {
