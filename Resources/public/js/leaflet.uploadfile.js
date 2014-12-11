@@ -3,7 +3,7 @@ L.MAP2U.uploadfile = function(options) {
 
     control.onAdd = function(map) {
         var $container = $('<div>')
-                .attr('class', 'control-uploadfile');
+                .attr('class', 'leaflet-control control-uploadfile');
 
         var link = $('<a>')
                 .attr('class', 'control-button')
