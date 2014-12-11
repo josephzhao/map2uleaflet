@@ -3,7 +3,7 @@ L.MAP2U.graphchart = function (options) {
 
     control.onAdd = function (map) {
         var $container = $('<div>')
-                .attr('class', 'leaflet-control');
+                .attr('class', 'leaflet-control control-graphchart');
 
         var button = $('<a>')
                 .attr('class', 'control-button')
