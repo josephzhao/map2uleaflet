@@ -51,7 +51,7 @@ L.MAP2U.uploadfile = function(options) {
         });
 
         $.ajax({
-            url: Routing.generate('default_uploadshapefileform'),
+            url: Routing.generate('default_uploadshapefileform',{_locale:I18n.locale}),
             method: 'GET',
             success: function(response) {
 
