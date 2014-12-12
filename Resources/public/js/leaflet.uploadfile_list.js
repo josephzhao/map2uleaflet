@@ -38,7 +38,7 @@ L.MAP2U.uploadfile_list = function(options) {
         });
         
         $.ajax({
-            url: Routing.generate('default_uploadfilelistform'),
+            url: Routing.generate('default_uploadfilelistform',{_locale:I18n.locale}),
             method: 'GET',
            
             success: function(response) {
