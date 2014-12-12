@@ -25,13 +25,13 @@ L.MAP2U.uploadfile = function(options) {
         var uploadfile_link = $('<div>')
                 .attr('class', 'uploadfile_link');
         uploadfile_link.append('<a class="uploadfile" rel="tooltip"   href="#" title="Upload Shapefile" id="shapefileform">Shapefile</a>');
-        uploadfile_link.append('<a class="help"  rel="tooltip"  title="Upload Shapefile Help" href="'+Routing.generate('help_uploadshapefile')+'" target="_blank"><i class="fa fa-question-circle"></i></a>');
+        uploadfile_link.append('<a class="help"  rel="tooltip"  title="Upload Shapefile Help" href="'+Routing.generate('help_uploadshapefile',{_locale:I18n.locale})+'" target="_blank"><i class="fa fa-question-circle"></i></a>');
         uploadfile_link.append('<a class="uploadfile" rel="tooltip"   href="#" title="Upload Mapinfo File" id="mapinfofileform">Mapinfo</a>');
-        uploadfile_link.append('<a class="help"  rel="tooltip"  title="Upload Mapinfo File Help" href="'+Routing.generate('help_uploadmapinfofile')+'" target="_blank"><i class="fa fa-question-circle"></i></a>');
+        uploadfile_link.append('<a class="help"  rel="tooltip"  title="Upload Mapinfo File Help" href="'+Routing.generate('help_uploadmapinfofile',{_locale:I18n.locale})+'" target="_blank"><i class="fa fa-question-circle"></i></a>');
         uploadfile_link.append('<a class="uploadfile" rel="tooltip"   href="#" title="Upload KML File" id="kmlfileform">KML</a>');
-        uploadfile_link.append('<a class="help"  rel="tooltip"  title="Upload KML File Help" href="'+Routing.generate('help_uploadkmlfile')+'" target="_blank"><i class="fa fa-question-circle"></i></a>');
+        uploadfile_link.append('<a class="help"  rel="tooltip"  title="Upload KML File Help" href="'+Routing.generate('help_uploadkmlfile',{_locale:I18n.locale})+'" target="_blank"><i class="fa fa-question-circle"></i></a>');
         uploadfile_link.append('<a class="uploadfile" rel="tooltip"   href="#" title="Upload Text File" id="textfileform">Text</a>');
-        uploadfile_link.append('<a class="help"  rel="tooltip"  title="Upload Text File Help" href="'+Routing.generate('help_uploadtextfile')+'" target="_blank"><i class="fa fa-question-circle"></i></a>');
+        uploadfile_link.append('<a class="help"  rel="tooltip"  title="Upload Text File Help" href="'+Routing.generate('help_uploadtextfile',{_locale:I18n.locale})+'" target="_blank"><i class="fa fa-question-circle"></i></a>');
         uploadfile_link.appendTo($ui);
 
         var barContent = $('<div>')
