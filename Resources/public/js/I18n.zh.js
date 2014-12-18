@@ -91,10 +91,10 @@ I18n.translations = {'zh': {
                 'title': 'Shapefile文件列表'
             },
             'uploadfile': {
-                'title': '上载文件'
+                'title': '上载空间信息文件'
             },
             'uploadfile-list': {
-                'title': '上载文件列表'
+                'title': '空间信息文件列表'
             },
             'share': {
                 'title': 'Share',

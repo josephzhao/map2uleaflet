@@ -450,7 +450,7 @@ L.MAP2U.layers = function (options) {
         });
         if (maploaded === false || (maploaded === true && thematicmap_layer && !thematicmap_layer.layer)) {
 
-            this.addUploadfile(Routing.generate('default_uploadfile_info',{_locale:I18n.locale}), opt.datasource, opt);
+            this.addUploadfile(Routing.generate('default_uploadfile_info', {_locale: I18n.locale}), opt.datasource, opt);
 
         }
 
@@ -473,7 +473,7 @@ L.MAP2U.layers = function (options) {
         var _this = this;
 
         $.ajax({
-            url: Routing.generate('leaflet_maplayerinfo',{_locale:I18n.locale}),
+            url: Routing.generate('leaflet_maplayerinfo', {_locale: I18n.locale}),
             type: 'GET',
             beforeSend: function () {
 
@@ -544,7 +544,7 @@ L.MAP2U.layers = function (options) {
 
 
         $.ajax({
-            url: Routing.generate('leaflet_maplayer',{_locale:I18n.locale}),
+            url: Routing.generate('leaflet_maplayer', {_locale: I18n.locale}),
             type: 'GET',
             beforeSend: function () {
 
@@ -752,7 +752,7 @@ L.MAP2U.layers = function (options) {
 
             var geoJsonUrl = "http://" + layer.hostName + "&typeName=" + layer.layerName + "&maxFeatures=5000&srsName=EPSG:4326&outputFormat=json";
             $.ajax({
-                url: Routing.generate('default_geoserver_wfs',{_locale:I18n.locale}),
+                url: Routing.generate('default_geoserver_wfs', {_locale: I18n.locale}),
                 type: 'POST',
                 beforeSend: function () {
 
@@ -840,6 +840,9 @@ L.MAP2U.layers = function (options) {
                     showLabels: (result.layer['label_field'] !== '' && result.layer['label_field'] !== null),
                     type: result.datatype,
                     tip_field: result.layer['tip_field'],
+                    tip_percentage: result.layer['tip_percentage'],
+                    tip_times100: result.layer['tip_times100'],
+                    tip_number: result.layer['tip_number'],
                     label_field: result.layer['label_field']
                 });
 
@@ -973,7 +976,7 @@ L.MAP2U.layers = function (options) {
                         }
                         else {
                             $.ajax({
-                                url: Routing.generate('draw_content',{_locale:I18n.locale}),
+                                url: Routing.generate('draw_content', {_locale: I18n.locale}),
                                 method: 'GET',
                                 beforeSend: function () {
 
@@ -1014,7 +1017,7 @@ L.MAP2U.layers = function (options) {
                             radius = e.target._mRadius;
                         }
                         $.ajax({
-                            url: Routing.generate('draw_' + e.target.type,{_locale:I18n.locale}),
+                            url: Routing.generate('draw_' + e.target.type, {_locale: I18n.locale}),
                             method: 'GET',
                             beforeSend: function () {
 
@@ -1114,6 +1117,9 @@ L.MAP2U.layers = function (options) {
             showLabels: (result.layer['label_field'] !== '' && result.layer['label_field'] !== null),
             type: result.datatype,
             tip_field: result.layer['tip_field'],
+            tip_percentage: result.layer['tip_percentage'],
+            tip_times100: result.layer['tip_times100'],
+            tip_number: result.layer['tip_number'],
             label_field: result.layer['label_field']
         });
         return;
@@ -1221,13 +1227,45 @@ L.MAP2U.layers = function (options) {
                     return  this.text;
                 });
                 if (e.target.options.tip_field !== undefined && e.target.options.tip_field !== '' && e.target.options.tip_field !== null) {
+
                     p = e.data.properties[e.target.options.tip_field ];
+                    if (e.target.options.tip_percentage === true && p !== '' && p !== undefined) {
+                        if (e.target.options.tip_times100 === true) {
+                            p = parseFloat(p) * 100;
+                        }
+                        if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== '') {
+                            p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
+                        }
+                         p=p+"%";
+                    }
                 }
                 else {
                     if (fieldkey === undefined || fieldkey === null || fieldkey === '' || (typeof fieldkey === 'object' && (fieldkey[0] === null || fieldkey[0] === '' || fieldkey[0] === undefined)))
+                    {
                         p = e.data.properties[properties_key[1]];
+                        if (e.target.options.tip_percentage === true && p !== '' && p !== undefined) {
+                            if (e.target.options.tip_times100 === true) {
+                                p = parseFloat(p) * 100;
+                            }
+                            if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== '') {
+                                p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
+                            }
+                             p=p+"%";
+                        }
+                    }
                     else
+                    {
                         p = e.data.properties[fieldkey[0]];
+                        if (e.target.options.tip_percentage === true && p !== '' && p !== undefined) {
+                            if (e.target.options.tip_times100 === true) {
+                                p = parseFloat(p) * 100;
+                            }
+                            if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== '') {
+                                p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
+                            }
+                             p=p+"%";
+                        }
+                    }
                 }
                 options.map_tooltip.classed("hidden", false)
                         .attr("style", "left:" + (mouse.x + 30) + "px;top:" + (mouse.y - 35) + "px")
@@ -1255,16 +1293,16 @@ L.MAP2U.layers = function (options) {
         if (layer.type === 'topojsonfile' || layer.type === 'shapefile_topojson' || layer.type === 'topojson' || layer.type === 'geojson') {
             var url;
             if (layer.layerType !== undefined && layer.layerType === 'uploadfile')
-                url = Routing.generate('leaflet_uploadfile',{_locale:I18n.locale});
+                url = Routing.generate('leaflet_uploadfile', {_locale: I18n.locale});
             else
             {
                 if (layer.layerType === 'uploadfilelayer')
                 {
-                    url = Routing.generate('leaflet_maplayer',{_locale:I18n.locale});
+                    url = Routing.generate('leaflet_maplayer', {_locale: I18n.locale});
                 }
                 else if (layer.layerType === 'leafletcluster')
                 {
-                    url = Routing.generate('leaflet_clusterlayer',{_locale:I18n.locale});
+                    url = Routing.generate('leaflet_clusterlayer', {_locale: I18n.locale});
                 }
                 else if (layer.layerType === 'wms') {
 
@@ -1289,7 +1327,7 @@ L.MAP2U.layers = function (options) {
 
                         var geoJsonUrl = "http://" + layer.hostName + "&typeName=" + layer.layerName + "&maxFeatures=5000&srsName=EPSG:4326&outputFormat=json";
                         $.ajax({
-                            url: Routing.generate('default_geoserver_wfs',{_locale:I18n.locale}),
+                            url: Routing.generate('default_geoserver_wfs', {_locale: I18n.locale}),
                             type: 'POST',
                             data: {
                                 address: geoJsonUrl
@@ -1820,7 +1858,7 @@ L.MAP2U.layers = function (options) {
                                         }
                                         else {
                                             $.ajax({
-                                                url: Routing.generate('draw_content',{_locale:I18n.locale}),
+                                                url: Routing.generate('draw_content', {_locale: I18n.locale}),
                                                 method: 'GET',
                                                 beforeSend: function () {
 
@@ -1858,7 +1896,7 @@ L.MAP2U.layers = function (options) {
                                             radius = e.target._mRadius;
                                         }
                                         $.ajax({
-                                            url: Routing.generate('draw_' + e.target.type,{_locale:I18n.locale}),
+                                            url: Routing.generate('draw_' + e.target.type, {_locale: I18n.locale}),
                                             method: 'GET',
                                             data: {
                                                 id: e.target.id,
@@ -1946,6 +1984,9 @@ L.MAP2U.layers = function (options) {
                                 showLabels: (result.layers[keys[k]]['label_field'] !== '' && result.layers[keys[k]]['label_field'] !== null),
                                 type: result.type,
                                 tip_field: result.layers[keys[k]]['tip_field'],
+                                tip_percentage: result.layers[keys[k]]['tip_percentage'],
+                                tip_times100: result.layers[keys[k]]['tip_times100'],
+                                tip_number: result.layers[keys[k]]['tip_number'],
                                 label_field: result.layers[keys[k]]['label_field'],
                                 featureAttributes: {
                                     'layerId': result.layers[keys[k]]['id'],
@@ -2041,12 +2082,45 @@ L.MAP2U.layers = function (options) {
                                     });
                                     if (e.target.options.tip_field !== undefined && e.target.options.tip_field !== '' && e.target.options.tip_field !== null) {
                                         p = e.data.properties[e.target.options.tip_field ];
+                                        if (e.target.options.tip_percentage === true && p !== '' && p !== undefined) {
+                                            if (e.target.options.tip_times100 === true) {
+                                                p = parseFloat(p) * 100;
+                                            }
+                                            if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== '') {
+                                                p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
+                                            }
+                                            p=p+"%";
+                                        }
+
+
                                     }
                                     else {
                                         if (fieldkey === undefined || fieldkey === null || fieldkey === '' || (typeof fieldkey === 'object' && (fieldkey[0] === null || fieldkey[0] === '' || fieldkey[0] === undefined)))
+                                        {
                                             p = e.data.properties[properties_key[1]];
+                                            if (e.target.options.tip_percentage === true && p !== '' && p !== undefined) {
+                                                if (e.target.options.tip_times100 === true) {
+                                                    p = parseFloat(p) * 100;
+                                                }
+                                                if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== '') {
+                                                    p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
+                                                }
+                                                 p=p+"%";
+                                            }
+                                        }
                                         else
+                                        {
                                             p = e.data.properties[fieldkey[0]];
+                                            if (e.target.options.tip_percentage === true && p !== '' && p !== undefined) {
+                                                if (e.target.options.tip_times100 === true) {
+                                                    p = parseFloat(p) * 100;
+                                                }
+                                                if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== '') {
+                                                    p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
+                                                }
+                                                 p=p+"%";
+                                            }
+                                        }
                                     }
                                     options.map_tooltip.classed("hidden", false)
                                             .attr("style", "left:" + (mouse.x + 30) + "px;top:" + (mouse.y - 35) + "px")
@@ -2282,7 +2356,7 @@ L.MAP2U.layers = function (options) {
             e.element.fill = $(e.element).css('fill');
 
             e.element.fill_opacity = $(e.element).css('fill-opacity');
-            
+
             if (e.element.fill !== 'none' || e.element.fill_opacity !== '0')
             {
                 d3.select(e.element).style({'fill': 'red', 'fill-opacity': '0.8'});
@@ -2305,13 +2379,47 @@ L.MAP2U.layers = function (options) {
                     return  this.text;
                 });
                 if (e.target.options.tip_field !== '') {
-                    p = e.data.properties[e.target.options.tip_field ];
+                    {
+                        p = e.data.properties[e.target.options.tip_field ];
+                        if (e.target.options.tip_percentage === true && p !== '' && p !== undefined) {
+                            if (e.target.options.tip_times100 === true) {
+                                p = parseFloat(p) * 100;
+                            }
+                            if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== '') {
+                                p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
+                            }
+                             p=p+"%";
+                        }
+                        
+                    }
                 }
                 else {
                     if (fieldkey === '' || fieldkey[0] === '' || fieldkey[0] === undefined)
+                    {
                         p = e.data.properties[properties_key[1]];
+                        if (e.target.options.tip_percentage === true && p !== '' && p !== undefined) {
+                            if (e.target.options.tip_times100 === true) {
+                                p = parseFloat(p) * 100;
+                            }
+                            if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== '') {
+                                p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
+                            }
+                             p=p+"%";
+                        }
+                    }
                     else
+                    {
                         p = e.data.properties[fieldkey[0]];
+                        if (e.target.options.tip_percentage === true && p !== '' && p !== undefined) {
+                            if (e.target.options.tip_times100 === true) {
+                                p = parseFloat(p) * 100;
+                            }
+                            if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== '') {
+                                p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
+                            }
+                             p=p+"%";
+                        }
+                    }
                 }
                 options.map_tooltip.classed("hidden", false)
                         .attr("style", "left:" + (mouse.x + 30) + "px;top:" + (mouse.y - 35) + "px")
@@ -2321,7 +2429,7 @@ L.MAP2U.layers = function (options) {
         });
         d3_layer.on('mouseout', function (e) {
             options.map_tooltip.classed("hidden", true);
-            d3.select(e.element).style({'fill': e.element.fill,'fill-opacity': e.element.fill_opacity});
+            d3.select(e.element).style({'fill': e.element.fill, 'fill-opacity': e.element.fill_opacity});
             d3.select(e.element).style('cursor', 'default');
         });
         if (opt.thematicmap && opt.thematicmap.thematicmap === true) {
@@ -2639,7 +2747,7 @@ L.MAP2U.layers = function (options) {
         // save current layers status to server
         $('div.sidebar_content div.section.overlay-layers div#overlayers_plus').on('click', function () {
             $.ajax({
-                url: Routing.generate('default_mapoverlayselectionform',{_locale:I18n.locale}),
+                url: Routing.generate('default_mapoverlayselectionform', {_locale: I18n.locale}),
                 type: 'GET',
                 beforeSend: function () {
 
@@ -2800,7 +2908,7 @@ L.MAP2U.layers = function (options) {
             });
             formData.append('data', layerdata);
             $.ajax({
-                url: Routing.generate('leaflet_save_mapoverlayers',{_locale:I18n.locale}),
+                url: Routing.generate('leaflet_save_mapoverlayers', {_locale: I18n.locale}),
                 type: 'POST',
                 beforeSend: function () {
 

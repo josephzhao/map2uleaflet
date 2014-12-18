@@ -1,4 +1,4 @@
 map2u_leaflet_controller:
     resource: "@Map2uLeafletBundle/Controller/"
     type: annotation
-    prefix: /
+    prefix: /{_locale}

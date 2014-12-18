@@ -382,7 +382,7 @@ window.onload = function () {
 
 
     $.ajax({
-        url: Routing.generate('leaflet_userlayers'),
+        url: Routing.generate('leaflet_userlayers',{_locale:I18n.locale}),
         method: 'GET',
         beforeSend: function () {
             map.spin(true);

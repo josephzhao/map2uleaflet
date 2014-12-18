@@ -384,92 +384,7 @@ class DefaultController extends Controller {
 
                 break;
         }
-
         return $data;
-
-        //  var_dump($id);
-//    if (!$user) {
-//      return new Response(\json_encode(array('success' => false, 'message' => 'Please Login first!')));
-//    }
-//    else {
-        if ($type === 'topojson' || $type === 'shapefile_topojson') {
-
-            $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UploadfileLayer p where p.id=' . $id)
-                    ->getResult();
-
-            //  var_dump($layers);
-
-            if ($layers) {
-
-                $layersData = array();
-                $conn = $this->get('database_connection');
-                $geoms = array();
-                $message = '';
-                $success = true;
-
-                foreach ($layers as $layer) {
-                    $geoms[$layer->getId()] = array();
-                    $layersData[$layer->getId()] = array();
-                    $layersData[$layer->getId()]['id'] = $layer->getId();
-                    $layersData[$layer->getId()]['layerTitle'] = $layer->getLayerTitle();
-                    $layersData[$layer->getId()]['layerName'] = $layer->getLayerName();
-                    $layersData[$layer->getId()]['tip_field'] = $layer->getUseruploadfile()->getTipField();
-                    $layersData[$layer->getId()]['label_field'] = $layer->getUseruploadfile()->getLabelField();
-//                    $layersData[$layer->getId()]['layerType'] = $layer->getLayerType();
-//                    $layersData[$layer->getId()]['clusterLayer'] = $layer->isClusterMap();
-                    $layersData[$layer->getId()]['layerShowInSwitcher'] = $layer->isLayerShowInSwitcher();
-                    $layersData[$layer->getId()]['fileName'] = $layer->getUseruploadfile()->getFileName();
-                    $layersData[$layer->getId()]['fileType'] = $layer->getUseruploadfile()->getType();
-                    $filename = $layer->getUseruploadfile()->getFileName();
-                    $filetype = $layer->getUseruploadfile()->getType();
-
-                    if ($layer->isTopojsonOnly() === true) {
-
-                        $geoms[$layer->getId()]['type'] = "topojson";
-                        if (file_exists($datafilesPath . '/uploads/' . $layer->getUserId() . '/topojson/usershapefile-' . $layer->getUseruploadfile()->getId() . '.json')) {
-                            $theGeom = file_get_contents($datafilesPath . '/uploads/' . $layer->getUserId() . '/topojson/usershapefile-' . $layer->getUseruploadfile()->getId() . '.json');
-                            $geoms[$layer->getId()]['geom'] = $theGeom;
-                        } else {
-                            $message = 'Topojson file ' . $layer->getUseruploadfile()->getTopojsonfileName() . ' not exist!';
-                            $success = false;
-                            $sql = "select st_asgeojson(st_transform(the_geom,4326)) as geometry from useruploadfile_geoms_" . $layer->getId();
-                            $type = "geojson";
-                            $geoms[$layer->getId()]['type'] = "geojson";
-                            $geoms[$layer->getId()]['geom'] = $conn->fetchAll($sql);
-                        }
-                    } else {
-                        $sql = "select st_asgeojson(the_geom) as geometry from useruploadfile_geoms_" . $layer->getId();
-                        $geoms[$layer->getId()]['type'] = "geojson";
-                        $type = "geojson";
-                        $geoms[$layer->getId()]['geom'] = $conn->fetchAll($sql);
-                    }
-                }
-
-                $json = $this->getSldContent($layers[0]->getDefaultSldName());
-                return new Response(\json_encode(array('success' => $success, 'type' => $type, 'filetype' => $filetype, 'filename' => $filename, 'message' => $message, 'layers' => $layersData, 'sld' => $json, 'data' => $geoms)));
-            } else {
-
-//                $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UserUploadfile p where p.id=' . $id)
-//                        ->getResult();
-//
-//                $json = $this->getSldContent($layers[0]->getSldfileName());
-//                 if (file_exists($shapefilesPath . '/uploads/' . $layers[0]->getUserId() . '/topojson/user' . $layers[0]->getType() . '-' . $layers[0]->getId() . '.json')) {
-//                    $theGeom = file_get_contents($shapefilesPath . '/uploads/' . $layer->getUserId() . '/topojson/user' . $layer->getType() . '-' . $layer->getId() . '.json');
-//                } else {
-//                    $theGeom = null;
-//                }
-//                return new Response(\json_encode(array('success' => $success, 'type' => $type, 'filetype' => $layers[0]->getType(), 'filename' => $layers[0]->getFileName(), 'message' => $message, 'layers' => array(), 'sld' => $json, 'data' => $geoms)));
-                //    var_dump($layers);
-            }
-        }
-        if ($type === 'geojson') {
-            if (intval($id) === -1) {
-                $geoms = $this->getUserDrawGeometries();
-                return new Response(\json_encode(array('success' => true, 'message' => 'User draw geometries', 'type' => 'geojson', 'filetype' => 'draw', 'filename' => 'draw', 'data' => $geoms)));
-            }
-        }
-        //  }
-        return new Response(\json_encode(array('success' => true, 'message' => 'User draw name  not exist')));
     }
 
     /**
@@ -517,6 +432,9 @@ class DefaultController extends Controller {
                     $layersData[$layer->getId()]['layerTitle'] = $layer->getLayerTitle();
                     $layersData[$layer->getId()]['layerName'] = $layer->getLayerName();
                     $layersData[$layer->getId()]['tip_field'] = $layer->getUseruploadfile()->getTipField();
+                    $layersData[$layer->getId()]['tip_percentage'] = $layer->getUseruploadfile()->getTipPercentage();
+                    $layersData[$layer->getId()]['tip_times100'] = $layer->getUseruploadfile()->getTipTimes100();
+                    $layersData[$layer->getId()]['tip_number'] = $layer->getUseruploadfile()->getTipNumber();
                     $layersData[$layer->getId()]['label_field'] = $layer->getUseruploadfile()->getLabelField();
                     $layersData[$layer->getId()]['layerType'] = 'leafletcluster';
                     $layersData[$layer->getId()]['seq'] = $layer->getSeq();
@@ -624,6 +542,9 @@ class DefaultController extends Controller {
                     $layersData[$layer->getId()]['layerTitle'] = $layer->getFileName();
                     $layersData[$layer->getId()]['layerName'] = $layer->getFileName();
                     $layersData[$layer->getId()]['tip_field'] = $layer->getTipField();
+                    $layersData[$layer->getId()]['tip_percentage'] = $layer->getTipPercentage();
+                    $layersData[$layer->getId()]['tip_times100'] = $layer->getTipTimes100();
+                    $layersData[$layer->getId()]['tip_number'] = $layer->getTipNumber();
                     $layersData[$layer->getId()]['label_field'] = $layer->getLabelField();
 
                     $layersData[$layer->getId()]['layerShowInSwitcher'] = true;
@@ -827,7 +748,10 @@ class DefaultController extends Controller {
         $layerData['id'] = -1;
         $layerData['layerTitle'] = $upload_file->getFileName();
         $layerData['layerName'] = $upload_file->getFileName();
-        $layerData['tip_field'] = '';
+        $layerData['tip_field'] = $upload_file->getTipField();
+        $layerData['tip_percentage'] = $upload_file->getTipPercentage();
+        $layerData['tip_times100'] = $upload_file->getTipTimes100();
+        $layerData['tip_number'] = $upload_file->getTipNumber();
         $layerData['label_field'] = '';
         $layerData['source'] = $upload_file->getId();
         $layerData['layerType'] = 'useruploadfile';
@@ -941,6 +865,9 @@ class DefaultController extends Controller {
         $layerData['layerTitle'] = "My draw geometries";
         $layerData['layerName'] = "My draw geometries";
         $layerData['tip_field'] = '';
+        $layerData['tip_percentage'] = false;
+        $layerData['tip_times100'] = false;
+        $layerData['tip_number'] = 3;
         $layerData['label_field'] = '';
         $layerData['layerType'] = 'userdraw';
         $layerData['clusterLayer'] = false;
@@ -965,6 +892,9 @@ class DefaultController extends Controller {
         $layerData['layerTitle'] = $layers[0]->getName();
         $layerData['layerName'] = $layers[0]->getName();
         $layerData['tip_field'] = '';
+        $layerData['tip_percentage'] = false;
+        $layerData['tip_times100'] = false;
+        $layerData['tip_number'] = 3;
         $layerData['label_field'] = '';
         $layerData['datasource'] = $layers[0]->getId();
         $layerData['layerType'] = 'userdrawlayer';
@@ -1032,6 +962,9 @@ class DefaultController extends Controller {
         $layerData['layerTitle'] = $layer->getLayerTitle();
         $layerData['layerName'] = $layer->getLayerName();
         $layerData['tip_field'] = $layer->getUseruploadfile()->getTipField();
+        $layerData['tip_percentage'] = $layer->getUseruploadfile()->getTipPercentage();
+        $layerData['tip_times100'] = $layer->getUseruploadfile()->getTipTimes100();
+        $layerData['tip_number'] = $layer->getUseruploadfile()->getTipNumber();
         $layerData['label_field'] = $layer->getUseruploadfile()->getLabelField();
 
         $layerData['seq'] = $layer->getSeq();
