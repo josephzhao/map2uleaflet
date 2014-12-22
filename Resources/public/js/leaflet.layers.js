@@ -450,7 +450,7 @@ L.MAP2U.layers = function (options) {
         });
         if (maploaded === false || (maploaded === true && thematicmap_layer && !thematicmap_layer.layer)) {
 
-            this.addUploadfile(Routing.generate('default_uploadfile_info', {_locale: I18n.locale}), opt.datasource, opt);
+            this.addUploadfile(Routing.generate('default_uploadfile_info'), opt.datasource, opt);
 
         }
 
@@ -473,7 +473,7 @@ L.MAP2U.layers = function (options) {
         var _this = this;
 
         $.ajax({
-            url: Routing.generate('leaflet_maplayerinfo', {_locale: I18n.locale}),
+            url: Routing.generate('leaflet_maplayerinfo'),
             type: 'GET',
             beforeSend: function () {
 
@@ -544,7 +544,7 @@ L.MAP2U.layers = function (options) {
 
 
         $.ajax({
-            url: Routing.generate('leaflet_maplayer', {_locale: I18n.locale}),
+            url: Routing.generate('leaflet_maplayer'),
             type: 'GET',
             beforeSend: function () {
 
@@ -752,7 +752,7 @@ L.MAP2U.layers = function (options) {
 
             var geoJsonUrl = "http://" + layer.hostName + "&typeName=" + layer.layerName + "&maxFeatures=5000&srsName=EPSG:4326&outputFormat=json";
             $.ajax({
-                url: Routing.generate('default_geoserver_wfs', {_locale: I18n.locale}),
+                url: Routing.generate('default_geoserver_wfs'),
                 type: 'POST',
                 beforeSend: function () {
 
@@ -976,7 +976,7 @@ L.MAP2U.layers = function (options) {
                         }
                         else {
                             $.ajax({
-                                url: Routing.generate('draw_content', {_locale: I18n.locale}),
+                                url: Routing.generate('draw_content'),
                                 method: 'GET',
                                 beforeSend: function () {
 
@@ -1017,7 +1017,7 @@ L.MAP2U.layers = function (options) {
                             radius = e.target._mRadius;
                         }
                         $.ajax({
-                            url: Routing.generate('draw_' + e.target.type, {_locale: I18n.locale}),
+                            url: Routing.generate('draw_' + e.target.type),
                             method: 'GET',
                             beforeSend: function () {
 
@@ -1293,16 +1293,16 @@ L.MAP2U.layers = function (options) {
         if (layer.type === 'topojsonfile' || layer.type === 'shapefile_topojson' || layer.type === 'topojson' || layer.type === 'geojson') {
             var url;
             if (layer.layerType !== undefined && layer.layerType === 'uploadfile')
-                url = Routing.generate('leaflet_uploadfile', {_locale: I18n.locale});
+                url = Routing.generate('leaflet_uploadfile');
             else
             {
                 if (layer.layerType === 'uploadfilelayer')
                 {
-                    url = Routing.generate('leaflet_maplayer', {_locale: I18n.locale});
+                    url = Routing.generate('leaflet_maplayer');
                 }
                 else if (layer.layerType === 'leafletcluster')
                 {
-                    url = Routing.generate('leaflet_clusterlayer', {_locale: I18n.locale});
+                    url = Routing.generate('leaflet_clusterlayer');
                 }
                 else if (layer.layerType === 'wms') {
 
@@ -1327,7 +1327,7 @@ L.MAP2U.layers = function (options) {
 
                         var geoJsonUrl = "http://" + layer.hostName + "&typeName=" + layer.layerName + "&maxFeatures=5000&srsName=EPSG:4326&outputFormat=json";
                         $.ajax({
-                            url: Routing.generate('default_geoserver_wfs', {_locale: I18n.locale}),
+                            url: Routing.generate('default_geoserver_wfs'),
                             type: 'POST',
                             data: {
                                 address: geoJsonUrl
@@ -1858,7 +1858,7 @@ L.MAP2U.layers = function (options) {
                                         }
                                         else {
                                             $.ajax({
-                                                url: Routing.generate('draw_content', {_locale: I18n.locale}),
+                                                url: Routing.generate('draw_content'),
                                                 method: 'GET',
                                                 beforeSend: function () {
 
@@ -1896,7 +1896,7 @@ L.MAP2U.layers = function (options) {
                                             radius = e.target._mRadius;
                                         }
                                         $.ajax({
-                                            url: Routing.generate('draw_' + e.target.type, {_locale: I18n.locale}),
+                                            url: Routing.generate('draw_' + e.target.type),
                                             method: 'GET',
                                             data: {
                                                 id: e.target.id,
@@ -2747,7 +2747,7 @@ L.MAP2U.layers = function (options) {
         // save current layers status to server
         $('div.sidebar_content div.section.overlay-layers div#overlayers_plus').on('click', function () {
             $.ajax({
-                url: Routing.generate('default_mapoverlayselectionform', {_locale: I18n.locale}),
+                url: Routing.generate('default_mapoverlayselectionform'),
                 type: 'GET',
                 beforeSend: function () {
 
@@ -2908,7 +2908,7 @@ L.MAP2U.layers = function (options) {
             });
             formData.append('data', layerdata);
             $.ajax({
-                url: Routing.generate('leaflet_save_mapoverlayers', {_locale: I18n.locale}),
+                url: Routing.generate('leaflet_save_mapoverlayers'),
                 type: 'POST',
                 beforeSend: function () {
 
