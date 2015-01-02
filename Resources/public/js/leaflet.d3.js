@@ -148,7 +148,10 @@ L.D3 = L.Class.extend({
         this._feature = this._g.selectAll("path")
                 .data(this.options.topojson ? this.data.geometries : this.data.features)
                 .enter()
-                .append("path");
+                .append("path")
+                .attr("id",function(d){
+                     return d.properties['ogc_fid'];
+                });
 
         if (this.options.sld === 'xxxxxxx') {
             var drawtext = false;
@@ -252,16 +255,12 @@ L.D3 = L.Class.extend({
 
                             .attr("fill", "none")
                             .attr("fill-opacity", 0.0);
-                    this._feature.attr("id", function (d) {
-                        return d.properties['ogc_fid'];
-                    });
+                  
                     this.onLoadPolylineSLD();
                 }
                 if (this._feature && (this._featureType === 'Polygon' || this._featureType === 'MultiPolygon')) {
                     this._feature.attr("d", this.path);
-                    this._feature.attr("id", function (d) {
-                        return d.properties['ogc_fid'];
-                    });
+                  
                     this.onLoadPolygonSLD();
                 }
             }
