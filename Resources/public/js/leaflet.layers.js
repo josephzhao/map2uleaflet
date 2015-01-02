@@ -2378,14 +2378,14 @@ L.MAP2U.layers = function (options) {
                 fieldkey = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function () {
                     return  this.text;
                 });
-                if (e.target.options.tip_field !== '') {
+                if (e.target.options.tip_field !== '' && e.target.options.tip_field !== null && e.target.options.tip_field !== undefined) {
                     {
                         p = e.data.properties[e.target.options.tip_field ];
                         if (e.target.options.tip_percentage === true && p !== '' && p !== undefined) {
                             if (e.target.options.tip_times100 === true) {
                                 p = parseFloat(p) * 100;
                             }
-                            if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== '') {
+                            if (e.target.options.tip_number !== undefined  && e.target.options.tip_number !== null && e.target.options.tip_number !== '') {
                                 p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
                             }
                             p = p + "%";
@@ -2401,7 +2401,7 @@ L.MAP2U.layers = function (options) {
                             if (e.target.options.tip_times100 === true) {
                                 p = parseFloat(p) * 100;
                             }
-                            if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== '') {
+                            if (e.target.options.tip_number !== undefined  && e.target.options.tip_number !== null && e.target.options.tip_number !== '') {
                                 p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
                             }
                             p = p + "%";
@@ -2414,7 +2414,7 @@ L.MAP2U.layers = function (options) {
                             if (e.target.options.tip_times100 === true) {
                                 p = parseFloat(p) * 100;
                             }
-                            if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== '') {
+                            if (e.target.options.tip_number !== undefined  && e.target.options.tip_number !== null && e.target.options.tip_number !== '') {
                                 p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
                             }
                             p = p + "%";
