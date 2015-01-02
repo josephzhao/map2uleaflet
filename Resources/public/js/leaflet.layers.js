@@ -1236,7 +1236,7 @@ L.MAP2U.layers = function (options) {
                         if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== '') {
                             p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
                         }
-                         p=p+"%";
+                        p = p + "%";
                     }
                 }
                 else {
@@ -1250,7 +1250,7 @@ L.MAP2U.layers = function (options) {
                             if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== '') {
                                 p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
                             }
-                             p=p+"%";
+                            p = p + "%";
                         }
                     }
                     else
@@ -1263,7 +1263,7 @@ L.MAP2U.layers = function (options) {
                             if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== '') {
                                 p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
                             }
-                             p=p+"%";
+                            p = p + "%";
                         }
                     }
                 }
@@ -2089,7 +2089,7 @@ L.MAP2U.layers = function (options) {
                                             if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== '') {
                                                 p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
                                             }
-                                            p=p+"%";
+                                            p = p + "%";
                                         }
 
 
@@ -2105,7 +2105,7 @@ L.MAP2U.layers = function (options) {
                                                 if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== '') {
                                                     p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
                                                 }
-                                                 p=p+"%";
+                                                p = p + "%";
                                             }
                                         }
                                         else
@@ -2118,7 +2118,7 @@ L.MAP2U.layers = function (options) {
                                                 if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== '') {
                                                     p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
                                                 }
-                                                 p=p+"%";
+                                                p = p + "%";
                                             }
                                         }
                                     }
@@ -2388,9 +2388,9 @@ L.MAP2U.layers = function (options) {
                             if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== '') {
                                 p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
                             }
-                             p=p+"%";
+                            p = p + "%";
                         }
-                        
+
                     }
                 }
                 else {
@@ -2404,7 +2404,7 @@ L.MAP2U.layers = function (options) {
                             if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== '') {
                                 p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
                             }
-                             p=p+"%";
+                            p = p + "%";
                         }
                     }
                     else
@@ -2417,7 +2417,7 @@ L.MAP2U.layers = function (options) {
                             if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== '') {
                                 p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
                             }
-                             p=p+"%";
+                            p = p + "%";
                         }
                     }
                 }
@@ -2728,6 +2728,7 @@ L.MAP2U.layers = function (options) {
     };
     control.overlayToolButtons = function () {
         var _this = this;
+        $('div.sidebar_content div.section.overlay-layers div#move_overlayer_up').unbind('click');
         $('div.sidebar_content div.section.overlay-layers div#move_overlayer_up').on('click', function () {
             var selected = $('div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li.selected');
             if (selected.prev()) {
@@ -2736,6 +2737,7 @@ L.MAP2U.layers = function (options) {
             }
 
         });
+        $('div.sidebar_content div.section.overlay-layers div#move_overlayer_down').unbind('click');
         $('div.sidebar_content div.section.overlay-layers div#move_overlayer_down').on('click', function () {
             var selected = $('div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li.selected');
             if (selected.next()) {
@@ -2745,6 +2747,7 @@ L.MAP2U.layers = function (options) {
 
         });
         // save current layers status to server
+        $('div.sidebar_content div.section.overlay-layers div#overlayers_plus').unbind('click');
         $('div.sidebar_content div.section.overlay-layers div#overlayers_plus').on('click', function () {
             $.ajax({
                 url: Routing.generate('default_mapoverlayselectionform'),
@@ -2774,6 +2777,7 @@ L.MAP2U.layers = function (options) {
             });
 
         });
+        $('div.sidebar_content div.section.overlay-layers div#overlayers_minus').unbind('click');
         $('div.sidebar_content div.section.overlay-layers div#overlayers_minus').on('click', function () {
             var selected = $('div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li.selected');
             if (selected.data("index") !== undefined && _this._map.dataLayers[selected.data("index")] && _this._map.dataLayers[selected.data("index")].index_id !== -1) {
@@ -2789,6 +2793,7 @@ L.MAP2U.layers = function (options) {
                 }
             }
         });
+        $('div.sidebar_content div.section.overlay-layers div#overlayers_zoom_to_layer').unbind('click');
         $('div.sidebar_content div.section.overlay-layers div#overlayers_zoom_to_layer').on('click', function () {
             var selected = $('div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li.selected');
             if (selected.data("index") !== undefined && _this._map.dataLayers[selected.data("index")] && _this._map.dataLayers[selected.data("index")].bounds) {
@@ -2804,19 +2809,21 @@ L.MAP2U.layers = function (options) {
             }
         });
         // save current layers status to server
+        $('div.sidebar_content div.section.overlay-layers div#overlayers_selectall').unbind('click');
         $('div.sidebar_content div.section.overlay-layers div#overlayers_selectall').on('click', function () {
             $('div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li').map(function () {
                 $(this).find("input[type=checkbox]").prop('checked', true)
                         .trigger('change');
             });
         });
+        $('div.sidebar_content div.section.overlay-layers div#overlayers_unselectall').unbind('click');
         $('div.sidebar_content div.section.overlay-layers div#overlayers_unselectall').on('click', function () {
             $('div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li').map(function () {
                 $(this).find("input[type=checkbox]").prop('checked', false)
                         .trigger('change');
             });
         });
-
+        $('div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li div.layer_legend_icon').unbind('click');
         $('div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li div.layer_legend_icon').click(function (e) {
 
             if ($(this).find("i").hasClass("fa-plus")) {
@@ -2840,6 +2847,7 @@ L.MAP2U.layers = function (options) {
 //                }
 //            });
         });
+        $('div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li .layername_label').unbind('click');
         $('div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li .layername_label').click(function (e) {
             var _that = this;
             $('div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li .layername_label').map(function () {
@@ -2870,6 +2878,7 @@ L.MAP2U.layers = function (options) {
         });
 
         // save current layers status to server
+        $('div.sidebar_content div.section.overlay-layers div#save_overlayers_index').unbind('click');
         $('div.sidebar_content div.section.overlay-layers div#save_overlayers_index').on('click', function () {
             var formData = new FormData();
             var activelayer = null;
