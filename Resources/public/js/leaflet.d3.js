@@ -249,12 +249,19 @@ L.D3 = L.Class.extend({
                 if (this._feature && (this._featureType === 'LineString' || this._featureType === 'MultiLineString' || this._featureType === 'Polyline' || this._featureType === 'MultiPolyline')) {
                     this._feature
                             .attr("d", this.path)
+
                             .attr("fill", "none")
                             .attr("fill-opacity", 0.0);
+                    this._feature.attr("id", function (d) {
+                        return d.properties['ogc_fid'];
+                    });
                     this.onLoadPolylineSLD();
                 }
                 if (this._feature && (this._featureType === 'Polygon' || this._featureType === 'MultiPolygon')) {
                     this._feature.attr("d", this.path);
+                    this._feature.attr("id", function (d) {
+                        return d.properties['ogc_fid'];
+                    });
                     this.onLoadPolygonSLD();
                 }
             }
