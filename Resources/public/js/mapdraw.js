@@ -113,7 +113,7 @@ function initMapDraw(map) {
                     radius = e.target._mRadius;
                 }
                 $.ajax({
-                    url: Routing.generate('draw_' + e.target.type),
+                    url: Routing.generate('draw_' + e.target.type,{'_locale':  window.locale}),
                     method: 'GET',
                     data: {
                         id: e.target.id,
@@ -122,6 +122,9 @@ function initMapDraw(map) {
                         index: e.target.index
                     },
                     success: function (response) {
+                        
+                        alert("hhhhhh");
+                        
                         if ($('body.sonata-bc #ajax-dialog').length === 0) {
                             $('<div class="modal fade" id="ajax-dialog" role="dialog"></div>').appendTo('body');
                         } else {
@@ -141,14 +144,18 @@ function initMapDraw(map) {
 
 
         if ($('body.sonata-bc #ajax-dialog').length === 0) {
-            $('<div class="modal fade" id="ajax-dialog" role="dialog"></div>').appendTo('body');
+            alert("sssss");
+//            fade" data-backdrop="static" data-keyboard="false" id="main_modal_dialogpanel" tabindex="-1" role="dialog" aria-labelledby="mainModalDialogLabel" aria-hidden="true"
+            
+            $('<div class="modal fade" id="ajax-dialog" role="dialog">hhfhhgj</div>').appendTo('body');
         } else {
             $('body.sonata-bc #ajax-dialog').html('');
         }
 
-
+ alert("hhhhhh2");
+ 
         $.ajax({
-            url: Routing.generate('draw_' + layer.type),
+            url: Routing.generate('draw_' + layer.type,{'_locale':  window.locale}),
             method: 'GET',
             data: {
                 id: 0,
@@ -159,21 +166,21 @@ function initMapDraw(map) {
             success: function (response) {
                 $(response).appendTo($('body.sonata-bc #ajax-dialog'));
 
-                $('#ajax-dialog').modal({show: true});
-                $('#ajax-dialog').draggable();
+                $('body.sonata-bc #ajax-dialog').modal({show: true});
+                $('body.sonata-bc #ajax-dialog').draggable();
                 //  alert(JSON.stringify(html));
             }
         });
 
-        $('#ajax-dialog').on('hidden.bs.modal', function (e) {
+        $('body.sonata-bc #ajax-dialog').on('hidden.bs.modal', function (e) {
             // do something...
             //   alert(drawnItems.getLayers()[drawnItems.getLayers().length - 1].id);
-
+alert("www");
             if (drawnItems.getLayers()[drawnItems.getLayers().length - 1].id === 0)
             {
                 drawnItems.removeLayer(drawnItems.getLayers()[drawnItems.getLayers().length - 1]);
             }
-            $('#ajax-dialog').remove();
+            $('body.sonata-bc #ajax-dialog').remove();
         });
 
 
@@ -208,7 +215,7 @@ function initMapDraw(map) {
                 if (layer._mRadius !== undefined)
                     radius = layer._mRadius;
                 $.ajax({
-                    url: Routing.generate('draw_save'),
+                    url: Routing.generate('draw_save',{'_locale':  window.locale}),
                     method: 'POST',
                     data: {
                         id: layer.id,
@@ -240,7 +247,7 @@ function initMapDraw(map) {
                 {
 
                     $.ajax({
-                        url: Routing.generate('draw_delete'),
+                        url: Routing.generate('draw_delete',{'_locale':  window.locale}),
                         method: 'POST',
                         data: {
                             id: layer.id

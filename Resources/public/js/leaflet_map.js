@@ -382,7 +382,7 @@ window.onload = function () {
 
 
     $.ajax({
-        url: Routing.generate('leaflet_userlayers',{_locale:I18n.locale}),
+        url: Routing.generate('leaflet_userlayers',{'_locale':  window.locale}),
         method: 'GET',
         beforeSend: function () {
             map.spin(true);
@@ -491,7 +491,7 @@ window.onload = function () {
                             var radius = 0;
 
                             $.ajax({
-                                url: Routing.generate('draw_' + e.target.type),
+                                url: Routing.generate('draw_' + e.target.type,{'_locale':  window.locale}),
                                 method: 'GET',
                                 data: {
                                     id: e.target.id,
@@ -603,7 +603,7 @@ function createSearchIcon(map, opt) {
             var radius = 0;
 
             $.ajax({
-                url: Routing.generate('draw_' + e.target.type),
+                url: Routing.generate('draw_' + e.target.type,{'_locale':  window.locale}),
                 method: 'GET',
                 data: {
                     id: e.target.id,
