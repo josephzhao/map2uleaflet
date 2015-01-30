@@ -382,7 +382,7 @@ window.onload = function () {
 
 
     $.ajax({
-        url: Routing.generate('leaflet_userlayers',{'_locale':  window.locale}),
+        url: Routing.generate('leaflet_userlayers', {'_locale': window.locale}),
         method: 'GET',
         beforeSend: function () {
             map.spin(true);
@@ -434,6 +434,25 @@ window.onload = function () {
 
     initMapDraw(map);
     maptoolbar_init(this);
+    // control map_draw_select_pane defined in base.html.twig
+    $(".sonata-bc div.close_map_draw_select_pane_button").click(function () {
+        $(".sonata-bc div#map_draw_select_pane").hide();
+    });
+    $('.sonata-bc div#map_draw_select_pane').draggable({handle: '.header'});
+
+
+    $(".sonata-bc div#map_draw_select_pane").on("drag", function (event, ui) {
+        if (ui.position.left < 1)
+            ui.position.left = 1;
+        if (ui.position.top < 1)
+            ui.position.top = 1;
+        if ($(window).width() < ($(this).width() + ui.position.left + 5))
+            ui.position.left = $(window).width() - $(this).width() - 5;
+        if ((ui.position.top + $(this).height()) > ($(window).height() - 5))
+            ui.position.top = $(window).height() - 5 - $(this).height();
+
+        //  $("#mapping_system_status_id").html(ui.position.top + " , " + ui.position.left + "  ,  " + $(window).height() + "  ,  " + $(window).width() + "margin-bottom:" + $(this).css("margin-bottom"));
+    });
 
 
 //    $.ajax({
@@ -491,7 +510,7 @@ window.onload = function () {
                             var radius = 0;
 
                             $.ajax({
-                                url: Routing.generate('draw_' + e.target.type,{'_locale':  window.locale}),
+                                url: Routing.generate('draw_' + e.target.type, {'_locale': window.locale}),
                                 method: 'GET',
                                 data: {
                                     id: e.target.id,
@@ -603,7 +622,7 @@ function createSearchIcon(map, opt) {
             var radius = 0;
 
             $.ajax({
-                url: Routing.generate('draw_' + e.target.type,{'_locale':  window.locale}),
+                url: Routing.generate('draw_' + e.target.type, {'_locale': window.locale}),
                 method: 'GET',
                 data: {
                     id: e.target.id,

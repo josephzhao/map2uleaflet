@@ -113,7 +113,7 @@ function initMapDraw(map) {
                     radius = e.target._mRadius;
                 }
                 $.ajax({
-                    url: Routing.generate('draw_' + e.target.type,{'_locale':  window.locale}),
+                    url: Routing.generate('draw_' + e.target.type, {'_locale': window.locale}),
                     method: 'GET',
                     data: {
                         id: e.target.id,
@@ -122,9 +122,9 @@ function initMapDraw(map) {
                         index: e.target.index
                     },
                     success: function (response) {
-                        
-                        alert("hhhhhh");
-                        
+
+
+
                         if ($('body.sonata-bc #ajax-dialog').length === 0) {
                             $('<div class="modal fade" id="ajax-dialog" role="dialog"></div>').appendTo('body');
                         } else {
@@ -142,20 +142,18 @@ function initMapDraw(map) {
         });
 
 
-
         if ($('body.sonata-bc #ajax-dialog').length === 0) {
-            alert("sssss");
-//            fade" data-backdrop="static" data-keyboard="false" id="main_modal_dialogpanel" tabindex="-1" role="dialog" aria-labelledby="mainModalDialogLabel" aria-hidden="true"
-            
-            $('<div class="modal fade" id="ajax-dialog" role="dialog">hhfhhgj</div>').appendTo('body');
+
+
+            $('<div class="modal fade" id="ajax-dialog" z-index="-1" data-backdrop="false" data-backdrop="static" data-keyboard="false" role="dialog"></div>').appendTo('body');
         } else {
             $('body.sonata-bc #ajax-dialog').html('');
         }
 
- alert("hhhhhh2");
- 
+
+
         $.ajax({
-            url: Routing.generate('draw_' + layer.type,{'_locale':  window.locale}),
+            url: Routing.generate('draw_' + layer.type, {'_locale': window.locale}),
             method: 'GET',
             data: {
                 id: 0,
@@ -166,7 +164,7 @@ function initMapDraw(map) {
             success: function (response) {
                 $(response).appendTo($('body.sonata-bc #ajax-dialog'));
 
-                $('body.sonata-bc #ajax-dialog').modal({show: true});
+                $('body.sonata-bc #ajax-dialog').modal('show');
                 $('body.sonata-bc #ajax-dialog').draggable();
                 //  alert(JSON.stringify(html));
             }
@@ -175,7 +173,7 @@ function initMapDraw(map) {
         $('body.sonata-bc #ajax-dialog').on('hidden.bs.modal', function (e) {
             // do something...
             //   alert(drawnItems.getLayers()[drawnItems.getLayers().length - 1].id);
-alert("www");
+
             if (drawnItems.getLayers()[drawnItems.getLayers().length - 1].id === 0)
             {
                 drawnItems.removeLayer(drawnItems.getLayers()[drawnItems.getLayers().length - 1]);
@@ -202,7 +200,16 @@ alert("www");
         // map.addLayer(layer);
     });
 
+    map.on('draw:drawstop', function (e) {
 
+        $(".sonata-bc div#map_draw_select_pane").hide();
+
+    });
+    map.on('draw:editstop', function (e) {
+alert("11");
+        $(".sonata-bc div#map_draw_select_pane").hide();
+
+    });
     map.on('draw:edited', function (e) {
         var layers = e.layers;
 
@@ -215,7 +222,7 @@ alert("www");
                 if (layer._mRadius !== undefined)
                     radius = layer._mRadius;
                 $.ajax({
-                    url: Routing.generate('draw_save',{'_locale':  window.locale}),
+                    url: Routing.generate('draw_save', {'_locale': window.locale}),
                     method: 'POST',
                     data: {
                         id: layer.id,
@@ -247,7 +254,7 @@ alert("www");
                 {
 
                     $.ajax({
-                        url: Routing.generate('draw_delete',{'_locale':  window.locale}),
+                        url: Routing.generate('draw_delete', {'_locale': window.locale}),
                         method: 'POST',
                         data: {
                             id: layer.id
