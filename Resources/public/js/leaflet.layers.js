@@ -808,6 +808,8 @@ L.MAP2U.layers = function (options) {
         }
 
         var json_data;
+        if(result.geomdata && result.geomdata['geom']===undefined)
+            return;
         if (typeof result.geomdata === 'object' && typeof result.geomdata['geom'] !== 'object')
             json_data = JSON.parse(result.geomdata['geom']);
         else
