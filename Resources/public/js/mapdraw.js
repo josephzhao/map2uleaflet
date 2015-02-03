@@ -206,7 +206,7 @@ function initMapDraw(map) {
 
     });
     map.on('draw:editstop', function (e) {
-alert("11");
+
         $(".sonata-bc div#map_draw_select_pane").hide();
 
     });

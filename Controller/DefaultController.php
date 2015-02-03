@@ -911,6 +911,14 @@ class DefaultController extends Controller {
 
         $geom['datatype'] = "geojson";
 
+        $sql1="SELECT EXISTS (SELECT 1  FROM   pg_catalog.pg_class c JOIN   pg_catalog.pg_namespace n ON n.oid = c.relnamespace  WHERE  n.nspname = 'public' AND c.relname = 'useruploadfile_geoms_" . $uploadfile_id . "')";
+        $stmt1 = $conn->fetchAll($sql1);
+        // if geometry table not exist return empty array
+        if($stmt1[0]['exists']===false)
+        {
+            return $geom;
+        }
+                
         $sql = "SELECT column_name FROM information_schema.columns WHERE table_name='useruploadfile_geoms_" . $uploadfile_id . "'";
         $stmt = $conn->fetchAll($sql);
 
@@ -930,7 +938,9 @@ class DefaultController extends Controller {
 
         $column_names = implode(',', $column_name_array);
 
-
+        if ($column_names == null || trim($column_names) == '') {
+            $column_names = "*";
+        }
 
         $sql = "SELECT row_to_json(fc) as geom FROM ( SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features FROM (SELECT 'Feature' As type, ST_AsGeoJSON(lg.the_geom)::json As geometry
     , row_to_json(lp) As properties
