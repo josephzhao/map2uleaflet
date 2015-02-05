@@ -2987,16 +2987,16 @@ L.MAP2U.layers = function (options) {
         var legend_label = I18n.t('javascripts.map.layers.' + title);
         if (legend_label === undefined || legend_label === null || legend_label.indexOf('missing ') === 1)
         {
-            if (title.length > 25)
-                label.append(title.substr(0, 22) + "...");
-            else
+         //   if (title.length > 25)
+         //       label.append(title.substr(0, 22) + "...");
+         //   else
                 label.append(title);
         }
         else
         {
-            if (legend_label.length > 25)
-                label.append(legend_label.substr(0, 22) + "...");
-            else
+          //  if (legend_label.length > 25)
+          //      label.append(legend_label.substr(0, 22) + "...");
+         //   else
                 label.append(legend_label);
         }
 
