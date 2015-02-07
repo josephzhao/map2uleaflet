@@ -71,6 +71,11 @@ I18n.translations = {'en': {
                 'tooltip_disabled': 'Map Legend Disabled',
                 'tooltip': 'Show Map Legend'
             },
+            'business': {
+                'title': 'Business',
+                'tooltip_disabled': 'Business Panel Disabled',
+                'tooltip': 'Show Business Panel'
+            },
             'graphchart': {
                 'title': 'Graph and Chart',
                 'tooltip_disabled': 'Graph and Chart Disabled',

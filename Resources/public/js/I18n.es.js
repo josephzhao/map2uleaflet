@@ -67,6 +67,11 @@ I18n.translations = {'es': {
                 'tooltip_disabled': 'Map Legend Disabled',
                 'tooltip': 'Show Map Legend'
             },
+            'business': {
+                'title': 'Business',
+                'tooltip_disabled': 'Business Panel Disabled',
+                'tooltip': 'Show Business Panel'
+            },
             'shapefile-upload': {
                 'title': 'Upload Shapefile'
             },
