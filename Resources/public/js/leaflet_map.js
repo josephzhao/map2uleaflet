@@ -345,7 +345,10 @@ window.onload = function () {
         sidebar: rightSidebar,
         'short': true
     }).addTo(map);
-
+  L.MAP2U.business({position: position,
+        sidebar: rightSidebar,
+        'short': true
+    }).addTo(map);
     L.MAP2U.graphchart({
         position: position,
         sidebar: rightSidebar,
