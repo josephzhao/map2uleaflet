@@ -584,7 +584,7 @@ class DefaultController extends Controller {
         return new Response(\json_encode(array('success' => true, 'message' => 'User draw name  not exist')));
     }
 
-    private function getClustermapInfo($id) {
+    protected  function getClustermapInfo($id) {
         $em = $this->getDoctrine()->getManager();
         $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:LeafletClusterLayer p where p.id=' . $id)
                 ->getResult();
@@ -602,7 +602,7 @@ class DefaultController extends Controller {
         return $layerData;
     }
 
-    private function getUserdrawlayerInfo($id) {
+    protected function getUserdrawlayerInfo($id) {
         $em = $this->getDoctrine()->getManager();
         $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UserDrawLayer p where p.id=' . $id)
                 ->getResult();
@@ -620,7 +620,7 @@ class DefaultController extends Controller {
         return $layerData;
     }
 
-    private function getHeatmapInfo($id) {
+    protected function getHeatmapInfo($id) {
         $em = $this->getDoctrine()->getManager();
         $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:LeafletHeatmapLayer p where p.id=' . $id)
                 ->getResult();
@@ -644,7 +644,7 @@ class DefaultController extends Controller {
         return $layerData;
     }
 
-    private function getThematicmapInfo($id) {
+    protected function getThematicmapInfo($id) {
         $em = $this->getDoctrine()->getManager();
         $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:ThematicMap p where p.id=' . $id)
                 ->getResult();
@@ -680,7 +680,7 @@ class DefaultController extends Controller {
         return $layerData;
     }
 
-    private function getUserUploadfileInfo($id) {
+    protected function getUserUploadfileInfo($id) {
         $em = $this->getDoctrine()->getManager();
         $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UserUploadfile p where p.id=' . $id)
                 ->getResult();
@@ -698,7 +698,7 @@ class DefaultController extends Controller {
         return $layerData;
     }
 
-    private function getUploadfileLayerInfo($id) {
+    protected function getUploadfileLayerInfo($id) {
         $em = $this->getDoctrine()->getManager();
         $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UploadfileLayer p where p.id=' . $id)
                 ->getResult();
@@ -716,7 +716,7 @@ class DefaultController extends Controller {
         return $layerData;
     }
 
-    private function getWFSLayerInfo($id) {
+    protected function getWFSLayerInfo($id) {
         $em = $this->getDoctrine()->getManager();
         $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:GeoServerLayer p where p.id=' . $id)
                 ->getResult();
@@ -731,7 +731,7 @@ class DefaultController extends Controller {
         return $layerData;
     }
 
-    private function getUploadfileLayerData($id, $datafilesPath) {
+    protected function getUploadfileLayerData($id, $datafilesPath) {
         $em = $this->getDoctrine()->getManager();
         $upload_files = $em->createQuery('SELECT p FROM Map2uCoreBundle:UserUploadfile p where p.id=' . $id)
                 ->getResult();
@@ -769,7 +769,7 @@ class DefaultController extends Controller {
         return new Response(\json_encode(array('success' => $success, 'datatype' => $geom['datatype'], 'message' => $message, 'layer' => $layerData, 'sld' => $sld_json, 'geomdata' => $geom)));
     }
 
-    private function getUploadfilelayerLayerData($id, $datafilesPath) {
+    protected function getUploadfilelayerLayerData($id, $datafilesPath) {
         $em = $this->getDoctrine()->getManager();
         $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UploadfileLayer p where p.id=' . $id)
                 ->getResult();
@@ -788,7 +788,7 @@ class DefaultController extends Controller {
         return new Response(\json_encode(array('success' => $success, 'datatype' => $geom['datatype'], 'message' => $message, 'layer' => $layerData, 'sld' => $sld_json, 'geomdata' => $geom)));
     }
 
-    private function getHeatmapLayerData($id, $datafilesPath) {
+    protected function getHeatmapLayerData($id, $datafilesPath) {
         $em = $this->getDoctrine()->getManager();
         $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:LeafletClusterLayer p where p.id=' . $id)
                 ->getResult();
@@ -806,7 +806,7 @@ class DefaultController extends Controller {
         return new Response(\json_encode(array('success' => $success, 'datatype' => $geom['datatype'], 'message' => $message, 'layer' => $layerData, 'sld' => $sld_json, 'geomdata' => $geom)));
     }
 
-    private function getThematicMapLayerData($id, $datafilesPath) {
+    protected function getThematicMapLayerData($id, $datafilesPath) {
         $em = $this->getDoctrine()->getManager();
         $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:ThematicMap p where p.id=' . $id)
                 ->getResult();
@@ -838,7 +838,7 @@ class DefaultController extends Controller {
         return new Response(\json_encode(array('success' => $success, 'datatype' => $geom['datatype'], 'message' => $message, 'layer' => $layerData, 'sld' => $sld_json, 'geomdata' => $geom)));
     }
 
-    private function getClusterLayerData($id, $datafilesPath) {
+    protected function getClusterLayerData($id, $datafilesPath) {
         $em = $this->getDoctrine()->getManager();
         $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:LeafletClusterLayer p where p.id=' . $id)
                 ->getResult();
@@ -856,7 +856,7 @@ class DefaultController extends Controller {
         return new Response(\json_encode(array('success' => $success, 'datatype' => $geom['datatype'], 'message' => $message, 'layer' => $layerData, 'sld' => $sld_json, 'geomdata' => $geom)));
     }
 
-    private function getUserdrawLayerData($datafilesPath) {
+    protected function getUserdrawLayerData($datafilesPath) {
 
         $geom['geom'] = $this->getUserDrawGeometries();
         $geom['datatype'] = 'geojson';
@@ -877,7 +877,7 @@ class DefaultController extends Controller {
         return new Response(\json_encode(array('success' => true, 'datatype' => $geom['datatype'], 'message' => 'User draw geometries', 'layer' => $layerData, 'sld' => null, 'geomdata' => $geom)));
     }
 
-    private function getUserdrawLayerDataFromID($datafilesPath, $id) {
+    protected function getUserdrawLayerDataFromID($datafilesPath, $id) {
 
         $em = $this->getDoctrine()->getManager();
         $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UserDrawLayer p where p.id=' . $id)->getResult();
@@ -905,7 +905,7 @@ class DefaultController extends Controller {
         return new Response(\json_encode(array('success' => true, 'datatype' => $geom['datatype'], 'message' => 'User draw geometries', 'layer' => $layerData, 'sld' => null, 'geomdata' => $geom)));
     }
 
-    private function getGeomJsonData($userid, $topojson_type, $uploadfile_id, $datafilesPath) {
+    protected function getGeomJsonData($userid, $topojson_type, $uploadfile_id, $datafilesPath) {
         $conn = $this->get('database_connection');
         $geom = array();
 
@@ -966,7 +966,7 @@ class DefaultController extends Controller {
         return $geom;
     }
 
-    private function setLayerInfo($layer) {
+    protected function setLayerInfo($layer) {
         $layerData = array();
         $layerData['id'] = $layer->getId();
         $layerData['layerTitle'] = $layer->getLayerTitle();
@@ -988,7 +988,7 @@ class DefaultController extends Controller {
         return $layerData;
     }
 
-    private function getWFSLayerData($id, $datafilesPath, $source) {
+    protected function getWFSLayerData($id, $datafilesPath, $source) {
         
     }
 
@@ -997,7 +997,7 @@ class DefaultController extends Controller {
      *
      */
 
-    private function getUserDrawGeometries() {
+    protected function getUserDrawGeometries() {
         $user = $this->getUser();
         if (!$user) {
             return null;
@@ -1008,7 +1008,7 @@ class DefaultController extends Controller {
         return $stmt;
     }
 
-    private function getUserDrawLayerGeometries($id) {
+    protected function getUserDrawLayerGeometries($id) {
         $user = $this->getUser();
         $conn = $this->get('database_connection');
         if (!$user) {
@@ -1025,7 +1025,7 @@ class DefaultController extends Controller {
      *
      */
 
-    private function getSldContent($sldFilename) {
+    protected function getSldContent($sldFilename) {
         // sld path for sld file
         $sldPath = $this->get('kernel')->getRootDir() . '/../Data';
         if (isset($sldFilename) && $sldFilename != '' && file_exists($sldPath . '/sld/' . $sldFilename)) {
@@ -1045,7 +1045,7 @@ class DefaultController extends Controller {
         return '';
     }
 
-    private function processChild($children, $returnJson) {
+    protected function processChild($children, $returnJson) {
 
         $responseJson = array();
         $res_array = array();
@@ -1078,7 +1078,7 @@ class DefaultController extends Controller {
         return $returnJson;
     }
 
-    private function getSldContent_origin($sldFilename) {
+    protected function getSldContent_origin($sldFilename) {
         // sld path for sld file
         $sldPath = $this->get('kernel')->getRootDir() . '/../Data';
         if (isset($sldFilename) && $sldFilename != '' && file_exists($sldPath . '/sld/' . $sldFilename)) {

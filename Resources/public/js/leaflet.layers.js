@@ -450,7 +450,7 @@ L.MAP2U.layers = function (options) {
         });
         if (maploaded === false || (maploaded === true && thematicmap_layer && !thematicmap_layer.layer)) {
 
-            this.addUploadfile(Routing.generate('default_uploadfile_info',{'_locale':  window.locale}), opt.datasource, opt);
+            this.addUploadfile(Routing.generate('default_uploadfile_info', {'_locale': window.locale}), opt.datasource, opt);
 
         }
 
@@ -473,7 +473,7 @@ L.MAP2U.layers = function (options) {
         var _this = this;
 
         $.ajax({
-            url: Routing.generate('leaflet_maplayerinfo',{'_locale':  window.locale}),
+            url: Routing.generate('leaflet_maplayerinfo', {'_locale': window.locale}),
             type: 'GET',
             beforeSend: function () {
 
@@ -544,7 +544,7 @@ L.MAP2U.layers = function (options) {
 
 
         $.ajax({
-            url: Routing.generate('leaflet_maplayer',{'_locale': window.locale}),
+            url: Routing.generate('leaflet_maplayer', {'_locale': window.locale}),
             type: 'GET',
             beforeSend: function () {
 
@@ -752,7 +752,7 @@ L.MAP2U.layers = function (options) {
 
             var geoJsonUrl = "http://" + layer.hostName + "&typeName=" + layer.layerName + "&maxFeatures=5000&srsName=EPSG:4326&outputFormat=json";
             $.ajax({
-                url: Routing.generate('default_geoserver_wfs',{'_locale':  window.locale}),
+                url: Routing.generate('default_geoserver_wfs', {'_locale': window.locale}),
                 type: 'POST',
                 beforeSend: function () {
 
@@ -808,7 +808,7 @@ L.MAP2U.layers = function (options) {
         }
 
         var json_data;
-        if(result.geomdata && result.geomdata['geom']===undefined)
+        if (result.geomdata && result.geomdata['geom'] === undefined)
             return;
         if (typeof result.geomdata === 'object' && typeof result.geomdata['geom'] !== 'object')
             json_data = JSON.parse(result.geomdata['geom']);
@@ -978,7 +978,7 @@ L.MAP2U.layers = function (options) {
                         }
                         else {
                             $.ajax({
-                                url: Routing.generate('draw_content',{'_locale':  window.locale}),
+                                url: Routing.generate('draw_content', {'_locale': window.locale}),
                                 method: 'GET',
                                 beforeSend: function () {
 
@@ -1019,7 +1019,7 @@ L.MAP2U.layers = function (options) {
                             radius = e.target._mRadius;
                         }
                         $.ajax({
-                            url: Routing.generate('draw_' + e.target.type,{'_locale':  window.locale}),
+                            url: Routing.generate('draw_' + e.target.type, {'_locale': window.locale}),
                             method: 'GET',
                             beforeSend: function () {
 
@@ -1050,6 +1050,8 @@ L.MAP2U.layers = function (options) {
                                 //  alert(JSON.stringify(html));
                             }
                         });
+                    }
+                    else if (_this._map.drawControl._toolbars.edit._activeMode && _this._map.drawControl._toolbars.edit._activeMode.handler.type === 'remove') {
                     }
                     ;
                 });
@@ -1295,17 +1297,17 @@ L.MAP2U.layers = function (options) {
         if (layer.type === 'topojsonfile' || layer.type === 'shapefile_topojson' || layer.type === 'topojson' || layer.type === 'geojson') {
             var url;
             if (layer.layerType !== undefined && layer.layerType === 'uploadfile')
-                url = Routing.generate('leaflet_uploadfile',{'_locale':  window.locale});
+                url = Routing.generate('leaflet_uploadfile', {'_locale': window.locale});
             else
             {
                 if (layer.layerType === 'uploadfilelayer')
                 {
-                  
-                    url = Routing.generate('leaflet_maplayer',{'_locale':  window.locale});
+
+                    url = Routing.generate('leaflet_maplayer', {'_locale': window.locale});
                 }
                 else if (layer.layerType === 'leafletcluster')
                 {
-                    url = Routing.generate('leaflet_clusterlayer',{'_locale':  window.locale});
+                    url = Routing.generate('leaflet_clusterlayer', {'_locale': window.locale});
                 }
                 else if (layer.layerType === 'wms') {
 
@@ -1330,7 +1332,7 @@ L.MAP2U.layers = function (options) {
 
                         var geoJsonUrl = "http://" + layer.hostName + "&typeName=" + layer.layerName + "&maxFeatures=5000&srsName=EPSG:4326&outputFormat=json";
                         $.ajax({
-                            url: Routing.generate('default_geoserver_wfs',{'_locale':  window.locale}),
+                            url: Routing.generate('default_geoserver_wfs', {'_locale': window.locale}),
                             type: 'POST',
                             data: {
                                 address: geoJsonUrl
@@ -1861,7 +1863,7 @@ L.MAP2U.layers = function (options) {
                                         }
                                         else {
                                             $.ajax({
-                                                url: Routing.generate('draw_content',{'_locale':  window.locale}),
+                                                url: Routing.generate('draw_content', {'_locale': window.locale}),
                                                 method: 'GET',
                                                 beforeSend: function () {
 
@@ -1899,7 +1901,7 @@ L.MAP2U.layers = function (options) {
                                             radius = e.target._mRadius;
                                         }
                                         $.ajax({
-                                            url: Routing.generate('draw_' + e.target.type,{'_locale':  window.locale}),
+                                            url: Routing.generate('draw_' + e.target.type, {'_locale': window.locale}),
                                             method: 'GET',
                                             data: {
                                                 id: e.target.id,
@@ -1920,6 +1922,8 @@ L.MAP2U.layers = function (options) {
                                                 //  alert(JSON.stringify(html));
                                             }
                                         });
+                                    }
+                                    else if (_this._map.drawControl._toolbars.edit._activeMode && _this._map.drawControl._toolbars.edit._activeMode.handler.type === 'remove') {
                                     }
                                     ;
                                 });
@@ -2388,7 +2392,7 @@ L.MAP2U.layers = function (options) {
                             if (e.target.options.tip_times100 === true) {
                                 p = parseFloat(p) * 100;
                             }
-                            if (e.target.options.tip_number !== undefined  && e.target.options.tip_number !== null && e.target.options.tip_number !== '') {
+                            if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== null && e.target.options.tip_number !== '') {
                                 p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
                             }
                             p = p + "%";
@@ -2404,7 +2408,7 @@ L.MAP2U.layers = function (options) {
                             if (e.target.options.tip_times100 === true) {
                                 p = parseFloat(p) * 100;
                             }
-                            if (e.target.options.tip_number !== undefined  && e.target.options.tip_number !== null && e.target.options.tip_number !== '') {
+                            if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== null && e.target.options.tip_number !== '') {
                                 p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
                             }
                             p = p + "%";
@@ -2417,14 +2421,14 @@ L.MAP2U.layers = function (options) {
                             if (e.target.options.tip_times100 === true) {
                                 p = parseFloat(p) * 100;
                             }
-                            if (e.target.options.tip_number !== undefined  && e.target.options.tip_number !== null && e.target.options.tip_number !== '') {
+                            if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== null && e.target.options.tip_number !== '') {
                                 p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
                             }
                             p = p + "%";
                         }
                     }
                 }
-                
+
                 options.map_tooltip.classed("hidden", false)
                         .attr("style", "left:" + (mouse.x + 30) + "px;top:" + (mouse.y - 35) + "px")
                         .html(p);
@@ -2754,7 +2758,7 @@ L.MAP2U.layers = function (options) {
         $('div.sidebar_content div.section.overlay-layers div#overlayers_plus').unbind('click');
         $('div.sidebar_content div.section.overlay-layers div#overlayers_plus').on('click', function () {
             $.ajax({
-                url: Routing.generate('default_mapoverlayselectionform',{'_locale':  window.locale}),
+                url: Routing.generate('default_mapoverlayselectionform', {'_locale': window.locale}),
                 type: 'GET',
                 beforeSend: function () {
 
@@ -2921,7 +2925,7 @@ L.MAP2U.layers = function (options) {
             });
             formData.append('data', layerdata);
             $.ajax({
-                url: Routing.generate('leaflet_save_mapoverlayers',{'_locale':  window.locale}),
+                url: Routing.generate('leaflet_save_mapoverlayers', {'_locale': window.locale}),
                 type: 'POST',
                 beforeSend: function () {
 
@@ -2987,17 +2991,17 @@ L.MAP2U.layers = function (options) {
         var legend_label = I18n.t('javascripts.map.layers.' + title);
         if (legend_label === undefined || legend_label === null || legend_label.indexOf('missing ') === 1)
         {
-         //   if (title.length > 25)
-         //       label.append(title.substr(0, 22) + "...");
-         //   else
-                label.append(title);
+            //   if (title.length > 25)
+            //       label.append(title.substr(0, 22) + "...");
+            //   else
+            label.append(title);
         }
         else
         {
-          //  if (legend_label.length > 25)
-          //      label.append(legend_label.substr(0, 22) + "...");
-         //   else
-                label.append(legend_label);
+            //  if (legend_label.length > 25)
+            //      label.append(legend_label.substr(0, 22) + "...");
+            //   else
+            label.append(legend_label);
         }
 
         label_div.appendTo(item);
