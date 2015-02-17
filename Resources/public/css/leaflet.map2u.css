@@ -364,11 +364,22 @@ div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li {
     display: inline-block;
 }
 
-div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li.selected {
+div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li.selected,
+div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li > ul.layer_legend > li.overlay_group_li.selected
+{
     background-color: #08C;
 }
-div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li.selected > label {
+div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li.selected > label,
+div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li> ul.layer_legend > li.overlay_group_li.selected > label
+{
     color: white;
+}
+
+
+
+.group_layername_label {
+    width:128px;
+    cursor: pointer;
 }
 
 .layername_label {
