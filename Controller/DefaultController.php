@@ -44,7 +44,7 @@ class DefaultController extends Controller {
      */
     public function userLayersAction() {
         $em = $this->getDoctrine()->getManager();
-
+        $private_userdraw_layers = null;
         if ($this->getUser()) {
             $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UploadfileLayer p where p.userId=' . $this->getUser()->getId() . ' or (p.published = true and p.public = true ) ORDER BY p.seq ASC')
                     ->getResult();
@@ -76,12 +76,12 @@ class DefaultController extends Controller {
                     ->getResult();
         }
         if ($this->getUser()) {
-            $userdraw_layers = $em->createQuery("SELECT p FROM Map2uCoreBundle:UserDrawLayer p  ORDER BY p.name ASC")
-                    ->getResult();
-        } else {
-            $userdraw_layers = $em->createQuery("SELECT p FROM Map2uCoreBundle:UserDrawLayer p where  p.published = true and lower(p.name) != 'private only' and lower(p.name) != 'private' ORDER BY p.name ASC")
+            $private_userdraw_layers = $em->createQuery("SELECT p FROM Map2uCoreBundle:UserDrawLayer p  ORDER BY p.name ASC")
                     ->getResult();
         }
+        $public_userdraw_layers = $em->createQuery("SELECT p FROM Map2uCoreBundle:UserDrawLayer p where  p.published = true and lower(p.name) != 'private only' and lower(p.name) != 'private' ORDER BY p.name ASC")
+                ->getResult();
+
         if ($this->getUser()) {
 
             $wmslayers = $em->createQuery('SELECT u FROM Map2uCoreBundle:GeoServerLayer u WHERE  (u.public=true and u.published=true)  or u.userId=' . $this->getUser()->getId() . '  order by u.seq')
@@ -200,20 +200,59 @@ class DefaultController extends Controller {
                 array_push($layersData, $layerData);
             }
         }
-        if ($userdraw_layers) {
-            foreach ($userdraw_layers as $layer) {
+        if ($public_userdraw_layers) {
+            $communityLayerData = array();
+            $communityLayerData['id'] = 1;
+            $communityLayerData['datasource'] = 1;
+            $communityLayerData['layerTitle'] = 'Community layers';
+            $communityLayerData['layerName'] = 'Community layers';
+            $communityLayerData['layerType'] = 'group';
+            $communityLayerData['layerShowInSwitcher'] = true;
+            $communityLayerData['filename'] = "userdrawlayer-group";
+            $communityLayerData['layers'] = array();
+            foreach ($public_userdraw_layers as $layer) {
+                $layerData = array();
+                $layerData['id'] = $layer->getId();
+                $layerData['datasource'] = $layer->getId();
+                $layerData['layerTitle'] = $layer->getName();
+                $layerData['layerName'] = $layer->getName();
+                $layerData['public'] = true;
+                $layerData['groupName'] = "Community layers";
+                $layerData['layerType'] = "userdrawlayer";
+                $layerData['clusterLayer'] = false;
+                $layerData['layerShowInSwitcher'] = true;
+                $layerData['defaultShowOnMap'] = $layer->getDefaultShowOnMap();
+                $layerData['filename'] = "userdrawlayer-" . $layer->getName();
+                array_push($communityLayerData['layers'], $layerData);
+            }
+            array_push($layersData, $communityLayerData);
+        }
+        if ($private_userdraw_layers) {
+            $personalLayerData = array();
+            $personalLayerData['id'] = 2;
+            $personalLayerData['datasource'] = 2;
+            $personalLayerData['layerTitle'] = 'My personal layers';
+            $personalLayerData['layerName'] = 'My personal layers';
+            $personalLayerData['layerType'] = 'group';
+            $personalLayerData['layerShowInSwitcher'] = true;
+            $personalLayerData['filename'] = "userdrawlayer-group";
+            $personalLayerData['layers'] = array();
+            foreach ($private_userdraw_layers as $layer) {
                 $layerData = array();
                 $layerData['id'] = $layer->getId();
                 $layerData['datasource'] = $layer->getId();
                 $layerData['layerTitle'] = $layer->getName();
                 $layerData['layerName'] = $layer->getName();
                 $layerData['layerType'] = "userdrawlayer";
+                $layerData['public'] = false;
+                $layerData['groupName'] = "My personal layers";
                 $layerData['clusterLayer'] = false;
                 $layerData['layerShowInSwitcher'] = true;
                 $layerData['defaultShowOnMap'] = $layer->getDefaultShowOnMap();
                 $layerData['filename'] = "userdrawlayer-" . $layer->getName();
-                array_push($layersData, $layerData);
+                array_push($personalLayerData['layers'], $layerData);
             }
+            array_push($layersData, $personalLayerData);
         }
         return new Response(\json_encode(array('success' => $success, 'message' => $message, 'layers' => $layersData)));
 
@@ -351,6 +390,8 @@ class DefaultController extends Controller {
         //   $user = $this->getUser();
         $id = $request->get("id");
         $layertype = $request->get("layerType");
+        $public = $request->get("public");
+
         $source = $request->get("source");
         $data = null;
         // datafiles path for uploaded shapefiles and created topojson files
@@ -377,10 +418,10 @@ class DefaultController extends Controller {
                 $data = $this->getWFSLayerData($id, $datafilesPath, $source);
                 break;
             case 'userdraw':
-                $data = $this->getUserdrawLayerData($datafilesPath);
+                $data = $this->getUserdrawLayerData($datafilesPath, $public);
                 break;
             case 'userdrawlayer':
-                $data = $this->getUserdrawLayerDataFromID($datafilesPath, $id);
+                $data = $this->getUserdrawLayerDataFromID($datafilesPath, $id, $public);
 
                 break;
         }
@@ -584,7 +625,7 @@ class DefaultController extends Controller {
         return new Response(\json_encode(array('success' => true, 'message' => 'User draw name  not exist')));
     }
 
-    protected  function getClustermapInfo($id) {
+    protected function getClustermapInfo($id) {
         $em = $this->getDoctrine()->getManager();
         $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:LeafletClusterLayer p where p.id=' . $id)
                 ->getResult();
@@ -856,9 +897,9 @@ class DefaultController extends Controller {
         return new Response(\json_encode(array('success' => $success, 'datatype' => $geom['datatype'], 'message' => $message, 'layer' => $layerData, 'sld' => $sld_json, 'geomdata' => $geom)));
     }
 
-    protected function getUserdrawLayerData($datafilesPath) {
+    protected function getUserdrawLayerData($datafilesPath, $public) {
 
-        $geom['geom'] = $this->getUserDrawGeometries();
+        $geom['geom'] = $this->getUserDrawGeometries($public);
         $geom['datatype'] = 'geojson';
         $layerData = array();
         $layerData['id'] = -1;
@@ -877,14 +918,14 @@ class DefaultController extends Controller {
         return new Response(\json_encode(array('success' => true, 'datatype' => $geom['datatype'], 'message' => 'User draw geometries', 'layer' => $layerData, 'sld' => null, 'geomdata' => $geom)));
     }
 
-    protected function getUserdrawLayerDataFromID($datafilesPath, $id) {
+    protected function getUserdrawLayerDataFromID($datafilesPath, $id, $public) {
 
         $em = $this->getDoctrine()->getManager();
         $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UserDrawLayer p where p.id=' . $id)->getResult();
         if (!$layers) {
             return new Response(\json_encode(array('success' => true, 'message' => "User draw layer id:$id not exist")));
         }
-        $geom['geom'] = $this->getUserDrawLayerGeometries($id);
+        $geom['geom'] = $this->getUserDrawLayerGeometries($id, $public);
 
         $geom['datatype'] = 'geojson';
         $layerData = array();
@@ -911,14 +952,13 @@ class DefaultController extends Controller {
 
         $geom['datatype'] = "geojson";
 
-        $sql1="SELECT EXISTS (SELECT 1  FROM   pg_catalog.pg_class c JOIN   pg_catalog.pg_namespace n ON n.oid = c.relnamespace  WHERE  n.nspname = 'public' AND c.relname = 'useruploadfile_geoms_" . $uploadfile_id . "')";
+        $sql1 = "SELECT EXISTS (SELECT 1  FROM   pg_catalog.pg_class c JOIN   pg_catalog.pg_namespace n ON n.oid = c.relnamespace  WHERE  n.nspname = 'public' AND c.relname = 'useruploadfile_geoms_" . $uploadfile_id . "')";
         $stmt1 = $conn->fetchAll($sql1);
         // if geometry table not exist return empty array
-        if($stmt1[0]['exists']===false)
-        {
+        if ($stmt1[0]['exists'] === false) {
             return $geom;
         }
-                
+
         $sql = "SELECT column_name FROM information_schema.columns WHERE table_name='useruploadfile_geoms_" . $uploadfile_id . "'";
         $stmt = $conn->fetchAll($sql);
 
@@ -997,24 +1037,29 @@ class DefaultController extends Controller {
      *
      */
 
-    protected function getUserDrawGeometries() {
+    protected function getUserDrawGeometries($public) {
         $user = $this->getUser();
         if (!$user) {
             return null;
         }
         $conn = $this->get('database_connection');
-        $tsql = "select a.id as ogc_fid,a.id as ogc_id, a.name as keyname , a.geom_type , a.radius , a.buffer ,st_asgeojson(b.the_geom) as feature from userdrawgeometries a, userdrawgeometries_geom b where (a.b_public=true or a.user_id=" . $user->getId() . ") and a.id=b.userdrawgeometries_id";
+        if ($public) {
+            $tsql = "select a.id as ogc_fid,a.id as ogc_id, a.name as keyname , a.geom_type , a.radius , a.buffer ,st_asgeojson(b.the_geom) as feature from userdrawgeometries a, userdrawgeometries_geom b where a.b_public=true  and a.id=b.userdrawgeometries_id";
+        } else {
+            $tsql = "select a.id as ogc_fid,a.id as ogc_id, a.name as keyname , a.geom_type , a.radius , a.buffer ,st_asgeojson(b.the_geom) as feature from userdrawgeometries a, userdrawgeometries_geom b where  a.user_id=" . $user->getId() . " and a.id=b.userdrawgeometries_id";
+        }
         $stmt = $conn->fetchAll($tsql);
         return $stmt;
     }
 
-    protected function getUserDrawLayerGeometries($id) {
+    protected function getUserDrawLayerGeometries($id, $public) {
         $user = $this->getUser();
         $conn = $this->get('database_connection');
-        if (!$user) {
+        if ($public) {
             $tsql = "select a.id as ogc_fid,a.id as ogc_id, a.name as keyname , a.geom_type , a.radius , a.buffer ,st_asgeojson(b.the_geom) as feature from userdrawgeometries a, userdrawgeometries_geom b where a.userdrawlayer_id=" . $id . " and a.b_public=true  and a.id=b.userdrawgeometries_id";
         } else {
-            $tsql = "select a.id as ogc_fid,a.id as ogc_id, a.name as keyname , a.geom_type , a.radius , a.buffer ,st_asgeojson(b.the_geom) as feature from userdrawgeometries a, userdrawgeometries_geom b where (a.b_public=true or a.user_id=" . $user->getId() . ") and a.userdrawlayer_id=" . $id . " and a.id=b.userdrawgeometries_id";
+            $tsql = "select a.id as ogc_fid,a.id as ogc_id, a.name as keyname , a.geom_type , a.radius , a.buffer ,st_asgeojson(b.the_geom) as feature from userdrawgeometries a, userdrawgeometries_geom b where  a.user_id=" . $user->getId() . " and a.userdrawlayer_id=" . $id . " and a.id=b.userdrawgeometries_id";
+            //         $tsql = "select a.id as ogc_fid,a.id as ogc_id, a.name as keyname , a.geom_type , a.radius , a.buffer ,st_asgeojson(b.the_geom) as feature from userdrawgeometries a, userdrawgeometries_geom b where (a.b_public=true or a.user_id=" . $user->getId() . ") and a.userdrawlayer_id=" . $id . " and a.id=b.userdrawgeometries_id";
         }
         $stmt = $conn->fetchAll($tsql);
         return $stmt;
