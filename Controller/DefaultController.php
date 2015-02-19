@@ -79,7 +79,7 @@ class DefaultController extends Controller {
             $private_userdraw_layers = $em->createQuery("SELECT p FROM Map2uCoreBundle:UserDrawLayer p  ORDER BY p.name ASC")
                     ->getResult();
         }
-        $public_userdraw_layers = $em->createQuery("SELECT p FROM Map2uCoreBundle:UserDrawLayer p where  p.published = true and lower(p.name) != 'private only' and lower(p.name) != 'private' ORDER BY p.name ASC")
+        $public_userdraw_layers = $em->createQuery("SELECT p FROM Map2uCoreBundle:UserDrawLayer p where  p.published = true  ORDER BY p.name ASC")
                 ->getResult();
 
         if ($this->getUser()) {
@@ -213,6 +213,7 @@ class DefaultController extends Controller {
             foreach ($public_userdraw_layers as $layer) {
                 $layerData = array();
                 $layerData['id'] = $layer->getId();
+                $layerData['layerId'] = $layer->getId();
                 $layerData['datasource'] = $layer->getId();
                 $layerData['layerTitle'] = $layer->getName();
                 $layerData['layerName'] = $layer->getName();
@@ -418,7 +419,7 @@ class DefaultController extends Controller {
                 $data = $this->getWFSLayerData($id, $datafilesPath, $source);
                 break;
             case 'userdraw':
-                $data = $this->getUserdrawLayerData($datafilesPath, $id,$public);
+                $data = $this->getUserdrawLayerData($datafilesPath, $id, $public);
                 break;
             case 'userdrawlayer':
                 $data = $this->getUserdrawLayerDataFromID($datafilesPath, $id, $public);
@@ -897,9 +898,9 @@ class DefaultController extends Controller {
         return new Response(\json_encode(array('success' => $success, 'datatype' => $geom['datatype'], 'message' => $message, 'layer' => $layerData, 'sld' => $sld_json, 'geomdata' => $geom)));
     }
 
-    protected function getUserdrawLayerData($datafilesPath, $id,$public) {
+    protected function getUserdrawLayerData($datafilesPath, $id, $public) {
 
-        $geom['geom'] = $this->getUserDrawGeometries($id,$public);
+        $geom['geom'] = $this->getUserDrawGeometries($id, $public);
         $geom['datatype'] = 'geojson';
         $layerData = array();
         $layerData['id'] = -1;
@@ -1037,16 +1038,16 @@ class DefaultController extends Controller {
      *
      */
 
-    protected function getUserDrawGeometries($id,$public) {
+    protected function getUserDrawGeometries($id, $public) {
         $user = $this->getUser();
         if (!$user) {
             return null;
         }
         $conn = $this->get('database_connection');
         if ($public) {
-            $tsql = "select b.id as ogc_fid,b.id as ogc_id, b.name as keyname , b.geom_type , b.radius , b.buffer ,st_asgeojson(c.the_geom) as feature from userdrawlayers a,userdrawgeometries b, userdrawgeometries_geom c where a.id=". $id ." and a.id=b.userdrawlayer_id and b.b_public=true  and b.id=c.userdrawgeometries_id";
+            $tsql = "select b.id as ogc_fid,b.id as ogc_id, b.name as keyname , b.geom_type , b.radius , b.buffer ,st_asgeojson(c.the_geom) as feature from userdrawlayers a,userdrawgeometries b, userdrawgeometries_geom c where a.id=" . $id . " and a.id=b.userdrawlayer_id and b.b_public=true  and b.id=c.userdrawgeometries_id";
         } else {
-            $tsql = "select b.id as ogc_fid,b.id as ogc_id, b.name as keyname , b.geom_type , b.radius , b.buffer ,st_asgeojson(c.the_geom) as feature from userdrawlayers a,userdrawgeometries b, userdrawgeometries_geom c where  a.id=". $id ." and a.id=b.userdrawlayer_id and a.user_id=" . $user->getId() . " and b.id=c.userdrawgeometries_id";
+            $tsql = "select b.id as ogc_fid,b.id as ogc_id, b.name as keyname , b.geom_type , b.radius , b.buffer ,st_asgeojson(c.the_geom) as feature from userdrawlayers a,userdrawgeometries b, userdrawgeometries_geom c where  a.id=" . $id . " and a.id=b.userdrawlayer_id and b.user_id=" . $user->getId() . " and b.id=c.userdrawgeometries_id";
         }
         $stmt = $conn->fetchAll($tsql);
         return $stmt;
@@ -1056,9 +1057,9 @@ class DefaultController extends Controller {
         $user = $this->getUser();
         $conn = $this->get('database_connection');
         if ($public) {
-            $tsql = "select b.id as ogc_fid,b.id as ogc_id, b.name as keyname , b.geom_type , b.radius , b.buffer ,st_asgeojson(c.the_geom) as feature from userdrawlayers a,userdrawgeometries b, userdrawgeometries_geom c where a.id=". $id ." and a.id=b.userdrawlayer_id and b.b_public=true  and b.id=c.userdrawgeometries_id";
+            $tsql = "select b.id as ogc_fid,b.id as ogc_id, b.name as keyname , b.geom_type , b.radius , b.buffer ,st_asgeojson(c.the_geom) as feature from userdrawlayers a,userdrawgeometries b, userdrawgeometries_geom c where a.id=" . $id . " and a.id=b.userdrawlayer_id and b.b_public=true  and b.id=c.userdrawgeometries_id";
         } else {
-            $tsql = "select b.id as ogc_fid,b.id as ogc_id, b.name as keyname , b.geom_type , b.radius , b.buffer ,st_asgeojson(c.the_geom) as feature from userdrawlayers a,userdrawgeometries b, userdrawgeometries_geom c where a.id=". $id ." and a.user_id=" . $user->getId() . " and a.id=b.userdrawlayer_id and b.id=c.userdrawgeometries_id";
+            $tsql = "select b.id as ogc_fid,b.id as ogc_id, b.name as keyname , b.geom_type , b.radius , b.buffer ,st_asgeojson(c.the_geom) as feature from userdrawlayers a,userdrawgeometries b, userdrawgeometries_geom c where a.id=" . $id . " and b.user_id=" . $user->getId() . " and a.id=b.userdrawlayer_id and b.id=c.userdrawgeometries_id";
             //         $tsql = "select a.id as ogc_fid,a.id as ogc_id, a.name as keyname , a.geom_type , a.radius , a.buffer ,st_asgeojson(b.the_geom) as feature from userdrawgeometries a, userdrawgeometries_geom b where (a.b_public=true or a.user_id=" . $user->getId() . ") and a.userdrawlayer_id=" . $id . " and a.id=b.userdrawgeometries_id";
         }
         $stmt = $conn->fetchAll($tsql);

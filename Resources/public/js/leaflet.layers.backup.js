@@ -351,46 +351,35 @@ L.MAP2U.layers = function (options) {
     };
     control.reorderLayers = function () {
         var layers = this._map.dataLayers;
-        var showUserDraw = false;
         var activelayer = $("div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li.selected");
         $("div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li").map(function (i) {
 
             $(this).data('index', i);
 
-
             if (layers[$(this).data('index')].index_id !== undefined) {
                 if (activelayer.data("index") !== undefined && parseInt(activelayer.data("index")) === parseInt($(this).data('index'))) {
 
-
-                    if (layers[$(this).data('index')].layerType === 'group' && layers[$(this).data('index')].filename === 'userdrawlayer-group') {
-                        $(this).find("li.overlay_group_li").map(function () {
-                            var layerId = $(this).data("layerId");
-                            var layerName = $(this).data("layerName");
-                            var groupName = $(this).data("groupName");
-                            window.map.eachLayer(function (layer) {
-                                if (layerId !== undefined && layerName !== undefined && groupName !== undefined && layer.layerId === layerId && layer.layerName === layerName && layer.groupName === groupName) {
-                                    layer.bringToFront();
-                                }
-                                ;
-                            });
-                        });
-                        showUserDraw = true;
-                        $(".leaflet-map-pane .leaflet-objects-pane .leaflet-overlay-pane svg.leaflet-zoom-animated").css('z-index', 901);
+                    if (parseInt(layers[$(this).data('index')].index_id) === -1) {
+                        if (layers[$(this).data('index')].layer) {
+                            $(".leaflet-map-pane .leaflet-objects-pane .leaflet-overlay-pane svg.leaflet-zoom-animated").css('z-index', 901);
+                        }
                     }
                     else {
-                        if (parseInt(layers[$(this).data('index')].index_id) === -1)
-                        {
-                            if (layers[$(this).data('index')].layer) {
-                                $(".leaflet-map-pane .leaflet-objects-pane .leaflet-overlay-pane svg.leaflet-zoom-animated").css('z-index', 901);
+                        if (layers[$(this).data('index')].layer !== null && layers[$(this).data('index')].layer !== undefined) {
+
+
+                            if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true)
+                            {
+                                //  alert(map.dataLayers[i].layer._el);
+                                var clusterlayers = layers[$(this).data('index')].layer._featureGroup._layers;
+                                var keys = Object.keys(clusterlayers).map(function (k) {
+                                    return  k;
+                                });
+                                if (clusterlayers[keys[0]] && clusterlayers[keys[0]]._container)
+                                    $(clusterlayers[keys[0]]._container).parent().css("z-index", 901);
                             }
-                        }
-                        else {
-                            if (layers[$(this).data('index')].layer !== null && layers[$(this).data('index')].layer !== undefined) {
-
-
-                                if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true)
-                                {
-                                    //  alert(map.dataLayers[i].layer._el);
+                            else {
+                                if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true) {
                                     var clusterlayers = layers[$(this).data('index')].layer._featureGroup._layers;
                                     var keys = Object.keys(clusterlayers).map(function (k) {
                                         return  k;
@@ -399,54 +388,36 @@ L.MAP2U.layers = function (options) {
                                         $(clusterlayers[keys[0]]._container).parent().css("z-index", 901);
                                 }
                                 else {
-                                    if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true) {
-                                        var clusterlayers = layers[$(this).data('index')].layer._featureGroup._layers;
-                                        var keys = Object.keys(clusterlayers).map(function (k) {
-                                            return  k;
-                                        });
-                                        if (clusterlayers[keys[0]] && clusterlayers[keys[0]]._container)
-                                            $(clusterlayers[keys[0]]._container).parent().css("z-index", 901);
-                                    }
-                                    else {
-                                        if (layers[$(this).data('index')].layer && layers[$(this).data('index')].layer._container) {
-                                            $(layers[$(this).data('index')].layer._container).css("z-index", 901);
-                                        }
+                                    if (layers[$(this).data('index')].layer && layers[$(this).data('index')].layer._container) {
+                                        $(layers[$(this).data('index')].layer._container).css("z-index", 901);
                                     }
                                 }
                             }
                         }
                     }
                 }
-
                 else {
-                    if (layers[$(this).data('index')].layerType === 'group' && layers[$(this).data('index')].filename === 'userdrawlayer-group') {
-                        $(this).find("li.overlay_group_li").map(function () {
-                            var layerId = $(this).data("layerId");
-                            var layerName = $(this).data("layerName");
-                            var groupName = $(this).data("groupName");
-                            window.map.eachLayer(function (layer) {
-                                if (layerId !== undefined && layerName !== undefined && groupName !== undefined && layer.layerId === layerId && layer.layerName === layerName && layer.groupName === groupName) {
-                                    layer.bringToBack();
-                                }
-                                ;
-                            });
-                        });
-                        if (showUserDraw === false)
-                            $(".leaflet-map-pane .leaflet-objects-pane .leaflet-overlay-pane svg.leaflet-zoom-animated").css('z-index', 301 - i);
+                    // if the layer is user draw layer
+                    if (parseInt(layers[$(this).data('index')].index_id) === -1) {
+                        if (layers[$(this).data('index')].layer) {
+                            $(".leaflet-map-pane .leaflet-objects-pane .leaflet-overlay-pane svg.leaflet-zoom-animated").css('z-index', 300 - i);
+                        }
                     }
                     else {
-                        // if the layer is user draw layer
-                        if (parseInt(layers[$(this).data('index')].index_id) === -1) {
-                            if (layers[$(this).data('index')].layer) {
-                                $(".leaflet-map-pane .leaflet-objects-pane .leaflet-overlay-pane svg.leaflet-zoom-animated").css('z-index', 300 - i);
-                            }
-                        }
-                        else {
-                            if (layers[$(this).data('index')].layer !== null && layers[$(this).data('index')].layer !== undefined)
+                        if (layers[$(this).data('index')].layer !== null && layers[$(this).data('index')].layer !== undefined)
+                        {
+                            if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true)
                             {
-                                if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true)
-                                {
-                                    //  alert(map.dataLayers[i].layer._el);
+                                //  alert(map.dataLayers[i].layer._el);
+                                var clusterlayers = layers[$(this).data('index')].layer._featureGroup._layers;
+                                var keys = Object.keys(clusterlayers).map(function (k) {
+                                    return  k;
+                                });
+                                if (clusterlayers[keys[0]] && clusterlayers[keys[0]]._container)
+                                    $(clusterlayers[keys[0]]._container).parent().css("z-index", 300 - i);
+                            }
+                            else {
+                                if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true) {
                                     var clusterlayers = layers[$(this).data('index')].layer._featureGroup._layers;
                                     var keys = Object.keys(clusterlayers).map(function (k) {
                                         return  k;
@@ -455,18 +426,8 @@ L.MAP2U.layers = function (options) {
                                         $(clusterlayers[keys[0]]._container).parent().css("z-index", 300 - i);
                                 }
                                 else {
-                                    if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true) {
-                                        var clusterlayers = layers[$(this).data('index')].layer._featureGroup._layers;
-                                        var keys = Object.keys(clusterlayers).map(function (k) {
-                                            return  k;
-                                        });
-                                        if (clusterlayers[keys[0]] && clusterlayers[keys[0]]._container)
-                                            $(clusterlayers[keys[0]]._container).parent().css("z-index", 300 - i);
-                                    }
-                                    else {
-                                        if (layers[$(this).data('index')].layer && layers[$(this).data('index')].layer._container) {
-                                            $(layers[$(this).data('index')].layer._container).css("z-index", 300 - i);
-                                        }
+                                    if (layers[$(this).data('index')].layer && layers[$(this).data('index')].layer._container) {
+                                        $(layers[$(this).data('index')].layer._container).css("z-index", 300 - i);
                                     }
                                 }
                             }
@@ -580,10 +541,6 @@ L.MAP2U.layers = function (options) {
             control.renderWFSLayer(layer);
             return;
         }
-        if (layer.layerType === 'group') {
-            control.renderGroupLayer(layer);
-            return;
-        }
 
 
         $.ajax({
@@ -601,7 +558,6 @@ L.MAP2U.layers = function (options) {
             },
             //Ajax events
             success: completeHandler = function (response) {
-
                 result = response;
                 if (response === '' || response === undefined || response === null)
                     return;
@@ -625,7 +581,7 @@ L.MAP2U.layers = function (options) {
 
             },
             // Form data
-            data: {id: layer.layerId, layerType: layer.layerType, public: layer.public},
+            data: {id: layer.layerId, layerType: layer.layerType},
             //Options to tell JQuery not to process data or worry about content-type
             cache: false,
             contentType: false
@@ -758,6 +714,14 @@ L.MAP2U.layers = function (options) {
                         }
                     }
                 }
+
+//                if (callback && maplayer) {
+//                    setTimeout(function() {
+//                        callback(maplayer, opt);
+//                    }, 500);
+//
+//                }
+
             },
             // Form data
             data: {id: uploadfile_id},
@@ -766,9 +730,6 @@ L.MAP2U.layers = function (options) {
             contentType: false
                     //   processData: false
         });
-    };
-    control.renderGroupLayer = function (layer) {
-
     };
     control.renderWMSLayer = function (layer) {
         if ((layer.layer === undefined || layer.layer === null) && layer.hostName !== undefined && layer.layerName !== undefined)
@@ -856,14 +817,14 @@ L.MAP2U.layers = function (options) {
         var bounds = d3.geo.bounds(json_data);
         layer.bounds = bounds;
         if (layer.layerType === 'clustermap') {
+
             control.renderClusterLayer(layer, json_data);
             return;
+
         }
         else {
             if (layer.layerType === 'userdraw' || layer.layerType === 'userdrawlayer')
-            {
                 control.renderUserdrawLayer(json_data, layer, opt);
-            }
             else {
 
                 control.renderD3Layer(layer, json_data, sld, {
@@ -905,12 +866,10 @@ L.MAP2U.layers = function (options) {
             var feature;
             if (data[i] !== null && data[i].feature !== null) {
                 var coordinates;
-
                 if (typeof data[i].feature === 'object')
                     coordinates = data[i].feature.coordinates;
                 else
                     coordinates = JSON.parse(data[i].feature).coordinates;
-
                 if ($.isArray(coordinates[0])) {
                     for (var j = 0; j < coordinates[0].length; j++) {
                         var temp = coordinates[0][j][0];
@@ -924,7 +883,6 @@ L.MAP2U.layers = function (options) {
                     coordinates[0] = coordinates[1];
                     coordinates[1] = temp;
                 }
-
                 if (data[i].geom_type === 'polygon')
                 {
                     feature = new L.Polygon(coordinates);
@@ -942,7 +900,6 @@ L.MAP2U.layers = function (options) {
                 {
                     feature = new L.circle(coordinates, data[i].radius);
                 }
-
                 if (data[i].geom_type === 'marker')
                 {
                     feature = L.marker(coordinates);
@@ -956,7 +913,6 @@ L.MAP2U.layers = function (options) {
                 feature.index = _this._map.drawnItems.getLayers().length;
                 feature.type = data[i].geom_type;
                 feature.layerId = -1;
-
                 feature.on('click', function (e) {
 
                     var selectedfeature = e.target;
@@ -1102,17 +1058,10 @@ L.MAP2U.layers = function (options) {
                 if (layer.layerType === 'userdrawlayer')
                 {
                     if (layer.layer === undefined || layer.layer === null)
-                    {
                         layer.layer = new L.FeatureGroup();
-                        layer.layer.layerId = layer.layerId;
-                        layer.layer.layerName = layer.layerName;
-                        layer.layer.groupName = layer.groupName;
-                    }
                     layer.layer.addLayer(feature);
                     if (!_this._map.hasLayer(layer.layer))
-                    {
-                        _this._map.addLayer(layer.layer);
-                    }
+                        _this._map.addLayer(layer.layer)
                 } else {
                     if (layer.layer === undefined || layer.layer === null)
                         layer.layer = _this._map.drawnItems;
@@ -2914,16 +2863,9 @@ L.MAP2U.layers = function (options) {
                     $(this).parent().removeClass("selected");
                 }
             });
-            $('div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li > ul.layer_legend > li.overlay_group_li .group_layername_label').map(function () {
-                if (_that !== this) {
-                    $(this).parent().removeClass("selected");
-                }
-
-            });
             if ($(this).parent().hasClass("selected"))
             {
                 $(this).parent().removeClass("selected");
-
                 $('div.sidebar_content div.section.overlay-layers div#overlayers_zoom_to_layer').addClass('disabled');
                 $('div.sidebar_content div.section.overlay-layers div#overlayers_minus').addClass('disabled');
                 $('div.sidebar_content div.section.overlay-layers div#move_overlayer_up').addClass('disabled');
@@ -2942,47 +2884,6 @@ L.MAP2U.layers = function (options) {
             _this.reorderLayers();
             e.stopPropagation();
         });
-
-
-
-
-        $('div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li > ul.layer_legend > li.overlay_group_li .group_layername_label').unbind('click');
-        $('div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li > ul.layer_legend > li.overlay_group_li .group_layername_label').click(function (e) {
-            var _that = this;
-            $('div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li .layername_label').map(function () {
-                if (_that !== this) {
-                    $(this).parent().removeClass("selected");
-                }
-
-            });
-            $('div.sidebar_content div.section.overlay-layers ul.overlay_ul > li.overlay_li > ul.layer_legend > li.overlay_group_li .group_layername_label').map(function () {
-                if (_that !== this) {
-                    $(this).parent().removeClass("selected");
-                }
-
-            });
-            if ($(this).parent().hasClass("selected"))
-            {
-                $(this).parent().removeClass("selected");
-//                $('div.sidebar_content div.section.overlay-layers div#overlayers_zoom_to_layer').addClass('disabled');
-//                $('div.sidebar_content div.section.overlay-layers div#overlayers_minus').addClass('disabled');
-//                $('div.sidebar_content div.section.overlay-layers div#move_overlayer_up').addClass('disabled');
-//                $('div.sidebar_content div.section.overlay-layers div#move_overlayer_down').addClass('disabled');
-//
-            }
-            else
-            {
-                $(this).parent().addClass("selected");
-//                $('div.sidebar_content div.section.overlay-layers div#overlayers_zoom_to_layer').removeClass('disabled');
-//                $('div.sidebar_content div.section.overlay-layers div#overlayers_minus').removeClass('disabled');
-                $('div.sidebar_content div.section.overlay-layers div#move_overlayer_up').addClass('disabled');
-                $('div.sidebar_content div.section.overlay-layers div#move_overlayer_down').addClass('disabled');
-            }
-
-            _this.reorderLayers();
-            e.stopPropagation();
-        });
-
 
         // save current layers status to server
         $('div.sidebar_content div.section.overlay-layers div#save_overlayers_index').unbind('click');
@@ -3060,81 +2961,6 @@ L.MAP2U.layers = function (options) {
         });
 
     };
-    control.addOverlayChildItem = function (pitem, layer, i, opt, bRefeshButton) {
-        var _this = this;
-        if ($(pitem).find("ul").length === 0) {
-            $(pitem).append("<ul class='layer_legend hidden'></ul>");
-        }
-        var ul = $(pitem).find("ul");
-
-        var subitem = $('<li class="overlay_group_li" data-layerId="' + layer.layerId + '" data-layerName="' + layer.layerName + '" data-groupName="' + layer.groupName + '">')
-                .tooltip({
-                    placement: 'top'
-                })
-                .appendTo(ul);
-
-        subitem.data('index', i);
-        subitem.css('border-bottom', '1px grey dotted');
-
-        var label_div = $("<div>").addClass('group_layername_label');
-        var label = $('<label>')
-                .appendTo(label_div);
-
-        var checked = _this._map.hasLayer(layer.layer);
-        var input = $('<input>')
-                .attr('type', 'checkbox')
-                .prop('checked', checked)
-                .appendTo(subitem);
-
-        //    var legend_icon = $("<div class='layer_legend_icon' style='display:inline-block'><i class='fa fa-plus blue'></i></div>").appendTo(subitem);
-        var title = '';
-        if (layer.layerTitle)
-            title = layer.layerTitle;
-        else
-            title = layer.layerName;
-        var legend_label = I18n.t('javascripts.map.layers.' + title);
-        if (legend_label === undefined || legend_label === null || legend_label.indexOf('missing ') === 1)
-        {
-
-            label.append(title);
-        }
-        else
-        {
-
-            label.append(legend_label);
-        }
-
-        label_div.appendTo(subitem);
-        label_div.css('display', 'inline-block');
-        input.on('change', function () {
-            checked = input.is(':checked');
-            if (checked) {
-                if (!layer.layer)
-                {
-                    control.loadLayer(layer, opt);
-                }
-                else
-                {
-                    if (layer.layer)
-                        _this._map.addLayer(layer.layer);
-                }
-            } else {
-                if (layer.layer)
-                    _this._map.removeLayer(layer.layer);
-            }
-            if (layer.layer)
-                _this._map.fire('overlaylayerchange', {layer: layer.layer});
-        });
-
-        if (layer.defaultShowOnMap === true)
-        {
-            $(input).prop('checked', true)
-                    .trigger('change');
-        }
-        if (bRefeshButton === true)
-            _this.overlayToolButtons();
-
-    };
     control.addOverlayItem = function (layer, i, opt, bRefeshButton) {
         var overlay_layers_ul = $(".leaflet-control-container .section.overlay-layers > ul.overlay_ul");
         var _this = this;
@@ -3202,14 +3028,7 @@ L.MAP2U.layers = function (options) {
                     legend.appendTo(item);
 
                 break;
-            case 'group':
-                $(item).data("group", true);
 
-                $.map(layer.layers, function (data, index) {
-                    data.layerId = data.id;
-                    _this.addOverlayChildItem(item, data, index, opt, bRefeshButton);
-                });
-                break;
             default:
                 if (layer.sld) {
                     var legend = _this.createLegend(layer.sld);
@@ -3219,37 +3038,23 @@ L.MAP2U.layers = function (options) {
                 break;
         }
         input.on('change', function () {
-
-
             checked = input.is(':checked');
-            if ($(this).parent().data("group") === true)
-            {
-
-                $(this).parent().find("li.overlay_group_li input[type='checkbox']").map(function () {
-
-                    $(this).prop("checked", checked).trigger('change');
-                });
-            }
-            else {
-                if (checked) {
-
-                    if (!layer.layer)
-                    {
-                        control.loadLayer(layer, opt);
-                    }
-                    else
-                    {
-                        if (layer.layer)
-                            _this._map.addLayer(layer.layer);
-                    }
-
-                } else {
-                    if (layer.layer)
-                        _this._map.removeLayer(layer.layer);
+            if (checked) {
+                if (!layer.layer)
+                {
+                    control.loadLayer(layer, opt);
                 }
+                else
+                {
+                    if (layer.layer)
+                        _this._map.addLayer(layer.layer);
+                }
+            } else {
                 if (layer.layer)
-                    _this._map.fire('overlaylayerchange', {layer: layer.layer});
+                    _this._map.removeLayer(layer.layer);
             }
+            if (layer.layer)
+                _this._map.fire('overlaylayerchange', {layer: layer.layer});
         });
 
         if (layer.defaultShowOnMap === true)
