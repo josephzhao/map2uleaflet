@@ -1044,9 +1044,9 @@ class DefaultController extends Controller {
         }
         $conn = $this->get('database_connection');
         if ($public) {
-            $tsql = "select a.id as ogc_fid,a.id as ogc_id, a.name as keyname , a.geom_type , a.radius , a.buffer ,st_asgeojson(b.the_geom) as feature from userdrawlayers ,userdrawgeometries a, userdrawgeometries_geom b where a.b_public=true  and a.id=b.userdrawgeometries_id";
+            $tsql = "select b.id as ogc_fid,b.id as ogc_id, b.name as keyname , b.geom_type , b.radius , b.buffer ,st_asgeojson(c.the_geom) as feature from userdrawlayers ,userdrawgeometries a, userdrawgeometries_geom b where a.b_public=true  and a.id=b.userdrawgeometries_id";
         } else {
-            $tsql = "select a.id as ogc_fid,a.id as ogc_id, a.name as keyname , a.geom_type , a.radius , a.buffer ,st_asgeojson(b.the_geom) as feature from userdrawlayers ,userdrawgeometries a, userdrawgeometries_geom b where  a.user_id=" . $user->getId() . " and a.id=b.userdrawgeometries_id";
+            $tsql = "select b.id as ogc_fid,b.id as ogc_id, b.name as keyname , b.geom_type , b.radius , b.buffer ,st_asgeojson(c.the_geom) as feature from userdrawlayers ,userdrawgeometries a, userdrawgeometries_geom b where  a.user_id=" . $user->getId() . " and a.id=b.userdrawgeometries_id";
         }
         $stmt = $conn->fetchAll($tsql);
         return $stmt;
@@ -1056,9 +1056,9 @@ class DefaultController extends Controller {
         $user = $this->getUser();
         $conn = $this->get('database_connection');
         if ($public) {
-            $tsql = "select a.id as ogc_fid,a.id as ogc_id, a.name as keyname , a.geom_type , a.radius , a.buffer ,st_asgeojson(b.the_geom) as feature from userdrawlayers a,userdrawgeometries b, userdrawgeometries_geom c where a.id=". $id ." and a.id=b.userdrawlayer_id and b.b_public=true  and b.id=c.userdrawgeometries_id";
+            $tsql = "select b.id as ogc_fid,b.id as ogc_id, b.name as keyname , b.geom_type , b.radius , b.buffer ,st_asgeojson(c.the_geom) as feature from userdrawlayers a,userdrawgeometries b, userdrawgeometries_geom c where a.id=". $id ." and a.id=b.userdrawlayer_id and b.b_public=true  and b.id=c.userdrawgeometries_id";
         } else {
-            $tsql = "select a.id as ogc_fid,a.id as ogc_id, a.name as keyname , a.geom_type , a.radius , a.buffer ,st_asgeojson(b.the_geom) as feature from userdrawlayers a,userdrawgeometries b, userdrawgeometries_geom c where a.id=". $id ." and a.user_id=" . $user->getId() . " and a.id=b.userdrawlayer_id and b.id=c.userdrawgeometries_id";
+            $tsql = "select b.id as ogc_fid,b.id as ogc_id, b.name as keyname , b.geom_type , b.radius , b.buffer ,st_asgeojson(c.the_geom) as feature from userdrawlayers a,userdrawgeometries b, userdrawgeometries_geom c where a.id=". $id ." and a.user_id=" . $user->getId() . " and a.id=b.userdrawlayer_id and b.id=c.userdrawgeometries_id";
             //         $tsql = "select a.id as ogc_fid,a.id as ogc_id, a.name as keyname , a.geom_type , a.radius , a.buffer ,st_asgeojson(b.the_geom) as feature from userdrawgeometries a, userdrawgeometries_geom b where (a.b_public=true or a.user_id=" . $user->getId() . ") and a.userdrawlayer_id=" . $id . " and a.id=b.userdrawgeometries_id";
         }
         var_dump($tsql);
