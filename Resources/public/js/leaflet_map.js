@@ -6,7 +6,7 @@
 
 
 
-
+OSM.SERVER_URL="localhost:8001/app.php"
 
 window.onload = function () {
     var map;
@@ -16,7 +16,7 @@ window.onload = function () {
     var historyControl;
     var printProvider,
             printControl;
-
+alert(window.location.hash);
 //    var mapapp;
 //    var canvas;
 //    var context;

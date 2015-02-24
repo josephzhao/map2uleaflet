@@ -924,7 +924,22 @@ L.MAP2U.layers = function (options) {
                     coordinates[0] = coordinates[1];
                     coordinates[1] = temp;
                 }
-
+                if (data[i].geom_type === null) {
+                    if (data[i].feature.type === 'Point') {
+                        if (parseFloat(data[i].radius) <= 0.0) {
+                            data[i].geom_type = "marker";
+                        }
+                        else {
+                            data[i].geom_type = "circle";
+                        }
+                    }
+                    if (data[i].feature.type === 'Polygon') {
+                        data[i].geom_type = "polygon";
+                    }
+                    if (data[i].feature.type === 'LineString') {
+                        data[i].geom_type = "polyline";
+                    }
+                }
                 if (data[i].geom_type === 'polygon')
                 {
                     feature = new L.Polygon(coordinates);
