@@ -122,7 +122,19 @@ var HeatmapOverlay = L.Class.extend({
 
         this._heatmap.setData(generatedData);
     },
-    
+    updateRadius:function (newradius) {
+        this.cfg.radius = newradius;
+
+        var data = this._data;
+        var min = data.min;
+        var max = data.max;
+        var clonedArray = $.map(data, function (obj) {
+
+            return  {lat: obj.latlng.lat, lng: obj.latlng.lng, count: obj['count'], radius: newradius};
+        });
+        
+        this.setData({min: min, max: max, data: clonedArray});
+    },
     setData: function(data) {
         this._max = data.max || this._max;
         this._min = data.min || this._min;
