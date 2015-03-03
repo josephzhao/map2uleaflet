@@ -802,7 +802,7 @@ L.D3 = L.Class.extend({
                 if (varFeatureTypeStyle !== undefined && typeof varFeatureTypeStyle === 'object' && varFeatureTypeStyle.Rule !== undefined) {
                     if (varFeatureTypeStyle.Rule.Filter !== undefined) {
                         var rule = varFeatureTypeStyle.Rule;
-                        var ps = this._feature[0];
+                        var ps = _this._feature[0];
                         var pNameExist = false;
                         var propertyName = '';
                         if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
@@ -826,7 +826,7 @@ L.D3 = L.Class.extend({
                                     var properties = p[0][0].__data__.properties;
                                     if (properties[propertyName] !== null && rule.Filter.PropertyIsEqualTo.Literal !== undefined && rule.Filter.PropertyIsEqualTo.Literal !== null && properties[propertyName].toLowerCase() === rule.Filter.PropertyIsEqualTo.Literal.toLowerCase()) {
 
-                                        p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule, false);
+                                        p = _this.setFeatureStyle(p, varFeatureTypeStyle.Rule, false);
                                     }
                                 }
                             }
@@ -852,16 +852,16 @@ L.D3 = L.Class.extend({
                                     if (properties[propertyName] !== null && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary === undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary !== undefined) && parseFloat(properties[propertyName]) <= parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary.Literal))
                                     {
 
-                                        p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule, false);
+                                        p = _this.setFeatureStyle(p, varFeatureTypeStyle.Rule, false);
                                     }
                                     if (properties[propertyName] !== null && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary !== undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary !== undefined) && parseFloat(properties[propertyName]) > parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary.Literal) && parseFloat(properties[propertyName]) <= parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary.Literal)) {
 
-                                        p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule, false);
+                                        p = _this.setFeatureStyle(p, varFeatureTypeStyle.Rule, false);
                                     }
                                     if (properties[propertyName] !== null && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary !== undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary === undefined) && parseFloat(properties[propertyName]) > parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary.Literal))
                                     {
 
-                                        p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule, false);
+                                        p = _this.setFeatureStyle(p, varFeatureTypeStyle.Rule, false);
                                     }
 
                                 }
@@ -870,12 +870,12 @@ L.D3 = L.Class.extend({
                         }
                         else {
 
-                            this._feature = this.setFeatureStyle(this._feature, varFeatureTypeStyle.Rule, false);
+                            this._feature = _this.setFeatureStyle(this._feature, varFeatureTypeStyle.Rule, false);
                         }
                     }
                     else {
 
-                        this._feature = this.setFeatureStyle(this._feature, varFeatureTypeStyle.Rule, false);
+                        this._feature = _this.setFeatureStyle(this._feature, varFeatureTypeStyle.Rule, false);
                     }
                 }
             }
