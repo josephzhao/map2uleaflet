@@ -3368,7 +3368,7 @@ L.MAP2U.layers = function (options) {
                 if (rule.Filter !== undefined) {
                     if (rule.Filter.PropertyIsEqualTo) {
                        // if (rule.Filter.PropertyIsEqualTo.Literal) {
-                            rule_name = rule.name;
+                            rule_name = rule.Name;
                          //   rule_name = rule.Filter.PropertyIsEqualTo.Literal;
                        // }
                         if((rule_name===undefined || rule_name=== null || rule_name.trim() ==='')&&(rule.Filter.PropertyIsEqualTo.Literal)) {
