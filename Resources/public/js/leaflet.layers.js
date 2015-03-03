@@ -3219,11 +3219,12 @@ L.MAP2U.layers = function (options) {
                 break;
             case 'group':
                 $(item).data("group", true);
-
-                $.map(layer.layers, function (data, index) {
-                    data.layerId = data.id;
-                    _this.addOverlayChildItem(item, data, index, opt, bRefeshButton);
-                });
+                if (layer.layers) {
+                    $.map(layer.layers, function (data, index) {
+                        data.layerId = data.id;
+                        _this.addOverlayChildItem(item, data, index, opt, bRefeshButton);
+                    });
+                }
                 break;
             default:
                 if (layer.sld) {
