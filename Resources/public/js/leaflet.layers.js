@@ -3364,16 +3364,13 @@ L.MAP2U.layers = function (options) {
                 var centerY = legendCanvas.height / 2;
                 var legendCtx = legendCanvas.getContext('2d');
                 var rule_name = '';
-                var literal_name=false;
+                var literal_name = false;
                 if (rule.Filter !== undefined) {
+                    rule_name = rule.Name;
                     if (rule.Filter.PropertyIsEqualTo) {
-                       // if (rule.Filter.PropertyIsEqualTo.Literal) {
-                            rule_name = rule.Name;
-                         //   rule_name = rule.Filter.PropertyIsEqualTo.Literal;
-                       // }
-                        if((rule_name===undefined || rule_name=== null || rule_name.trim() ==='')&&(rule.Filter.PropertyIsEqualTo.Literal)) {
+                        if ((rule_name === undefined || rule_name === null || rule_name.trim() === '') && (rule.Filter.PropertyIsEqualTo.Literal)) {
                             rule_name = rule.Filter.PropertyIsEqualTo.Literal;
-                            literal_name=true;
+                            literal_name = true;
                         }
                         if (rule.PointSymbolizer && rule.PointSymbolizer.Graphic && rule.PointSymbolizer.Graphic.Mark && rule.PointSymbolizer.Graphic.Mark.WellKnownName) {
 
@@ -3442,10 +3439,10 @@ L.MAP2U.layers = function (options) {
                     }
                     else if (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween) {
 
-                        if (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary && varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary.Literal&&literal_name===true)
+                        if (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary && varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary.Literal && literal_name === true)
                             rule_name = Math.round(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary.Literal);
 
-                        if (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary && varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary.Literal&&literal_name===true)
+                        if (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary && varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary.Literal && literal_name === true)
                             rule_name = rule_name + " - " + Math.round(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary.Literal);
                         legendCtx.beginPath();
                         legendCtx.rect(0, 0, 20, 15);
