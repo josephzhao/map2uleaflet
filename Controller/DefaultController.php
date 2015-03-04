@@ -29,7 +29,7 @@ class DefaultController extends Controller {
         return $this->render('Map2uLeafletBundle:Default:leaflet_map_js.html.twig');
     }
 
-    public function mapAction() {
+    public function mapAction(Request $request) {
 
 
         return $this->render('Map2uLeafletBundle:Default:map.html.twig');
