@@ -7,7 +7,7 @@
  */
 
 var HeatmapOverlay = L.Class.extend({
-    initialize: function(config) {
+    initialize: function (config) {
         this.cfg = config;
         this._el = L.DomUtil.create('div', 'leaflet-zoom-hide heatmap');
         this._data = [];
@@ -15,7 +15,7 @@ var HeatmapOverlay = L.Class.extend({
         this._min = 0;
         this.cfg.container = this._el;
     },
-    onAdd: function(map) {
+    onAdd: function (map) {
         var size = map.getSize();
 
         this._map = map;
@@ -36,21 +36,21 @@ var HeatmapOverlay = L.Class.extend({
 
         // on zoom, reset origin
         map.on('viewreset', this._resetOrigin, this);
-            // on zoom, reset origin
- 
+        // on zoom, reset origin
+
         // redraw whenever dragend
         map.on('dragend', this._draw, this);
 
         this._draw();
     },
-    onRemove: function(map) {
+    onRemove: function (map) {
         // remove layer's DOM elements and listeners
         map.getPanes().overlayPane.removeChild(this._el);
 
         map.off('viewreset', this._resetOrigin, this);
         map.off('dragend', this._draw, this);
     },
-    _draw: function() {
+    _draw: function () {
         if (!this._map) {
             return;
         }
@@ -63,10 +63,11 @@ var HeatmapOverlay = L.Class.extend({
         this._el.style[HeatmapOverlay.CSS_TRANSFORM] = 'translate(' +
                 -Math.round(point.x) + 'px,' +
                 -Math.round(point.y) + 'px)';
-
+        this._el.style.position = 'absolute';
+        
         this._update();
     },
-    _update: function() {
+    _update: function () {
         var bounds, zoom, scale;
 
         bounds = this._map.getBounds();
@@ -92,7 +93,7 @@ var HeatmapOverlay = L.Class.extend({
 
 
             // we don't wanna render points that are not even on the map ;-)
-            if (!bounds.contains(latlng)&&this.cfg.useLocalExtrema) {
+            if (!bounds.contains(latlng) && this.cfg.useLocalExtrema) {
                 continue;
             }
             // local max is the maximum within current bounds
@@ -122,7 +123,7 @@ var HeatmapOverlay = L.Class.extend({
 
         this._heatmap.setData(generatedData);
     },
-    updateRadius:function (newradius) {
+    updateRadius: function (newradius) {
         this.cfg.radius = newradius;
 
         var data = this._data;
@@ -132,10 +133,10 @@ var HeatmapOverlay = L.Class.extend({
 
             return  {lat: obj.latlng.lat, lng: obj.latlng.lng, count: obj['count'], radius: newradius};
         });
-        
+
         this.setData({min: min, max: max, data: clonedArray});
     },
-    setData: function(data) {
+    setData: function (data) {
         this._max = data.max || this._max;
         this._min = data.min || this._min;
         var latField = this.cfg.latField || 'lat';
@@ -162,7 +163,7 @@ var HeatmapOverlay = L.Class.extend({
         this._draw();
     },
     // experimential... not ready.
-    addData: function(pointOrArray) {
+    addData: function (pointOrArray) {
         if (pointOrArray.length > 0) {
             var len = pointOrArray.length;
             while (len--) {
@@ -187,13 +188,13 @@ var HeatmapOverlay = L.Class.extend({
             this._draw();
         }
     },
-    _resetOrigin: function() {
+    _resetOrigin: function () {
         this._origin = this._map.layerPointToLatLng(new L.Point(0, 0));
         this._draw();
     }
 });
 
-HeatmapOverlay.CSS_TRANSFORM = (function() {
+HeatmapOverlay.CSS_TRANSFORM = (function () {
     var div = document.createElement('div');
     var props = [
         'transform',
