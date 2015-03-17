@@ -54,25 +54,25 @@ class DefaultController extends Controller {
         }
 
         if ($this->getUser()) {
-            $cluster_layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:LeafletClusterLayer p where p.userId=' . $this->getUser()->getId() . ' or ( p.published = true and p.public = true ) ORDER BY p.seq ASC')
+            $cluster_layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:LeafletClusterLayer p where p.userId=' . $this->getUser()->getId() . ' or ( p.published = true or p.public = true ) ORDER BY p.seq ASC')
                     ->getResult();
         } else {
-            $cluster_layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:LeafletClusterLayer p where  p.published = true and p.public = true ORDER BY p.seq ASC')
+            $cluster_layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:LeafletClusterLayer p where  p.published = true or p.public = true ORDER BY p.seq ASC')
                     ->getResult();
         }
 
         if ($this->getUser()) {
-            $heatmap_layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:LeafletHeatmapLayer p where p.userId=' . $this->getUser()->getId() . ' or ( p.published = true and p.public = true ) ORDER BY p.seq ASC')
+            $heatmap_layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:LeafletHeatmapLayer p where p.userId=' . $this->getUser()->getId() . ' or ( p.published = true or p.public = true ) ORDER BY p.seq ASC')
                     ->getResult();
         } else {
-            $heatmap_layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:LeafletHeatmapLayer p where  p.published = true and p.public = true ORDER BY p.seq ASC')
+            $heatmap_layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:LeafletHeatmapLayer p where  p.published = true or p.public = true ORDER BY p.seq ASC')
                     ->getResult();
         }
         if ($this->getUser()) {
-            $thematicmap_layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:ThematicMap p where p.userId=' . $this->getUser()->getId() . ' or ( p.published = true and p.public = true) ORDER BY p.seq ASC')
+            $thematicmap_layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:ThematicMap p where p.userId=' . $this->getUser()->getId() . ' or ( p.published = true or p.public = true) ORDER BY p.seq ASC')
                     ->getResult();
         } else {
-            $thematicmap_layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:ThematicMap p where  p.published = true and p.public = true ORDER BY p.seq ASC')
+            $thematicmap_layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:ThematicMap p where  p.published = true or p.public = true ORDER BY p.seq ASC')
                     ->getResult();
         }
         if ($this->getUser()) {
@@ -84,11 +84,11 @@ class DefaultController extends Controller {
 
         if ($this->getUser()) {
 
-            $wmslayers = $em->createQuery('SELECT u FROM Map2uCoreBundle:GeoServerLayer u WHERE  (u.public=true and u.published=true)  or u.userId=' . $this->getUser()->getId() . '  order by u.seq')
+            $wmslayers = $em->createQuery('SELECT u FROM Map2uCoreBundle:GeoServerLayer u WHERE  (u.public=true or u.published=true)  or u.userId=' . $this->getUser()->getId() . '  order by u.seq')
                     ->getResult();
         } else {
 
-            $wmslayers = $em->createQuery('SELECT u FROM Map2uCoreBundle:GeoServerLayer u WHERE  u.public=true and u.published=true  order by u.seq')
+            $wmslayers = $em->createQuery('SELECT u FROM Map2uCoreBundle:GeoServerLayer u WHERE  u.public=true or u.published=true  order by u.seq')
                     ->getResult();
         }
 
