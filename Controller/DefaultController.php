@@ -46,10 +46,10 @@ class DefaultController extends Controller {
         $em = $this->getDoctrine()->getManager();
         $private_userdraw_layers = null;
         if ($this->getUser()) {
-            $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UploadfileLayer p where p.userId=' . $this->getUser()->getId() . ' or (p.published = true and p.public = true ) ORDER BY p.seq ASC')
+            $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UploadfileLayer p where p.userId=' . $this->getUser()->getId() . ' or (p.published = true or p.public = true ) ORDER BY p.seq ASC')
                     ->getResult();
         } else {
-            $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UploadfileLayer p where  p.published = true and p.public = true ORDER BY p.seq ASC')
+            $layers = $em->createQuery('SELECT p FROM Map2uCoreBundle:UploadfileLayer p where  p.published = true or p.public = true ORDER BY p.seq ASC')
                     ->getResult();
         }
 
