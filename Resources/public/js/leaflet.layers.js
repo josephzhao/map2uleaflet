@@ -3153,7 +3153,7 @@ L.MAP2U.layers = function (options) {
     control.addOverlayItem = function (layer, i, opt, bRefeshButton) {
         var overlay_layers_ul = $(".leaflet-control-container .section.overlay-layers > ul.overlay_ul");
         var _this = this;
-        var item = $('<li class="overlay_li">')
+        var item = $('<li class="overlay_li" data-layertype="' + layer.layerType + '" data-layerid="' + layer.layerId + '">')
                 .tooltip({
                     placement: 'top'
                 })
