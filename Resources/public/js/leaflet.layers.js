@@ -1141,6 +1141,9 @@ L.MAP2U.layers = function (options) {
     control.RenderTopojsonLayer = function (result, layer, opt) {
         var _this = this;
         var sld;
+        if(layer===null)
+            return;
+        
         if (typeof result.sld === 'object') {
             sld = result.sld;
         }
@@ -1154,6 +1157,9 @@ L.MAP2U.layers = function (options) {
         var key = Object.keys(json_data.objects).map(function (k) {
             return  k;
         });
+        if(json_data.objects[key].geometries===undefined||json_data.objects[key].geometries===null)
+            return;
+        
         var properties_key = Object.keys(json_data.objects[key].geometries[0].properties).map(function (k) {
             return  k;
         });
