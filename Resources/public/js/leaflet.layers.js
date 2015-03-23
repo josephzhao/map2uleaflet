@@ -1141,9 +1141,9 @@ L.MAP2U.layers = function (options) {
     control.RenderTopojsonLayer = function (result, layer, opt) {
         var _this = this;
         var sld;
-        if(layer===null)
+        if (layer === null)
             return;
-        
+
         if (typeof result.sld === 'object') {
             sld = result.sld;
         }
@@ -1157,9 +1157,9 @@ L.MAP2U.layers = function (options) {
         var key = Object.keys(json_data.objects).map(function (k) {
             return  k;
         });
-        if(json_data.objects[key].geometries===undefined||json_data.objects[key].geometries===null)
+        if (json_data.objects[key].geometries === undefined || json_data.objects[key].geometries === null)
             return;
-        
+
         var properties_key = Object.keys(json_data.objects[key].geometries[0].properties).map(function (k) {
             return  k;
         });
@@ -3350,6 +3350,7 @@ L.MAP2U.layers = function (options) {
 
         if (sld === undefined || sld.FeatureTypeStyle === undefined || sld.FeatureTypeStyle === null)
             return null;
+
         var legend = $("<div class='layer_legend hidden'>");
         var ul = $("<ul>").appendTo(legend);
         var keys = Object.keys(sld.FeatureTypeStyle);
@@ -3422,6 +3423,26 @@ L.MAP2U.layers = function (options) {
                             else
                                 legendCtx.lineWidth = 0.5;
                             legendCtx.strokeStyle = '#003300';
+                            legendCtx.stroke();
+                        }
+                        if (rule.LineSymbolizer) {
+
+                            legendCtx.beginPath();
+                            legendCtx.moveTo(centerX - legendCanvas.width / 3, centerY);
+                            legendCtx.lineTo(centerX + legendCanvas.width / 3, centerY);
+                            if (rule.LineSymbolizer.Fill && rule.LineSymbolizer.Fill.fill)
+                                legendCtx.fillStyle = rule.LineSymbolizer.Fill.fill.trim();
+                            else
+                                legendCtx.fillStyle = '#ccc';
+                            legendCtx.fill();
+                            if (rule.LineSymbolizer.Stroke && rule.LineSymbolizer.Stroke['stroke-width'])
+                                legendCtx.lineWidth = rule.LineSymbolizer.Stroke['stroke-width'].trim();
+                            else
+                                legendCtx.lineWidth = 1;
+                            if (rule.LineSymbolizer.Stroke && rule.LineSymbolizer.Stroke.stroke)
+                                legendCtx.strokeStyle = rule.LineSymbolizer.Stroke.stroke.trim();
+                            else
+                                legendCtx.strokeStyle = 'black';
                             legendCtx.stroke();
                         }
                         if (rule.PolygonSymbolizer) {
