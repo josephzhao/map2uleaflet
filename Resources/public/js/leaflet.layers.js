@@ -1294,7 +1294,8 @@ L.MAP2U.layers = function (options) {
             var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function () {
                 return  this.text;
             });
-            if (shapefilename === '' || shapefilename[0] === undefined || geojson_shapefile.options.filename === shapefilename[0].toLowerCase())
+            
+            if (shapefilename.length === 0 || ( shapefilename.length === 1 && geojson_shapefile.options.filename === shapefilename[0].toLowerCase()))
             {
                 var p;
                 var fieldkey = '';
@@ -1593,7 +1594,7 @@ L.MAP2U.layers = function (options) {
                                                     var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function () {
                                                         return  this.text;
                                                     });
-                                                    if (shapefilename === '' || shapefilename[0] === undefined)
+                                                    if (shapefilename.length === 0 || ( shapefilename.length === 1 && layer.options.filename === shapefilename[0].toLowerCase()))
                                                     {
                                                         var p;
                                                         var fieldkey = '';
@@ -2151,7 +2152,7 @@ L.MAP2U.layers = function (options) {
                                 var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function () {
                                     return  this.text;
                                 });
-                                if (shapefilename === '' || shapefilename[0] === undefined || geojson_shapefile.options.filename === shapefilename[0].toLowerCase())
+                                if (shapefilename.length === 0 || ( shapefilename.length === 1 && geojson_shapefile.options.filename === shapefilename[0].toLowerCase()))
                                 {
                                     var p;
                                     var fieldkey = '';
@@ -2449,7 +2450,8 @@ L.MAP2U.layers = function (options) {
             var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function () {
                 return  this.text;
             });
-            if (shapefilename.length === 1 && d3_layer.options.filename === shapefilename[0].toLowerCase())
+            
+            if ((shapefilename.length===0) || (  shapefilename.length === 1 && d3_layer.options.filename === shapefilename[0].toLowerCase()))
             {
                 var p;
                 var fieldkey = '';
@@ -2591,7 +2593,7 @@ L.MAP2U.layers = function (options) {
                         var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function () {
                             return  this.text;
                         });
-                        if (shapefilename === '' || shapefilename[0] === undefined)
+                        if (shapefilename.length === 0 || ( shapefilename.length === 1 && geojson_shapefile.options.filename === shapefilename[0].toLowerCase()))
                         {
                             var p;
                             var fieldkey = '';
