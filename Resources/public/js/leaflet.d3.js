@@ -727,8 +727,17 @@ L.D3 = L.Class.extend({
                                 {
                                     var p = d3.select(ps[k]);
                                     var properties = p[0][0].__data__.properties;
-                                    if (properties[propertyName] && properties[propertyName].toLowerCase() === rule.Filter.PropertyIsEqualTo.Literal.toLowerCase()) {
-                                        p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule);
+                                    var pname = properties[propertyName];
+                                    if (pname !== undefined && pname !== null) {
+                                        if (typeof pname !== 'string')
+                                        {
+                                            pname = pname.toString();
+                                        }
+                                        pname = pname.toLowerCase();
+
+                                        if (pname === rule.Filter.PropertyIsEqualTo.Literal.toLowerCase()) {
+                                            p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule);
+                                        }
                                     }
                                 }
                             }
@@ -751,6 +760,7 @@ L.D3 = L.Class.extend({
                                 {
                                     var p = d3.select(ps[k]);
                                     var properties = p[0][0].__data__.properties;
+                                    
                                     if (properties[propertyName] && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary === undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary !== undefined) && parseFloat(properties[propertyName]) <= parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary.Literal))
                                     {
                                         p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule);
