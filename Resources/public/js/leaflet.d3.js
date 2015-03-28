@@ -729,7 +729,7 @@ L.D3 = L.Class.extend({
                                     var properties = p[0][0].__data__.properties;
                                     var pname = properties[propertyName];
                                     if (pname !== undefined && pname !== null) {
-                                        if (typeof pname !== 'string')
+                                        if (typeof pname === 'number')
                                         {
                                             pname = pname.toString();
                                         }
