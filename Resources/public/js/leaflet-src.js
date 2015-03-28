@@ -1352,10 +1352,7 @@
     L.Projection.SphericalMercator = {
         MAX_LATITUDE: 85.0511287798,
         project: function (latlng) { // (LatLng) -> Point
-            if(latlng===null)
-            {
-                return null;
-            }
+           
             var d = L.LatLng.DEG_TO_RAD,
                     max = this.MAX_LATITUDE,
                     lat = Math.max(Math.min(max, latlng.lat), -max),
