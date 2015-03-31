@@ -760,8 +760,8 @@ L.D3 = L.Class.extend({
                                 {
                                     var p = d3.select(ps[k]);
                                     var properties = p[0][0].__data__.properties;
-                                    
-                                    if ((properties[propertyName] !== undefined && properties[propertyName] !== null) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary === undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary !== undefined) &&  parseFloat(properties[propertyName]) <= parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary.Literal))
+
+                                    if ((properties[propertyName] !== undefined && properties[propertyName] !== null) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary === undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary !== undefined) && parseFloat(properties[propertyName]) <= parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary.Literal))
                                     {
                                         p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule);
                                     }
@@ -864,6 +864,11 @@ L.D3 = L.Class.extend({
                                     if (ps[k]) {
                                         var p = d3.select(ps[k]);
                                         var properties = p[0][0].__data__.properties;
+                                        if (parseFloat(properties[propertyName]) < 0.0002) {
+                                            alert(properties[propertyName] + "   " + (properties[propertyName] !== undefined && properties[propertyName] !== null));
+
+                                        }
+
                                         if ((properties[propertyName] !== undefined && properties[propertyName] !== null) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary === undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary !== undefined) && parseFloat(properties[propertyName]) <= parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary.Literal))
                                         {
 
