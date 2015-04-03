@@ -342,11 +342,14 @@ L.MAP2U.layers = function (options) {
             barContent.height($('.leaflet-sidebar.right').height() - 70);
         });
         function toggle(e) {
-            e.stopPropagation();
-            e.preventDefault();
+            if (e) {
+                e.stopPropagation();
+                e.preventDefault();
+            }
             options.sidebar.togglePane($ui, button);
             $('.leaflet-control .control-button').tooltip('hide');
         }
+        this.toggle = toggle;
         return $container[0];
     };
     control.reorderLayers = function () {
@@ -1294,8 +1297,8 @@ L.MAP2U.layers = function (options) {
             var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function () {
                 return  this.text;
             });
-            
-            if (shapefilename.length === 0 || ( shapefilename.length === 1 && geojson_shapefile.options.filename === shapefilename[0].toLowerCase()))
+
+            if (shapefilename.length === 0 || (shapefilename.length === 1 && geojson_shapefile.options.filename === shapefilename[0].toLowerCase()))
             {
                 var p;
                 var fieldkey = '';
@@ -1594,7 +1597,7 @@ L.MAP2U.layers = function (options) {
                                                     var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function () {
                                                         return  this.text;
                                                     });
-                                                    if (shapefilename.length === 0 || ( shapefilename.length === 1 && layer.options.filename === shapefilename[0].toLowerCase()))
+                                                    if (shapefilename.length === 0 || (shapefilename.length === 1 && layer.options.filename === shapefilename[0].toLowerCase()))
                                                     {
                                                         var p;
                                                         var fieldkey = '';
@@ -2152,7 +2155,7 @@ L.MAP2U.layers = function (options) {
                                 var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function () {
                                     return  this.text;
                                 });
-                                if (shapefilename.length === 0 || ( shapefilename.length === 1 && geojson_shapefile.options.filename === shapefilename[0].toLowerCase()))
+                                if (shapefilename.length === 0 || (shapefilename.length === 1 && geojson_shapefile.options.filename === shapefilename[0].toLowerCase()))
                                 {
                                     var p;
                                     var fieldkey = '';
@@ -2450,8 +2453,8 @@ L.MAP2U.layers = function (options) {
             var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function () {
                 return  this.text;
             });
-            
-            if ((shapefilename.length===0) || (  shapefilename.length === 1 && d3_layer.options.filename === shapefilename[0].toLowerCase()))
+
+            if ((shapefilename.length === 0) || (shapefilename.length === 1 && d3_layer.options.filename === shapefilename[0].toLowerCase()))
             {
                 var p;
                 var fieldkey = '';
@@ -2593,7 +2596,7 @@ L.MAP2U.layers = function (options) {
                         var shapefilename = $('.sonata-bc #shapefile_select_list option:selected').map(function () {
                             return  this.text;
                         });
-                        if (shapefilename.length === 0 || ( shapefilename.length === 1 && geojson_shapefile.options.filename === shapefilename[0].toLowerCase()))
+                        if (shapefilename.length === 0 || (shapefilename.length === 1 && geojson_shapefile.options.filename === shapefilename[0].toLowerCase()))
                         {
                             var p;
                             var fieldkey = '';
@@ -3346,12 +3349,16 @@ L.MAP2U.layers = function (options) {
         return legend;
     };
     control.createLegend = function (sld) {
+
+        if (sld === undefined || sld === null || sld === '')
+            return null;
+
         if (typeof sld !== 'object')
             sld = JSON.parse(sld);
 
-
-        if (sld === undefined || sld.FeatureTypeStyle === undefined || sld.FeatureTypeStyle === null)
+        if (sld.FeatureTypeStyle === undefined || sld.FeatureTypeStyle === null)
             return null;
+
 
         var legend = $("<div class='layer_legend hidden'>");
         var ul = $("<ul>").appendTo(legend);
