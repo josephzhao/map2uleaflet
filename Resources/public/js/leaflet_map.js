@@ -6,7 +6,7 @@
 
 
 
-OSM.SERVER_URL="localhost:8001/app.php"
+OSM.SERVER_URL = "localhost:8001/app.php"
 
 window.onload = function () {
     var map;
@@ -288,7 +288,7 @@ window.onload = function () {
 //    map.on('click', onMapClick);
 
     var position = $('html').attr('dir') === 'rtl' ? 'topleft' : 'topright';
-      L.MAP2U.zoom({position: position}).addTo(map);
+    L.MAP2U.zoom({position: position}).addTo(map);
 
     var lc = L.control.locate({
         position: position,
@@ -345,7 +345,7 @@ window.onload = function () {
         sidebar: rightSidebar,
         'short': true
     }).addTo(map);
-  L.MAP2U.business({position: position,
+    L.MAP2U.business({position: position,
         sidebar: rightSidebar,
         'short': true
     }).addTo(map);
@@ -408,6 +408,8 @@ window.onload = function () {
 
                 //    alert(JSON.stringify(result.layers));
                 // alert(result.layers.length);
+
+                result.layers = sortByKey(result.layers, 'seq');
 
                 var keys = Object.keys(result.layers).map(function (k) {
 
@@ -679,4 +681,20 @@ function ShowLeftSideBar(leftSidebar) {
             leftSidebar.show();
         }, 500);
     }
+}
+function sortByKey(array, key) {
+    return array.sort(function (a, b) {
+
+        if (a[key] === undefined || a[key] === null)
+        {
+            a[key] = "0";
+        }
+        if (b[key] === undefined || b[key] === null)
+        {
+            b[key] = "0";
+        }
+        var x = parseInt(a[key]);
+        var y = parseInt(b[key]);
+        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+    });
 }
