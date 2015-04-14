@@ -16,7 +16,7 @@ window.onload = function () {
     var historyControl;
     var printProvider,
             printControl;
-alert(window.location.hash);
+//alert(window.location.hash);
 //    var mapapp;
 //    var canvas;
 //    var context;
@@ -288,7 +288,7 @@ alert(window.location.hash);
 //    map.on('click', onMapClick);
 
     var position = $('html').attr('dir') === 'rtl' ? 'topleft' : 'topright';
-    //  L.MAP2U.zoom({position: position}).addTo(map);
+      L.MAP2U.zoom({position: position}).addTo(map);
 
     var lc = L.control.locate({
         position: position,
@@ -426,6 +426,7 @@ alert(window.location.hash);
             else
                 map.dataLayers[map.dataLayers.length] = {'map': map, 'layerType': 'userdraw', 'layer': null, 'index_id': -1, 'layerId': -1, layerTitle: "My draw geometries", 'filename': 'userdraw', 'layerName': 'My draw geometries', 'filename':'userdraw', type: 'geojson'};
             layersControl.refreshOverlays();
+            map.fire('zoomend');
         }
     });
 

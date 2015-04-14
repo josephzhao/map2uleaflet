@@ -207,6 +207,7 @@ class DefaultController extends Controller {
             $communityLayerData['layerTitle'] = 'Community layers';
             $communityLayerData['layerName'] = 'Community layers';
             $communityLayerData['layerType'] = 'group';
+            $communityLayerData['seq'] = 200;
             $communityLayerData['layerShowInSwitcher'] = true;
             $communityLayerData['filename'] = "userdrawlayer-group";
             $communityLayerData['layers'] = array();
@@ -217,6 +218,7 @@ class DefaultController extends Controller {
                 $layerData['datasource'] = $layer->getId();
                 $layerData['layerTitle'] = $layer->getName();
                 $layerData['layerName'] = $layer->getName();
+                $layerData['seq'] = $layer->getSeq();
                 $layerData['public'] = true;
                 $layerData['groupName'] = "Community layers";
                 $layerData['layerType'] = "userdrawlayer";
@@ -235,6 +237,7 @@ class DefaultController extends Controller {
             $personalLayerData['layerTitle'] = 'My personal layers';
             $personalLayerData['layerName'] = 'My personal layers';
             $personalLayerData['layerType'] = 'group';
+            $personalLayerData['seq'] = 201;
             $personalLayerData['layerShowInSwitcher'] = true;
             $personalLayerData['filename'] = "userdrawlayer-group";
             $personalLayerData['layers'] = array();
@@ -246,6 +249,7 @@ class DefaultController extends Controller {
                 $layerData['layerName'] = $layer->getName();
                 $layerData['layerType'] = "userdrawlayer";
                 $layerData['public'] = false;
+                $layerData['seq'] = $layer->getSeq();
                 $layerData['groupName'] = "My personal layers";
                 $layerData['clusterLayer'] = false;
                 $layerData['layerShowInSwitcher'] = true;
@@ -636,6 +640,7 @@ class DefaultController extends Controller {
             $layerData['layerTitle'] = $layers[0]->getLayerTitle();
             $layerData['layerName'] = $layers[0]->getLayerName();
             $layerData['datasource'] = $layers[0]->getId();
+            $layerData['seq'] = $layers[0]->getSeq();
             $layerData['layerType'] = 'clustermap';
             $layerData['layerShowInSwitcher'] = true;
             $layerData['fileName'] = $layers[0]->getFileName();
@@ -654,6 +659,7 @@ class DefaultController extends Controller {
             $layerData['layerTitle'] = $layers[0]->getName();
             $layerData['layerName'] = $layers[0]->getName();
             $layerData['datasource'] = $layers[0]->getId();
+            $layerData['seq'] = $layers[0]->getSeq();
             $layerData['layerType'] = 'userdrawlayer';
             $layerData['layerShowInSwitcher'] = $layers[0]->getDefaultShowOnMap();
             $layerData['fileName'] = $layers[0]->getName();
@@ -673,6 +679,7 @@ class DefaultController extends Controller {
             $layerData['layerTitle'] = $layers[0]->getFileName();
             $layerData['layerName'] = $layers[0]->getFileName();
             $layerData['datasource'] = $layers[0]->getDatasourceId();
+            $layerData['seq'] = $layers[0]->getSeq();
             $layerData['layerType'] = 'heatmap';
             $layerData['layerShowInSwitcher'] = true;
             $layerData['fileName'] = $layers[0]->getFileName();
@@ -698,6 +705,7 @@ class DefaultController extends Controller {
             $layerData['layerTitle'] = $layers[0]->getLayerTitle();
             $layerData['layerName'] = $layers[0]->getLayerName();
             $layerData['datasource'] = $layers[0]->getDatasourceId();
+            $layerData['seq'] = $layers[0]->getSeq();
             $layerData['layerType'] = 'thematicmap';
             $layerData['layerShowInSwitcher'] = true;
 
@@ -750,6 +758,7 @@ class DefaultController extends Controller {
             $layerData['layerTitle'] = $layers[0]->getLayerTitle();
             $layerData['layerName'] = $layers[0]->getLayerName();
             $layerData['datasource'] = $layers[0]->getUseruploadfile()->getId();
+            $layerData['seq'] = $layers[0]->getSeq();
             $layerData['layerType'] = 'uploadfilelayer';
             $layerData['layerShowInSwitcher'] = true;
             $layerData['fileName'] = $layers[0]->getFileName();
@@ -766,6 +775,7 @@ class DefaultController extends Controller {
         $layerData['layerTitle'] = $layers[0]->getFileName();
         $layerData['layerName'] = $layers[0]->getFileName();
         $layerData['datasource'] = $layers[0]->getId();
+        $layerData['seq'] = $layers[0]->getSeq();
         $layerData['layerType'] = 'wfs';
         $layerData['layerShowInSwitcher'] = true;
         $layerData['fileName'] = $layers[0]->getFileName();
@@ -1056,7 +1066,7 @@ class DefaultController extends Controller {
     protected function getUserDrawLayerGeometries($id, $public) {
         $user = $this->getUser();
         $conn = $this->get('database_connection');
-         $bpublic = filter_var($public, FILTER_VALIDATE_BOOLEAN);
+        $bpublic = filter_var($public, FILTER_VALIDATE_BOOLEAN);
         if ($bpublic) {
             $tsql = "select b.id as ogc_fid,b.id as ogc_id, b.name as keyname , b.geom_type , b.radius , b.buffer ,st_asgeojson(c.the_geom) as feature from userdrawlayers a,userdrawgeometries b, userdrawgeometries_geom c where a.id=" . $id . " and a.id=b.userdrawlayer_id and b.b_public=true  and b.id=c.userdrawgeometries_id";
         } else {

@@ -290,6 +290,7 @@ L.MAP2U.layers = function (options) {
                 $(input).prop('checked', true)
                         .trigger('change');
             }
+            ;
 
 
 //                input.on('change', function() {
@@ -311,23 +312,71 @@ L.MAP2U.layers = function (options) {
 //        });
 
             map.on('zoomend', function () {
+                var zoomLevel = map.getZoom();
+                alert(zoomLevel);
+                if (layer.defaultShowOnMap === '2')
+                {
+                    if ((layer.maxZoom === undefined || layer.maxZoom === null) && (layer.minZoom === undefined || layer.minZoom === null))
+                    {
+                        if ($(input).is(":checked") === false)
+                        {
+                            $(input).prop('checked', true)
+                                    .trigger('change');
+                        }
+                    }
+                    else if ((layer.maxZoom !== undefined && layer.maxZoom !== null && zoomLevel <= layer.maxZoom) && (layer.minZoom === undefined || layer.minZoom === null))
+                    {
+                        if ($(input).is(":checked") === false)
+                        {
+                            $(input).prop('checked', true)
+                                    .trigger('change');
+                        }
+                    }
+                    else if ((layer.minZoom !== undefined && layer.minZoom !== null && zoomLevel >= layer.minZoom) && (layer.maxZoom === undefined || layer.maxZoom === null))
+                    {
+                        if ($(input).is(":checked") === false)
+                        {
+                            $(input).prop('checked', true)
+                                    .trigger('change');
+                        }
+                    }
+                    else if ((layer.minZoom !== undefined && layer.minZoom !== null && zoomLevel >= layer.minZoom) && (layer.maxZoom !== undefined && layer.maxZoom !== null && zoomLevel <= layer.maxZoom))
+                    {
+                        if ($(input).is(":checked") === false)
+                        {
+                            $(input).prop('checked', true)
+                                    .trigger('change');
+                        }
+                    }
+                    else {
+                        if ($(input).is(":checked") === true)
+                        {
+                            $(input).prop('checked', false)
+                                    .trigger('change');
+                        }
+                    }
+                    ;
+
+                }
+                ;
+
                 // alert(map.getBounds().toBBoxString());
                 // alert(maxArea);
 
-                var disabled = false; //map.getBounds().getSize() >= maxArea;
-                $(input).prop('disabled', disabled);
-                if (disabled && $(input).is(':checked')) {
-                    $(input).prop('checked', false)
-                            .trigger('change');
-                    checked = true;
-                } else if (!disabled && !$(input).is(':checked') && checked) {
-                    $(input).prop('checked', true)
-                            .trigger('change');
-                }
-
-                $(item).attr('class', disabled ? 'disabled' : '');
-                item.attr('data-original-title', disabled ?
-                        I18n.t('javascripts.site.map_' + layer.layerName + '_zoom_in_tooltip') : '');
+//                var disabled = false; //map.getBounds().getSize() >= maxArea;
+//                $(input).prop('disabled', disabled);
+//                if (disabled && $(input).is(':checked')) {
+//                    $(input).prop('checked', false)
+//                            .trigger('change');
+//                    checked = true;
+//                } else if (!disabled && !$(input).is(':checked') && checked) {
+//                    $(input).prop('checked', true)
+//                            .trigger('change');
+//                }
+//
+//                $(item).attr('class', disabled ? 'disabled' : '');
+//                item.attr('data-original-title', disabled ?
+//                        I18n.t('javascripts.site.map_' + layer.layerName + '_zoom_in_tooltip') : '');
             });
         }
         map.dataLayers.forEach(function (layer) {
@@ -3284,6 +3333,73 @@ L.MAP2U.layers = function (options) {
             $(input).prop('checked', true)
                     .trigger('change');
         }
+        _this._map.on('zoomend', function () {
+            var zoomLevel = _this._map.getZoom();
+ //           alert(zoomLevel + " = " + layer.defaultShowOnMap + " = " + layer.maxZoom + "  =  " + layer.minZoom);
+            if (layer.defaultShowOnMap === '2')
+            {
+                if ((layer.maxZoom === undefined || layer.maxZoom === null) && (layer.minZoom === undefined || layer.minZoom === null))
+                {
+                    if ($(input).is(":checked") === false)
+                    {
+                        $(input).prop('checked', true)
+                                .trigger('change');
+                    }
+                }
+                else if ((layer.maxZoom !== undefined && layer.maxZoom !== null && zoomLevel <= layer.maxZoom) && (layer.minZoom === undefined || layer.minZoom === null))
+                {
+                    if ($(input).is(":checked") === false)
+                    {
+                        $(input).prop('checked', true)
+                                .trigger('change');
+                    }
+                }
+                else if ((layer.minZoom !== undefined && layer.minZoom !== null && zoomLevel >= layer.minZoom) && (layer.maxZoom === undefined || layer.maxZoom === null))
+                {
+                    if ($(input).is(":checked") === false)
+                    {
+                        $(input).prop('checked', true)
+                                .trigger('change');
+                    }
+                }
+                else if ((layer.minZoom !== undefined && layer.minZoom !== null && zoomLevel >= layer.minZoom) && (layer.maxZoom !== undefined && layer.maxZoom !== null && zoomLevel <= layer.maxZoom))
+                {
+                    if ($(input).is(":checked") === false)
+                    {
+                        $(input).prop('checked', true)
+                                .trigger('change');
+                    }
+                }
+                else {
+                    if ($(input).is(":checked") === true)
+                    {
+                        $(input).prop('checked', false)
+                                .trigger('change');
+                    }
+                }
+                ;
+
+            }
+            ;
+
+            // alert(map.getBounds().toBBoxString());
+            // alert(maxArea);
+
+//                var disabled = false; //map.getBounds().getSize() >= maxArea;
+//                $(input).prop('disabled', disabled);
+//                if (disabled && $(input).is(':checked')) {
+//                    $(input).prop('checked', false)
+//                            .trigger('change');
+//                    checked = true;
+//                } else if (!disabled && !$(input).is(':checked') && checked) {
+//                    $(input).prop('checked', true)
+//                            .trigger('change');
+//                }
+//
+//                $(item).attr('class', disabled ? 'disabled' : '');
+//                item.attr('data-original-title', disabled ?
+//                        I18n.t('javascripts.site.map_' + layer.layerName + '_zoom_in_tooltip') : '');
+        });
         if (bRefeshButton === true)
             _this.overlayToolButtons();
     };
