@@ -479,55 +479,46 @@ L.MAP2U.layers = function (options) {
 //                                        else {
 
 
-                                    }
-                                    if (layers[$(this).data('index')].layer && layers[$(this).data('index')].layer._container) {
-                                        $(layers[$(this).data('index')].layer._container).css("z-index", 901);
+                                        //       }
+                                        if (layers[$(this).data('index')].layer && layers[$(this).data('index')].layer._container) {
+                                            $(layers[$(this).data('index')].layer._container).css("z-index", 901);
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
-            }
 
-            else {
-                if (layers[$(this).data('index')].layerType === 'group' && layers[$(this).data('index')].filename === 'userdrawlayer-group') {
-                    $(this).find("li.overlay_group_li").map(function () {
-                        var layerId = $(this).data("layerId");
-                        var layerName = $(this).data("layerName");
-                        var groupName = $(this).data("groupName");
-                        window.map.eachLayer(function (layer) {
-                            if (layerId !== undefined && layerName !== undefined && groupName !== undefined && layer.layerId === layerId && layer.layerName === layerName && layer.groupName === groupName) {
-                                layer.bringToBack();
-                            }
-                            ;
-                        });
-                    });
-                    if (showUserDraw === false)
-                        $(".leaflet-map-pane .leaflet-objects-pane .leaflet-overlay-pane svg.leaflet-zoom-animated").css('z-index', 301 - i);
-                }
                 else {
-                    // if the layer is user draw layer
-                    if (parseInt(layers[$(this).data('index')].index_id) === -1) {
-                        if (layers[$(this).data('index')].layer) {
-                            $(".leaflet-map-pane .leaflet-objects-pane .leaflet-overlay-pane svg.leaflet-zoom-animated").css('z-index', 300 - i);
-                        }
+                    if (layers[$(this).data('index')].layerType === 'group' && layers[$(this).data('index')].filename === 'userdrawlayer-group') {
+                        $(this).find("li.overlay_group_li").map(function () {
+                            var layerId = $(this).data("layerId");
+                            var layerName = $(this).data("layerName");
+                            var groupName = $(this).data("groupName");
+                            window.map.eachLayer(function (layer) {
+                                if (layerId !== undefined && layerName !== undefined && groupName !== undefined && layer.layerId === layerId && layer.layerName === layerName && layer.groupName === groupName) {
+                                    layer.bringToBack();
+                                }
+                                ;
+                            });
+                        });
+                        if (showUserDraw === false)
+                            $(".leaflet-map-pane .leaflet-objects-pane .leaflet-overlay-pane svg.leaflet-zoom-animated").css('z-index', 301 - i);
                     }
                     else {
-                        if (layers[$(this).data('index')].layer !== null && layers[$(this).data('index')].layer !== undefined)
-                        {
-                            if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true)
-                            {
-                                //  alert(map.dataLayers[i].layer._el);
-                                var clusterlayers = layers[$(this).data('index')].layer._featureGroup._layers;
-                                var keys = Object.keys(clusterlayers).map(function (k) {
-                                    return  k;
-                                });
-                                if (clusterlayers[keys[0]] && clusterlayers[keys[0]]._container)
-                                    $(clusterlayers[keys[0]]._container).parent().css("z-index", 300 - i);
+                        // if the layer is user draw layer
+                        if (parseInt(layers[$(this).data('index')].index_id) === -1) {
+                            if (layers[$(this).data('index')].layer) {
+                                $(".leaflet-map-pane .leaflet-objects-pane .leaflet-overlay-pane svg.leaflet-zoom-animated").css('z-index', 300 - i);
                             }
-                            else {
-                                if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true) {
+                        }
+                        else {
+                            if (layers[$(this).data('index')].layer !== null && layers[$(this).data('index')].layer !== undefined)
+                            {
+                                if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true)
+                                {
+                                    //  alert(map.dataLayers[i].layer._el);
                                     var clusterlayers = layers[$(this).data('index')].layer._featureGroup._layers;
                                     var keys = Object.keys(clusterlayers).map(function (k) {
                                         return  k;
@@ -536,8 +527,18 @@ L.MAP2U.layers = function (options) {
                                         $(clusterlayers[keys[0]]._container).parent().css("z-index", 300 - i);
                                 }
                                 else {
-                                    if (layers[$(this).data('index')].layer && layers[$(this).data('index')].layer._container) {
-                                        $(layers[$(this).data('index')].layer._container).css("z-index", 300 - i);
+                                    if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true) {
+                                        var clusterlayers = layers[$(this).data('index')].layer._featureGroup._layers;
+                                        var keys = Object.keys(clusterlayers).map(function (k) {
+                                            return  k;
+                                        });
+                                        if (clusterlayers[keys[0]] && clusterlayers[keys[0]]._container)
+                                            $(clusterlayers[keys[0]]._container).parent().css("z-index", 300 - i);
+                                    }
+                                    else {
+                                        if (layers[$(this).data('index')].layer && layers[$(this).data('index')].layer._container) {
+                                            $(layers[$(this).data('index')].layer._container).css("z-index", 300 - i);
+                                        }
                                     }
                                 }
                             }
@@ -545,7 +546,6 @@ L.MAP2U.layers = function (options) {
                     }
                 }
             }
-        }
         });
     };
 
@@ -1416,7 +1416,7 @@ L.MAP2U.layers = function (options) {
                         }
                     }
                 }
-                 if (p !== '' && p !== null && p !== undefined) {
+                if (p !== '' && p !== null && p !== undefined) {
                     options.map_tooltip.classed("hidden", false)
                             .attr("style", "left:" + (mouse.x + 30) + "px;top:" + (mouse.y - 35) + "px")
                             .html(p);
@@ -1688,7 +1688,7 @@ L.MAP2U.layers = function (options) {
                                                             else
                                                                 p = properties[fieldkey[0]];
                                                         }
-                                                         if (p !== '' && p !== null && p !== undefined) {
+                                                        if (p !== '' && p !== null && p !== undefined) {
                                                             options.map_tooltip.classed("hidden", false)
                                                                     .attr("style", "left:" + (mouse.x + 30) + "px;top:" + (mouse.y - 35) + "px")
                                                                     .html(p);
@@ -2280,7 +2280,7 @@ L.MAP2U.layers = function (options) {
                                             }
                                         }
                                     }
-                                     if (p !== '' && p !== null && p !== undefined) {
+                                    if (p !== '' && p !== null && p !== undefined) {
                                         options.map_tooltip.classed("hidden", false)
                                                 .attr("style", "left:" + (mouse.x + 30) + "px;top:" + (mouse.y - 35) + "px")
                                                 .html(p);
@@ -2582,7 +2582,7 @@ L.MAP2U.layers = function (options) {
                         }
                     }
                 }
-                 if (p !== '' && p !== null && p !== undefined) {
+                if (p !== '' && p !== null && p !== undefined) {
                     options.map_tooltip.classed("hidden", false)
                             .attr("style", "left:" + (mouse.x + 30) + "px;top:" + (mouse.y - 35) + "px")
                             .html(p);
