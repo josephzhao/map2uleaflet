@@ -460,45 +460,74 @@ L.MAP2U.layers = function (options) {
                                             $(clusterlayers[keys[0]]._container).parent().css("z-index", 901);
                                     }
                                     else {
-                                        if (layers[$(this).data('index')].layer && layers[$(this).data('index')].layer._container) {
-                                            $(layers[$(this).data('index')].layer._container).css("z-index", 901);
-                                        }
+
+//                                            if (layers[$(this).data('index')].layerType === 'wms') {
+//
+//                                            if ($(".leaflet-map-pane .leaflet-objects-pane .leaflet-overlay-pane  div[layertype='wms'][layerid='" + layers[$(this).data('index')].layerId + "'].leaflet-layer").length === 1)
+//                                            {
+//                                                $(".leaflet-map-pane .leaflet-objects-pane .leaflet-overlay-pane  div[layertype='wms'][layerid='" + layers[$(this).data('index')].layerId + "'].leaflet-layer").css('z-index', 901);
+//                                            }
+//                                            else {
+//                                                $(layers[$(this).data('index')].layer._container).css("z-index", 901);
+//                                                $(layers[$(this).data('index')].layer._container).attr("layerType", "wms");
+//                                                $(layers[$(this).data('index')].layer._container).attr("layerId", layers[$(this).data('index')].layerId);
+//                                                $(layers[$(this).data('index')].layer._container).data("layerType", "wms");
+//                                                $(layers[$(this).data('index')].layer._container).data("layerId", layers[$(this).data('index')].layerId);
+//                                                $(layers[$(this).data('index')].layer._container).appendTo($(".leaflet-map-pane .leaflet-objects-pane .leaflet-overlay-pane"));
+//                                            }
+//                                        }
+//                                        else {
+
+
+                                    }
+                                    if (layers[$(this).data('index')].layer && layers[$(this).data('index')].layer._container) {
+                                        $(layers[$(this).data('index')].layer._container).css("z-index", 901);
                                     }
                                 }
                             }
                         }
                     }
                 }
+            }
 
-                else {
-                    if (layers[$(this).data('index')].layerType === 'group' && layers[$(this).data('index')].filename === 'userdrawlayer-group') {
-                        $(this).find("li.overlay_group_li").map(function () {
-                            var layerId = $(this).data("layerId");
-                            var layerName = $(this).data("layerName");
-                            var groupName = $(this).data("groupName");
-                            window.map.eachLayer(function (layer) {
-                                if (layerId !== undefined && layerName !== undefined && groupName !== undefined && layer.layerId === layerId && layer.layerName === layerName && layer.groupName === groupName) {
-                                    layer.bringToBack();
-                                }
-                                ;
-                            });
+            else {
+                if (layers[$(this).data('index')].layerType === 'group' && layers[$(this).data('index')].filename === 'userdrawlayer-group') {
+                    $(this).find("li.overlay_group_li").map(function () {
+                        var layerId = $(this).data("layerId");
+                        var layerName = $(this).data("layerName");
+                        var groupName = $(this).data("groupName");
+                        window.map.eachLayer(function (layer) {
+                            if (layerId !== undefined && layerName !== undefined && groupName !== undefined && layer.layerId === layerId && layer.layerName === layerName && layer.groupName === groupName) {
+                                layer.bringToBack();
+                            }
+                            ;
                         });
-                        if (showUserDraw === false)
-                            $(".leaflet-map-pane .leaflet-objects-pane .leaflet-overlay-pane svg.leaflet-zoom-animated").css('z-index', 301 - i);
+                    });
+                    if (showUserDraw === false)
+                        $(".leaflet-map-pane .leaflet-objects-pane .leaflet-overlay-pane svg.leaflet-zoom-animated").css('z-index', 301 - i);
+                }
+                else {
+                    // if the layer is user draw layer
+                    if (parseInt(layers[$(this).data('index')].index_id) === -1) {
+                        if (layers[$(this).data('index')].layer) {
+                            $(".leaflet-map-pane .leaflet-objects-pane .leaflet-overlay-pane svg.leaflet-zoom-animated").css('z-index', 300 - i);
+                        }
                     }
                     else {
-                        // if the layer is user draw layer
-                        if (parseInt(layers[$(this).data('index')].index_id) === -1) {
-                            if (layers[$(this).data('index')].layer) {
-                                $(".leaflet-map-pane .leaflet-objects-pane .leaflet-overlay-pane svg.leaflet-zoom-animated").css('z-index', 300 - i);
-                            }
-                        }
-                        else {
-                            if (layers[$(this).data('index')].layer !== null && layers[$(this).data('index')].layer !== undefined)
+                        if (layers[$(this).data('index')].layer !== null && layers[$(this).data('index')].layer !== undefined)
+                        {
+                            if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true)
                             {
-                                if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true)
-                                {
-                                    //  alert(map.dataLayers[i].layer._el);
+                                //  alert(map.dataLayers[i].layer._el);
+                                var clusterlayers = layers[$(this).data('index')].layer._featureGroup._layers;
+                                var keys = Object.keys(clusterlayers).map(function (k) {
+                                    return  k;
+                                });
+                                if (clusterlayers[keys[0]] && clusterlayers[keys[0]]._container)
+                                    $(clusterlayers[keys[0]]._container).parent().css("z-index", 300 - i);
+                            }
+                            else {
+                                if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true) {
                                     var clusterlayers = layers[$(this).data('index')].layer._featureGroup._layers;
                                     var keys = Object.keys(clusterlayers).map(function (k) {
                                         return  k;
@@ -507,18 +536,8 @@ L.MAP2U.layers = function (options) {
                                         $(clusterlayers[keys[0]]._container).parent().css("z-index", 300 - i);
                                 }
                                 else {
-                                    if ((layers[$(this).data('index')].layer instanceof  L.MarkerClusterGroup) === true) {
-                                        var clusterlayers = layers[$(this).data('index')].layer._featureGroup._layers;
-                                        var keys = Object.keys(clusterlayers).map(function (k) {
-                                            return  k;
-                                        });
-                                        if (clusterlayers[keys[0]] && clusterlayers[keys[0]]._container)
-                                            $(clusterlayers[keys[0]]._container).parent().css("z-index", 300 - i);
-                                    }
-                                    else {
-                                        if (layers[$(this).data('index')].layer && layers[$(this).data('index')].layer._container) {
-                                            $(layers[$(this).data('index')].layer._container).css("z-index", 300 - i);
-                                        }
+                                    if (layers[$(this).data('index')].layer && layers[$(this).data('index')].layer._container) {
+                                        $(layers[$(this).data('index')].layer._container).css("z-index", 300 - i);
                                     }
                                 }
                             }
@@ -526,6 +545,7 @@ L.MAP2U.layers = function (options) {
                     }
                 }
             }
+        }
         });
     };
 
@@ -1349,7 +1369,7 @@ L.MAP2U.layers = function (options) {
 
             if (shapefilename.length === 0 || (shapefilename.length === 1 && geojson_shapefile.options.filename === shapefilename[0].toLowerCase()))
             {
-                var p;
+                var p = '';
                 var fieldkey = '';
                 var mouse = L.DomEvent.getMousePosition(e.originalEvent, _this._map._container);
                 fieldkey = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function () {
@@ -1371,16 +1391,16 @@ L.MAP2U.layers = function (options) {
                 else {
                     if (fieldkey === undefined || fieldkey === null || fieldkey === '' || (typeof fieldkey === 'object' && (fieldkey[0] === null || fieldkey[0] === '' || fieldkey[0] === undefined)))
                     {
-                        p = e.data.properties[properties_key[1]];
-                        if (e.target.options.tip_percentage === true && p !== '' && p !== undefined) {
-                            if (e.target.options.tip_times100 === true) {
-                                p = parseFloat(p) * 100;
-                            }
-                            if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== '') {
-                                p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
-                            }
-                            p = p + "%";
-                        }
+//                        p = e.data.properties[properties_key[1]];
+//                        if (e.target.options.tip_percentage === true && p !== '' && p !== undefined) {
+//                            if (e.target.options.tip_times100 === true) {
+//                                p = parseFloat(p) * 100;
+//                            }
+//                            if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== '') {
+//                                p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
+//                            }
+//                            p = p + "%";
+//                        }
                     }
                     else
                     {
@@ -1396,9 +1416,11 @@ L.MAP2U.layers = function (options) {
                         }
                     }
                 }
-                options.map_tooltip.classed("hidden", false)
-                        .attr("style", "left:" + (mouse.x + 30) + "px;top:" + (mouse.y - 35) + "px")
-                        .html(p);
+                 if (p !== '' && p !== null && p !== undefined) {
+                    options.map_tooltip.classed("hidden", false)
+                            .attr("style", "left:" + (mouse.x + 30) + "px;top:" + (mouse.y - 35) + "px")
+                            .html(p);
+                }
             }
             // }
         });
@@ -1648,7 +1670,7 @@ L.MAP2U.layers = function (options) {
                                                     });
                                                     if (shapefilename.length === 0 || (shapefilename.length === 1 && layer.options.filename === shapefilename[0].toLowerCase()))
                                                     {
-                                                        var p;
+                                                        var p = '';
                                                         var fieldkey = '';
                                                         var mouse = L.DomEvent.getMousePosition(e.originalEvent, _this._map._container);
                                                         fieldkey = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function () {
@@ -1660,13 +1682,17 @@ L.MAP2U.layers = function (options) {
                                                         else {
 
                                                             if (fieldkey === undefined || fieldkey === null || fieldkey === '' || (typeof fieldkey === 'object' && (fieldkey[0] === null || fieldkey[0] === '' || fieldkey[0] === undefined)))
-                                                                p = properties[properties_key[1]];
+                                                            {
+                                                                // p = properties[properties_key[1]];
+                                                            }
                                                             else
                                                                 p = properties[fieldkey[0]];
                                                         }
-                                                        options.map_tooltip.classed("hidden", false)
-                                                                .attr("style", "left:" + (mouse.x + 30) + "px;top:" + (mouse.y - 35) + "px")
-                                                                .html(p);
+                                                         if (p !== '' && p !== null && p !== undefined) {
+                                                            options.map_tooltip.classed("hidden", false)
+                                                                    .attr("style", "left:" + (mouse.x + 30) + "px;top:" + (mouse.y - 35) + "px")
+                                                                    .html(p);
+                                                        }
                                                     }
 
                                                 });
@@ -2206,7 +2232,7 @@ L.MAP2U.layers = function (options) {
                                 });
                                 if (shapefilename.length === 0 || (shapefilename.length === 1 && geojson_shapefile.options.filename === shapefilename[0].toLowerCase()))
                                 {
-                                    var p;
+                                    var p = '';
                                     var fieldkey = '';
                                     var mouse = L.DomEvent.getMousePosition(e.originalEvent, _this._map._container);
                                     fieldkey = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function () {
@@ -2229,16 +2255,16 @@ L.MAP2U.layers = function (options) {
                                     else {
                                         if (fieldkey === undefined || fieldkey === null || fieldkey === '' || (typeof fieldkey === 'object' && (fieldkey[0] === null || fieldkey[0] === '' || fieldkey[0] === undefined)))
                                         {
-                                            p = e.data.properties[properties_key[1]];
-                                            if (e.target.options.tip_percentage === true && p !== '' && p !== undefined) {
-                                                if (e.target.options.tip_times100 === true) {
-                                                    p = parseFloat(p) * 100;
-                                                }
-                                                if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== '') {
-                                                    p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
-                                                }
-                                                p = p + "%";
-                                            }
+//                                            p = e.data.properties[properties_key[1]];
+//                                            if (e.target.options.tip_percentage === true && p !== '' && p !== undefined) {
+//                                                if (e.target.options.tip_times100 === true) {
+//                                                    p = parseFloat(p) * 100;
+//                                                }
+//                                                if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== '') {
+//                                                    p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
+//                                                }
+//                                                p = p + "%";
+//                                            }
                                         }
                                         else
                                         {
@@ -2254,11 +2280,13 @@ L.MAP2U.layers = function (options) {
                                             }
                                         }
                                     }
-                                    options.map_tooltip.classed("hidden", false)
-                                            .attr("style", "left:" + (mouse.x + 30) + "px;top:" + (mouse.y - 35) + "px")
-                                            .html(p);
+                                     if (p !== '' && p !== null && p !== undefined) {
+                                        options.map_tooltip.classed("hidden", false)
+                                                .attr("style", "left:" + (mouse.x + 30) + "px;top:" + (mouse.y - 35) + "px")
+                                                .html(p);
+                                    }
                                 }
-                                // }
+
                             });
                             geojson_shapefile.on('mouseout', function (e) {
                                 options.map_tooltip.classed("hidden", true);
@@ -2505,7 +2533,7 @@ L.MAP2U.layers = function (options) {
 
             if ((shapefilename.length === 0) || (shapefilename.length === 1 && d3_layer.options.filename === shapefilename[0].toLowerCase()))
             {
-                var p;
+                var p = '';
                 var fieldkey = '';
                 var mouse = L.DomEvent.getMousePosition(e.originalEvent, _this._map._container);
                 fieldkey = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function () {
@@ -2529,16 +2557,16 @@ L.MAP2U.layers = function (options) {
                 else {
                     if (fieldkey === '' || fieldkey[0] === '' || fieldkey[0] === undefined)
                     {
-                        p = e.data.properties[properties_key[1]];
-                        if (e.target.options.tip_percentage === true && p !== '' && p !== undefined) {
-                            if (e.target.options.tip_times100 === true) {
-                                p = parseFloat(p) * 100;
-                            }
-                            if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== null && e.target.options.tip_number !== '') {
-                                p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
-                            }
-                            p = p + "%";
-                        }
+//                        p = e.data.properties[properties_key[1]];
+//                        if (e.target.options.tip_percentage === true && p !== '' && p !== undefined) {
+//                            if (e.target.options.tip_times100 === true) {
+//                                p = parseFloat(p) * 100;
+//                            }
+//                            if (e.target.options.tip_number !== undefined && e.target.options.tip_number !== null && e.target.options.tip_number !== '') {
+//                                p = parseFloat(p).toFixed(parseInt(e.target.options.tip_number));
+//                            }
+//                            p = p + "%";
+//                        }
                     }
                     else
                     {
@@ -2554,10 +2582,11 @@ L.MAP2U.layers = function (options) {
                         }
                     }
                 }
-
-                options.map_tooltip.classed("hidden", false)
-                        .attr("style", "left:" + (mouse.x + 30) + "px;top:" + (mouse.y - 35) + "px")
-                        .html(p);
+                 if (p !== '' && p !== null && p !== undefined) {
+                    options.map_tooltip.classed("hidden", false)
+                            .attr("style", "left:" + (mouse.x + 30) + "px;top:" + (mouse.y - 35) + "px")
+                            .html(p);
+                }
             }
             // }
         });
@@ -2647,7 +2676,7 @@ L.MAP2U.layers = function (options) {
                         });
                         if (shapefilename.length === 0 || (shapefilename.length === 1 && geojson_shapefile.options.filename === shapefilename[0].toLowerCase()))
                         {
-                            var p;
+                            var p = '';
                             var fieldkey = '';
                             var mouse = L.DomEvent.getMousePosition(e.originalEvent, _this._map._container);
                             fieldkey = $('.sonata-bc #shapefile_labelfield_list option:selected').map(function () {
@@ -2659,13 +2688,17 @@ L.MAP2U.layers = function (options) {
                             else {
 
                                 if (fieldkey === undefined || fieldkey === null || fieldkey === '' || (typeof fieldkey === 'object' && (fieldkey[0] === null || fieldkey[0] === '' || fieldkey[0] === undefined)))
-                                    p = properties[properties_key[1]];
+                                {
+                                    // p = properties[properties_key[1]];
+                                }
                                 else
                                     p = properties[fieldkey[0]];
                             }
-                            options.map_tooltip.classed("hidden", false)
-                                    .attr("style", "left:" + (mouse.x + 30) + "px;top:" + (mouse.y - 35) + "px")
-                                    .html(p);
+                            if (p !== '' && p !== null && p !== undefined) {
+                                options.map_tooltip.classed("hidden", false)
+                                        .attr("style", "left:" + (mouse.x + 30) + "px;top:" + (mouse.y - 35) + "px")
+                                        .html(p);
+                            }
                         }
 
                     });
@@ -3335,7 +3368,7 @@ L.MAP2U.layers = function (options) {
         }
         _this._map.on('zoomend', function () {
             var zoomLevel = _this._map.getZoom();
- //           alert(zoomLevel + " = " + layer.defaultShowOnMap + " = " + layer.maxZoom + "  =  " + layer.minZoom);
+            //           alert(zoomLevel + " = " + layer.defaultShowOnMap + " = " + layer.maxZoom + "  =  " + layer.minZoom);
             if (layer.defaultShowOnMap === '2')
             {
                 if ((layer.maxZoom === undefined || layer.maxZoom === null) && (layer.minZoom === undefined || layer.minZoom === null))
