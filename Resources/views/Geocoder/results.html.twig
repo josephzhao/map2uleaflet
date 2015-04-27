@@ -3,7 +3,7 @@
 {% else %}
   <ul class='results-list'>
     {#% for  result in results %#}
-      <li><p class="inner12 search_results_entry clearfix">{{ results| resultToHtm |raw  }}</p></li>
+      <li><p class="inner12 search_results_entry clearfix">{{ results| resultToHtml |raw  }}</p></li>
     {#% endfor %#}
   </ul>
   {% if more_params %}
