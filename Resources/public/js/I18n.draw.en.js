@@ -34,8 +34,8 @@ I18n.translations = {'en': {
         "No layers to edit": "No layers to edit",
         "Delete layers": "Delete layers",
         "No layers to delete": "No layers to delete.",
-        "Drag handles, or marker to edit feature.": "Drag handles, or marker to edit feature.",
-        "Click cancel to undo changes": "Click cancel to undo changes.",
+        "Drag handles, or marker to edit feature.": "Drag a handle, or marker to make changes.",
+        "Click cancel to undo changes": "Click cancel to undo all changes.",
         "Click on a feature to remove": "Click on a feature to remove"
     }
 };
