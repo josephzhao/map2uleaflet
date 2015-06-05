@@ -148,7 +148,7 @@ I18n.translations = {'en': {
         "Click and drag to draw circle": "Click and drag to draw circle.",
         "Click map to place marker": "Click map to place marker.",
         "Click to start drawing shape": "Click to start drawing shape.",
-        "Click to continue drawing shape": "Click to continue drawing shape.",
+        "Click to continue drawing shape": "Click to move the cursor to draw further.",
         "Click first point to close this shape": "Click first point to close this shape.",
         "<strong>Error:</strong> shape edges cannot cross!": "<strong>Error:</strong> shape edges cannot cross!",
         "Click to start drawing line": "Click to start drawing line.",
