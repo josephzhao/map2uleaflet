@@ -64,7 +64,7 @@ var HeatmapOverlay = L.Class.extend({
                 -Math.round(point.x) + 'px,' +
                 -Math.round(point.y) + 'px)';
         this._el.style.position = 'absolute';
-        
+
         this._update();
     },
     _update: function () {
@@ -145,6 +145,9 @@ var HeatmapOverlay = L.Class.extend({
 
         // transform data to latlngs
         var data = data.data;
+        if (data === null) {
+            return;
+        }
         var len = data.length;
         var d = [];
 

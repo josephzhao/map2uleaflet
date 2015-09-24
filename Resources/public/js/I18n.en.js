@@ -50,6 +50,12 @@ I18n.translations = {'en': {
                 'share': {
                     'title': 'Share Map Information'
                 },
+                'measure': {
+                    'title': 'Measure Length or Area'
+                },
+                'query': {
+                    'title': 'Query Map Content'
+                },
                 'key': {
                     'title': 'Show Map Legend'
                 }
@@ -101,6 +107,16 @@ I18n.translations = {'en': {
             },
             'uploadfile-list': {
                 'title': 'Upload File List'
+            },
+            'measure': {
+                'title': 'Measure Length or Area',
+                'query_disabled_tooltip': 'Length or Area Measurement Disabled',
+                'query_tooltip': 'Length or Area Measurement'
+            },
+            'query': {
+                'title': 'Query Map Content',
+                'query_disabled_tooltip': 'Map Content Query Disabled',
+                'query_tooltip': 'Map Content Query'
             },
             'share': {
                 'title': 'Share',
