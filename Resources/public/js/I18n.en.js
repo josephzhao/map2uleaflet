@@ -42,112 +42,110 @@ I18n.translations = {'en': {
                     "trail3_clip": "Trail Head",
                     "trails": "Trails",
                     "water_ways": "Water Ways"
-                },
-                'locate': {
-                    'title': 'Show my location'
-                }
-                ,
-                'share': {
-                    'title': 'Share Map Information'
-                },
-                'measure': {
-                    'title': 'Measure Length or Area'
-                },
-                'query': {
-                    'title': 'Query Map Content'
-                },
-                'key': {
-                    'title': 'Show Map Legend'
-                }
-                ,
-                'legend': {
-                    'title': 'Show Map Legend'
-                }
-                ,
-                'graphchart': {
-                    'title': 'Show Graph and Chart'
-                }
-                ,
-                'note': {
-                    'title': 'Create Note'
                 }
             },
-            'key': {
-                'title': 'Legend',
-                'tooltip_disabled': 'Map Legend Disabled',
-                'tooltip': 'Show Map Legend'
-            },
-            'business': {
-                'title': 'Business',
-                'tooltip_disabled': 'Business Panel Disabled',
-                'tooltip': 'Show Business Panel'
-            },
-            'graphchart': {
-                'title': 'Graph and Chart',
-                'tooltip_disabled': 'Graph and Chart Disabled',
-                'tooltip': 'Show Graph and Chart'
-            },
-            'shapefile-upload': {
-                'title': 'Upload Shapefile'
-            },
-            'textfile-upload': {
-                'title': 'Upload Text File'
-            },
-            'mapinfofile-upload': {
-                'title': 'Upload Mapinfo File'
-            },
-            'kmlfile-upload': {
-                'title': 'Upload KML File'
-            },
-            'shapefile-list': {
-                'title': 'Shapefile List'
-            },
-            'uploadfile': {
-                'title': 'Upload File'
-            },
-            'uploadfile-list': {
-                'title': 'Upload File List'
-            },
-            'measure': {
-                'title': 'Measure Length or Area',
-                'query_disabled_tooltip': 'Length or Area Measurement Disabled',
-                'query_tooltip': 'Length or Area Measurement'
-            },
-            'query': {
-                'title': 'Query Map Content',
-                'query_disabled_tooltip': 'Map Content Query Disabled',
-                'query_tooltip': 'Map Content Query'
+            'locate': {
+                'title': 'Show my location'
             },
             'share': {
-                'title': 'Share',
-                'link': 'Link or HTML',
-                'include_marker': 'include marker',
-                'long_link': 'Link',
-                'short_link': 'Short Link',
-                'embed': 'HTML',
-                'image': 'Image',
-                'format': 'Format',
-                'scale': 'Scale',
-                'image_size': 'Image Size',
-                'paste_html': 'Paste HTML',
-                'custom_dimensions': 'Custom Dimensions',
-                'download': 'Download'
-
+                'title': 'Share Map Information'
             },
-            'site': {
-                'shapefile_upload_disabled_tooltip': 'Upload Shapefile Disabled',
-                'shapefile_upload_tooltip': 'Upload Shapefile',
-                'shapefile_list_disabled_tooltip': 'Shapefile List Disabled',
-                'shapefile_list_tooltip': 'Shapefile List',
-                'graphchart_disabled_tooltip': 'Graph and Chart Disabled',
-                'graphchart_tooltip': 'Graph and Chart',
-                'uploadfile_disabled_tooltip': 'Upload Spatial File Disabled',
-                'uploadfile_tooltip': 'Upload Spatial File',
-                'uploadfile_list_disabled_tooltip': 'Upload File List Disabled',
-                'uploadfile_list_tooltip': 'Upload File List',
-                'createnote_disabled_tooltip': 'Create Note Disabled',
-                'createnote_tooltip': 'Create Note'
+            'measure': {
+                'title': 'Measure Length or Area'
+            },
+            'query': {
+                'title': 'Query Map Content'
+            },
+            'key': {
+                'title': 'Show Map Legend'
+            },
+            'legend': {
+                'title': 'Show Map Legend'
+            },
+            'graphchart': {
+                'title': 'Show Graph and Chart'
+            },
+            'note': {
+                'title': 'Create Note'
             }
+        },
+        'key': {
+            'title': 'Legend',
+            'tooltip_disabled': 'Map Legend Disabled',
+            'tooltip': 'Show Map Legend'
+        },
+        'business': {
+            'title': 'Business',
+            'tooltip_disabled': 'Business Panel Disabled',
+            'tooltip': 'Show Business Panel'
+        },
+        'graphchart': {
+            'title': 'Graph and Chart',
+            'tooltip_disabled': 'Graph and Chart Disabled',
+            'tooltip': 'Show Graph and Chart'
+        },
+        'shapefile-upload': {
+            'title': 'Upload Shapefile'
+        },
+        'textfile-upload': {
+            'title': 'Upload Text File'
+        },
+        'mapinfofile-upload': {
+            'title': 'Upload Mapinfo File'
+        },
+        'kmlfile-upload': {
+            'title': 'Upload KML File'
+        },
+        'shapefile-list': {
+            'title': 'Shapefile List'
+        },
+        'uploadfile': {
+            'title': 'Upload File'
+        },
+        'uploadfile-list': {
+            'title': 'Upload File List'
+        },
+        'measure': {
+            'title': 'Measure Length or Area'
+
+        },
+        'query': {
+            'title': 'Query Map Content'
+
+        },
+        'share': {
+            'title': 'Share',
+            'link': 'Link or HTML',
+            'include_marker': 'include marker',
+            'long_link': 'Link',
+            'short_link': 'Short Link',
+            'embed': 'HTML',
+            'image': 'Image',
+            'format': 'Format',
+            'scale': 'Scale',
+            'image_size': 'Image Size',
+            'paste_html': 'Paste HTML',
+            'custom_dimensions': 'Custom Dimensions',
+            'download': 'Download'
+
+        },
+        'site': {
+            'shapefile_upload_disabled_tooltip': 'Upload Shapefile Disabled',
+            'shapefile_upload_tooltip': 'Upload Shapefile',
+            'shapefile_list_disabled_tooltip': 'Shapefile List Disabled',
+            'shapefile_list_tooltip': 'Shapefile List',
+            'graphchart_disabled_tooltip': 'Graph and Chart Disabled',
+            'graphchart_tooltip': 'Graph and Chart',
+            'uploadfile_disabled_tooltip': 'Upload Spatial File Disabled',
+            'uploadfile_tooltip': 'Upload Spatial File',
+            'uploadfile_list_disabled_tooltip': 'Upload File List Disabled',
+            'uploadfile_list_tooltip': 'Upload File List',
+            'createnote_disabled_tooltip': 'Create Note Disabled',
+            'createnote_tooltip': 'Create Note',
+            'query_disabled_tooltip': 'Map Content Query Disabled',
+            'query_tooltip': 'Map Content Query',
+            'measure_disabled_tooltip': 'Length or Area Measurement Disabled',
+            'measure_tooltip': 'Length or Area Measurement'
         },
         'Reset Map Extent': 'Reset Map Extent',
         'Prev Map Extent': 'Prev Map Extent',
