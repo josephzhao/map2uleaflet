@@ -106,7 +106,7 @@ I18n.translations = {'en': {
                 'title': 'Upload File List'
             },
             'measure': {
-                'title': 'Measure Length or Area'
+                'title': 'Map Measurement'
 
             },
             'query': {
