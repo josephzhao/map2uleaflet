@@ -51,7 +51,7 @@ I18n.translations = {'en': {
                     'title': 'Share Map Information'
                 },
                 'measure': {
-                    'title': 'Measure Length or Area'
+                    'title': 'Map Measurement'
                 },
                 'query': {
                     'title': 'Query Map Content'
