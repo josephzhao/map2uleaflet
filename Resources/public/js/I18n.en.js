@@ -53,6 +53,9 @@ I18n.translations = {'en': {
                 'measure': {
                     'title': 'Map Measurement'
                 },
+                'themeticmap': {
+                    'title': 'Themetic Map'
+                },
                 'query': {
                     'title': 'Query Map Content'
                 },
@@ -107,7 +110,9 @@ I18n.translations = {'en': {
             },
             'measure': {
                 'title': 'Map Measurement'
-
+            },
+            'themeticmap': {
+                'title': 'Themetic Map'
             },
             'query': {
                 'title': 'Query Map Content'
@@ -145,7 +150,9 @@ I18n.translations = {'en': {
                 'query_disabled_tooltip': 'Map Content Query Disabled',
                 'query_tooltip': 'Map Content Query',
                 'measure_disabled_tooltip': 'Length or Area Measurement Disabled',
-                'measure_tooltip': 'Length or Area Measurement'
+                'measure_tooltip': 'Length or Area Measurement',
+                'themeticmap_disabled_tooltip': 'Themetic Map Disabled',
+                'themeticmap_tooltip': 'Themetic Map'
             }
         },
         'Reset Map Extent': 'Reset Map Extent',
