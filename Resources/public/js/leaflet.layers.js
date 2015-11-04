@@ -3470,7 +3470,9 @@ L.MAP2U.layers = function (options) {
     control.createThematicmapLegend = function (sld) {
         var legend = $("<div class='layer_legend hidden'>");
         var ul = $("<ul>").appendTo(legend);
-
+        if (sld === null || sld === undefined) {
+            return null;
+        }
         if (typeof sld !== 'object')
             sld = JSON.parse(sld);
         if (sld.categories === undefined)
