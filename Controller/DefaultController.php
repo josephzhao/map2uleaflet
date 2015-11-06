@@ -13,6 +13,7 @@ use Map2u\CoreBundle\Entity\UploadfileLayer;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Map2u\CoreBundle\Entity\SystemSettings;
 
 /**
  * Map2u Leaflet Default controller.
