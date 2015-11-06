@@ -1176,7 +1176,7 @@ class DefaultController extends Controller {
         if (!$user) {
             return new Response(\json_encode(array('success' => false, 'message' => 'Please Login first!')));
         }
-        $mapstatus = $em->createQuery("SELECT p FROM Map2uCoreBundle:SystemSettings p where p.userId=" . $user->getId() . " and name='mapstatus'")
+        $mapstatus = $em->createQuery("SELECT p FROM Map2uCoreBundle:SystemSettings p where p.userId=" . $user->getId() . " and p.name='mapstatus'")
                 ->getResult();
         if (!$mapstatus) {
             $mapstatus = new Map2u\CoreBundle\Entity\SystemSettings();
