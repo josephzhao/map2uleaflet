@@ -1180,7 +1180,7 @@ class DefaultController extends Controller {
         $mapstatus = $em->createQuery("SELECT p FROM Map2uCoreBundle:SystemSettings p where p.userId=" . $user->getId() . " and p.name='mapstatus'")
                 ->getResult();
         if (!$mapstatus) {
-            $mapstatus = new Map2u\CoreBundle\Entity\SystemSettings();
+            $mapstatus = new SystemSettings();
             $mapstatus->setName('mapstatus');
         }
 
