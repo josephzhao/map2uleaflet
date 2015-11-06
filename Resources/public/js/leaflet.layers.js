@@ -3300,7 +3300,15 @@ L.MAP2U.layers = function (options) {
                     legend.appendTo(item);
                 break;
             case 'thematicmap':
-                var legend = _this.createThematicmapLegend(layer.sld);
+                var legend = null;
+                if (layer.sld) {
+                    legend = _this.createThematicmapLegend(layer.sld);
+                }
+                else {
+                    if (layer.layerStyle) {
+                        legend = _this.createThematicmapLegendByStyle(layer.layerStyle);
+                    }
+                }
                 if (legend !== null)
                     legend.appendTo(item);
                 break;
@@ -3464,6 +3472,32 @@ L.MAP2U.layers = function (options) {
         for (var i = 0; i < array.length; i++)
         {
             ul.append('<li><div tabindex="0" style="display:inline-block; margin: 2px 6px 2px 2px; width: 20px; height: 15px; background-color: ' + array[i][1] + '" ></div>' + array[i][0] + '</li>');
+        }
+        return legend;
+    };
+    control.createThematicmapLegendByStyle = function (style) {
+        if (style === null || style === undefined) {
+            return null;
+        }
+        var legend = $("<div class='layer_legend hidden'>");
+        var ul = $("<ul>").appendTo(legend);
+
+        if (typeof style !== 'object')
+            style = JSON.parse(style);
+        if (style.colors === undefined || style.keyfield === undefined)
+            return null;
+
+        if (typeof style.colors !== 'object')
+            style.colors = JSON.parse(style.colors);
+        if (typeof style.mins !== 'object')
+            style.mins = JSON.parse(style.mins);
+        if (typeof style.maxs !== 'object')
+            style.maxs = JSON.parse(style.maxs);
+
+
+        var keys = Object.keys(style.colors);
+        for (var key in keys) {
+            ul.append('<li><div tabindex="0" style="display:inline-block; margin: 2px 6px 2px 2px; width: 20px; height: 15px;background-color:' + style.colors[key] + ';border: 1px solid ;" ></div>' + style.mins[key] + " - " + style.maxs[key] + '</li>');
         }
         return legend;
     };
