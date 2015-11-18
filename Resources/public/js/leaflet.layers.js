@@ -84,6 +84,7 @@ L.MAP2U.layers = function (options) {
                     .prop('checked', map.hasLayer(layer.layer))
                     .appendTo(label);
             label.append(layer.layerName);
+
             item.on('click', function () {
                 layers.forEach(function (other) {
                     if (other.layer === layer.layer) {
@@ -3568,7 +3569,21 @@ L.MAP2U.layers = function (options) {
                 var literal_name = false;
                 if (rule.Filter !== undefined) {
                     rule_name = rule.Name;
-                    if (rule.Filter.PropertyIsEqualTo) {
+                    if (rule.Filter.And) {
+                   
+                        if (rule.PolygonSymbolizer && rule.PolygonSymbolizer.Fill && rule.PolygonSymbolizer.Fill.fill) {
+                            legendCtx.beginPath();
+                            legendCtx.rect(0, 0, 20, 15);
+                            alert(rule.PolygonSymbolizer.Fill.fill);
+                            legendCtx.fillStyle = rule.PolygonSymbolizer.Fill['fill'];
+                            legendCtx.fill();
+                            legendCtx.strokeStyle = rule.PolygonSymbolizer.Stroke['stroke'];
+                            legendCtx.lineWidth = rule.PolygonSymbolizer.Stroke['stroke-width'];
+                            legendCtx.closePath();
+                            legendCtx.stroke();
+                        }
+                    }
+                    else if (rule.Filter.PropertyIsEqualTo) {
                         if ((rule_name === undefined || rule_name === null || rule_name.trim() === '') && (rule.Filter.PropertyIsEqualTo.Literal)) {
                             rule_name = rule.Filter.PropertyIsEqualTo.Literal;
                             literal_name = true;

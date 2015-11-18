@@ -1091,7 +1091,8 @@ class DefaultController extends Controller {
             // read data from sld file
             $sldFileContent = file_get_contents($sldPath . '/sld/' . $sldFilename);
             $doc = new \DOMDocument();
-            $sdlText = str_replace('sld:', '', $sldFileContent);
+            $sdlText1 = str_replace('sld:', '', $sldFileContent);
+            $sdlText = str_replace('se:', '', $sdlText1);
             $doc->loadXML(str_replace('ogc:', '', $sdlText));
             $json = array();
             $featureTypeStyles = $doc->getElementsByTagName('FeatureTypeStyle');
@@ -1144,7 +1145,8 @@ class DefaultController extends Controller {
             // read data from sld file
             $sldFileContent = file_get_contents($sldPath . '/sld/' . $sldFilename);
             $doc = new \DOMDocument();
-            $sdlText = str_replace('sld:', '', $sldFileContent);
+            $sdlText_temp = str_replace('sld:', '', $sldFileContent);
+            $sdlText = str_replace('se:', '', $sdlText_temp);
             $doc->loadXML(str_replace('ogc:', '', $sdlText));
             $json = array();
             $featureTypeStyles = $doc->getElementsByTagName('FeatureTypeStyle');

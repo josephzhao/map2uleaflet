@@ -269,7 +269,9 @@ L.D3 = L.Class.extend({
         if (this.options.thematicmap === true && this.options.thematicmap_rule) {
             this.renderThematicMap(this.options.thematicmap_rule);
         }
-
+        if (this.options.thematicmap === true && this.options.thematicmap_style) {
+            this.renderThematicMapByStyle(this.options.thematicmap_style);
+        }
         if (this.options.showLabels && this._feature_labels)
         {
             this._feature_labels.attr("transform", function (d) {
@@ -370,12 +372,19 @@ L.D3 = L.Class.extend({
             }
         }
     },
+    renderThematicMapByStyle: function (style) {
+
+    },
     renderThematicMap: function (rule) {
         var ps = this._feature[0];
         var pNameExist = false;
         var propertyName = '';
+        if (rule.categories === undefined || rule.categories === null)
+            return;
+
         if (typeof rule.categories !== 'object')
             rule.categories = JSON.parse(rule.categories);
+
         if (ps.length > 0) {
             var p = d3.select(ps[0]);
             var properties = p[0][0].__data__.properties;
@@ -708,7 +717,83 @@ L.D3 = L.Class.extend({
                         var ps = this._feature[0];
                         var pNameExist = false;
                         var propertyName = '';
-                        if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
+                        if (varFeatureTypeStyle.Rule.Filter.And) {
+
+                            var greatthan = null;
+                            var lessthanoreq = null;
+                            var greatthan_property_name = '';
+                            var lessthanoreq_property_name = '';
+
+                            var greatthan_property_name_exist = false;
+                            var lessthanoreq_property_name_exist = false;
+
+                            if (varFeatureTypeStyle.Rule.Filter.And.PropertyIsGreaterThan) {
+                                greatthan_property_name = varFeatureTypeStyle.Rule.Filter.And.PropertyIsGreaterThan.PropertyName;
+                                greatthan = varFeatureTypeStyle.Rule.Filter.And.PropertyIsGreaterThan.Literal;
+                            }
+                            if (varFeatureTypeStyle.Rule.Filter.And.PropertyIsLessThanOrEqualTo) {
+                                lessthanoreq_property_name = varFeatureTypeStyle.Rule.Filter.And.PropertyIsLessThanOrEqualTo.PropertyName;
+                                lessthanoreq = varFeatureTypeStyle.Rule.Filter.And.PropertyIsLessThanOrEqualTo.Literal;
+                            }
+
+
+                            if (ps.length > 0) {
+                                var p = d3.select(ps[0]);
+                                var properties = p[0][0].__data__.properties;
+                                for (var property in properties) {
+                                    if (property.toLowerCase() === greatthan_property_name.toLowerCase()) {
+                                        greatthan_property_name_exist = true;
+                                        greatthan_property_name = property;
+
+                                    }
+                                    if (property.toLowerCase() === lessthanoreq_property_name.toLowerCase()) {
+                                        lessthanoreq_property_name_exist = true;
+                                        lessthanoreq_property_name = property;
+
+                                    }
+                                }
+
+                            }
+                            if (greatthan_property_name_exist === true || lessthanoreq_property_name_exist === true) {
+                                for (var k = 0; k < ps.length; k++)
+                                {
+                                    var condition1 = false;
+                                    var condition2 = false;
+                                    var p = d3.select(ps[k]);
+                                    var properties = p[0][0].__data__.properties;
+
+                                    if (greatthan_property_name_exist === true) {
+
+                                        var greatthan_property = properties[greatthan_property_name];
+
+                                        if (greatthan_property > greatthan || greatthan === null) {
+                                            condition1 = true;
+                                        }
+                                    }
+                                    else {
+                                        condition1 = true;
+                                    }
+
+                                    if (lessthanoreq_property_name_exist === true) {
+
+                                        var lessthanoreq_property = properties[lessthanoreq_property_name];
+
+                                        if (lessthanoreq_property <= lessthanoreq || lessthanoreq === null) {
+                                            condition2 = true;
+                                        }
+                                    }
+                                    else {
+                                        condition2 = true;
+                                    }
+
+                                    if (condition1 && condition2) {
+                                        p = this.setFeatureStyle(p, varFeatureTypeStyle.Rule);
+                                    }
+                                }
+                            }
+
+                        }
+                        else if (varFeatureTypeStyle.Rule.Filter.PropertyIsEqualTo) {
 
                             if (ps.length > 0) {
                                 var p = d3.select(ps[0]);
@@ -864,7 +949,7 @@ L.D3 = L.Class.extend({
                                     if (ps[k]) {
                                         var p = d3.select(ps[k]);
                                         var properties = p[0][0].__data__.properties;
-                                        
+
                                         if ((properties[propertyName] !== undefined && properties[propertyName] !== null) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.LowerBoundary === undefined) && (varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary !== undefined) && parseFloat(properties[propertyName]) <= parseFloat(varFeatureTypeStyle.Rule.Filter.PropertyIsBetween.UpperBoundary.Literal))
                                         {
                                             p = _this.setFeatureStyle(p, varFeatureTypeStyle.Rule, false);
