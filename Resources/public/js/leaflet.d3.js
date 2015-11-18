@@ -871,10 +871,49 @@ L.D3 = L.Class.extend({
                     }
                 }
             }
+        }
+        else if (_this.options.layerStyle) {
+            var ps = this._feature[0];
+            var pNameExist = false;
+            var propertyName = '';
+            if (ps.length > 0 && _this.options.layerStyle.keyfield !== undefined && _this.options.layerStyle.keyfield !== '') {
+                var p = d3.select(ps[0]);
+                var properties = p[0][0].__data__.properties;
+                for (var property in properties) {
+                    if (property.toLowerCase() === _this.options.layerStyle.keyfield.toLowerCase()) {
+                        pNameExist = true;
+                        propertyName = property;
+                        break;
+                    }
+                }
 
+            }
+            if (pNameExist === true) {
+                for (var k = 0; k < ps.length; k++)
+                {
+                    var p = d3.select(ps[k]);
+                    var properties = p[0][0].__data__.properties;
+                    var property_value = parseFloat(properties[propertyName]);
+
+                    for (var i = 0; i < _this.options.layerStyle.colors.length; i++) {
+
+                        if (property_value > _this.options.layerStyle.mins[i] && property_value <= _this.options.layerStyle.maxs[i]) {
+
+                            p.style('fill', _this.rgb2hex(_this.options.layerStyle.colors[i]));
+                            p.style('fill-opacity', _this.options.layerStyle.opacity);
+                            p.style('stroke-opacity', "1.0");
+                            p.style('stroke-width', _this.options.layerStyle.boundary_width);
+                            p.style('stroke', _this.options.layerStyle.boundary_color);
+                            //                  return {color: _this.options.layerStyle.boundary_color, "weight": _this.options.LayerStyle.boundary_width, "fillColor": rgb2hex(_this.options.LayerStyle.colors[i]), "fillOpacity": _this.options.LayerStyle.opacity};
+                        }
+                    }
+
+                }
+            }
 
         }
         else {
+
 
             this._feature.style('fill', "#CCC");
             this._feature.style('fill-opacity', "0.6");
@@ -990,6 +1029,14 @@ L.D3 = L.Class.extend({
                     .style("stroke-opacity", 0.8);
         }
 
+    },
+    rgb2hex: function (rgb) {
+        var hexDigits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"];
+        rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+        function hex(x) {
+            return isNaN(x) ? "01" : hexDigits[(x - x % 16) / 16] + hexDigits[x % 16];
+        }
+        return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
     },
     setFeatureStyle: function (feature, rule, fill) {
 
