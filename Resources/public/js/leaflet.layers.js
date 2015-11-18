@@ -3574,7 +3574,7 @@ L.MAP2U.layers = function (options) {
                         if (rule.PolygonSymbolizer && rule.PolygonSymbolizer.Fill && rule.PolygonSymbolizer.Fill.fill) {
                             legendCtx.beginPath();
                             legendCtx.rect(0, 0, 20, 15);
-                            alert(rule.PolygonSymbolizer.Fill.fill);
+                          
                             legendCtx.fillStyle = rule.PolygonSymbolizer.Fill['fill'];
                             legendCtx.fill();
                             legendCtx.strokeStyle = rule.PolygonSymbolizer.Stroke['stroke'];
